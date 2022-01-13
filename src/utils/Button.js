@@ -3,7 +3,7 @@ import {Dimensions, Text, TouchableOpacity} from 'react-native';
 import {colors} from 'utils/colors';
 import Next from 'assets/next.svg';
 import {moderateScale} from './Normalize';
-export const Button = ({disabled, text, flex, icon, absolute, ...props}) => {
+export const Button = ({disabled, text, flex, icon, absolute, height, ...props}) => {
   return (
     <TouchableOpacity
       style={{
@@ -13,7 +13,8 @@ export const Button = ({disabled, text, flex, icon, absolute, ...props}) => {
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
-        height: Dimensions.get('window').height / 10,
+        height: height  
+         || Dimensions.get('window').height / 10,
         borderColor: colors.orange,
       }}
       {...props}

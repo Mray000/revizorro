@@ -14,7 +14,6 @@ const middleware = async responce => {
   console.log(responce, authentication.accessToken);
   let status = String(responce.status);
   let data = await getJson(responce);
-  console.log(responce);
   if (status == '401') {
     api.refresh_token();
     return 'try_again';
@@ -268,7 +267,36 @@ export const api = {
 
   getFlats: async () => {
     let flats = await request.get('/flats/company');
-    console.log(flats);
     return flats;
+  },
+
+  addCheckList: async body => {
+    let data = await request.post('/check-lists', body);
+    return data;
+  },
+
+  getCheckLists: async () => {
+    let data = await request.get('/check-lists/company');
+    return data;
+  },
+
+  deleteCheckList: async id => {
+    let data = await request.delete(`/check-lists/${id}`);
+    return data;
+  },
+
+  addQuestion: async body => {
+    let data = await request.post('/questions', body);
+    return data;
+  },
+
+  editQuestion: async body => {
+    let data = await request.put(`/questions/${body.id}`, body);
+    return data;
+  },
+
+  editCheckList: async body => {
+    let data = await request.put(`/check-lists/${body.id}`, body);
+    return data;
   },
 };

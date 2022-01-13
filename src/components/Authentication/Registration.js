@@ -30,7 +30,6 @@ export const Registration = ({navigation}) => {
   const [is_phone_error, SetIsPhoneError] = useState(false);
   const [is_load, SetIsLoad] = useState(false);
   const [error, SetError] = useState('');
-
   const handleRegistration = async () => {
     if (!is_first_step) {
       SetIsLoad(true);
@@ -42,7 +41,6 @@ export const Registration = ({navigation}) => {
         email,
         password,
       );
-      console.log(data);
       switch (data) {
         case 'is_ok':
           return navigation.navigate('Workers');

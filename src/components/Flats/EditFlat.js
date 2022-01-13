@@ -14,17 +14,9 @@ import X from 'assets/x.svg';
 import {bytesToSize} from 'utils/BytesToSize';
 import {Button} from 'utils/Button';
 import {api} from 'utils/api';
-const types = {
-  '1-комнатная квартира': '1_room_flat',
-  '2-х комнатная квартира': '2_room_flat',
-  '3-х комнатная квартира': '3_room_flat',
-  '4-х комнатная квартира': '4_room_flat',
-  '5-комнатная квартира': '5_room_flat',
-  Дом: 'house',
-  Участок: 'land',
-  'Дом с участком': 'house_with_land',
-  'Другое(гаражб склад, и др.)': 'other',
-};
+import {Loader} from 'utils/Loader';
+import {convertType, types} from 'utils/flat_types';
+
 const URL = 'http://92.53.97.165/media/';
 
 export const EditFlat = ({navigation, route}) => {
@@ -33,44 +25,27 @@ export const EditFlat = ({navigation, route}) => {
   const [address, SetAddress] = useState(flat.address);
   const [images, SetImages] = useState(flat.images);
   const [is_load, SetIsLoad] = useState(false);
+  const [delited_images, SetDelitedImages] = useState([]);
+  const [added_images, SetAddedImages] = useState([]);
   const [is_delete_modal_open, SetIsDeleteModalOpen] = useState(false);
-  let type =
-    route.params?.type || Object.keys(types).find(el => types[el] == flat.type);
-  console.log(4565464);
+  let type = route.params?.type || convertType(flat.type);
   useEffect(() => {
     navigation.addListener('focus', () => {
-      console.log(route.params?.type);
-      type =
-        route.params?.type ||
-        Object.keys(types).find(el => types[el] == flat.type);
+      type = route.params?.type || convertType(flat.type);
     });
   }, []);
 
   const handleAddImage = async () => {
     const result = await launchImageLibrary({mediaType: 'photo'});
+    console.log(result);
     if (!result.didCancel) {
-      SetImages(prev => [...prev, ...result.assets]);
-      result.assets.map(el => {
-        api.addFlatImage(flat.id, {
-          uri: el.uri,
-          type: el.type,
-          name: el.fileName,
-        });
-      });
+      console.log(added_images);
+      SetAddedImages(prev => [...prev, ...result.assets]);
     }
   };
 
   const handleDeleteImage = async image => {
-    if (image.id) {
-      await api.deleteFlatImage(image.id);
-    }
-    SetImages(prev => prev.filter(el => el != image));
-  };
-
-  const handleDeleteFlat = async () => {
-    await api.deleteFlat(flat.id);
-    SetIsDeleteModalOpen(false);
-    navigation.navigate('FlatsList');
+    SetDelitedImages(prev => [...prev, image]);
   };
 
   const handleEditFlat = async () => {
@@ -80,10 +55,33 @@ export const EditFlat = ({navigation, route}) => {
       address,
       type: types[type],
     });
+    await Promise.all(
+      delited_images.map(
+        async image => image.id && (await api.deleteFlatImage(image.id)),
+      ),
+    );
+    await Promise.all(
+      added_images.map(
+        async image =>
+          await api.addFlatImage(flat.id, {
+            uri: image.uri,
+            type: image.type,
+            name: image.fileName,
+          }),
+      ),
+    );
     navigation.navigate('FlatsList');
     SetIsLoad(false);
   };
+
+  const handleDeleteFlat = async () => {
+    await api.deleteFlat(flat.id);
+    SetIsDeleteModalOpen(false);
+    navigation.navigate('FlatsList');
+  };
+
   let is_button_disabled = !title || !address || !type || is_load;
+  if (is_load) return <Loader />;
   return (
     <KeyboardAwareScrollView
       style={{
@@ -141,7 +139,6 @@ export const EditFlat = ({navigation, route}) => {
           onPress={() =>
             navigation.navigate('FlatTypes', {type, flat, parent: 'EditFlat'})
           }
-          //   onPress={() => console.log(435)}
           style={{
             height: dimensions.height / 10,
             marginTop: 10,
@@ -203,9 +200,10 @@ export const EditFlat = ({navigation, route}) => {
           }}>
           Пример чистой квартиры
         </Text>
-        {images.length ? (
-          <View>
-            {images.map(photo => (
+        <View>
+          {[...added_images, ...images]
+            .filter(image => !delited_images.includes(image))
+            .map(photo => (
               <Shadow
                 viewStyle={{
                   width: '100%',
@@ -219,12 +217,7 @@ export const EditFlat = ({navigation, route}) => {
                 }}
                 startColor={'#00000010'}
                 finalColor={'#00000002'}
-                offset={[0, 10]}
-                // distance={ 0 : undefined}
-                // corners={ ? [] : undefined}
-                // sides={ ? [] : undefined}
-                // size={ ? 0 : undefined}
-              >
+                offset={[0, 10]}>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -251,8 +244,7 @@ export const EditFlat = ({navigation, route}) => {
                 </View>
               </Shadow>
             ))}
-          </View>
-        ) : null}
+        </View>
         <TouchableOpacity
           onPress={handleAddImage}
           style={{

@@ -2,21 +2,14 @@ import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
 import {colors} from 'utils/colors';
 import {dimensions} from 'utils/dimisions';
+import {types as global_types} from 'utils/flat_types';
 import {Header} from 'utils/Header';
 import {moderateScale} from 'utils/Normalize';
 
 export const FlatTypes = ({navigation, route}) => {
-  const types = [
-    '1-комнатная квартира',
-    '2-х комнатная квартира',
-    '3-х комнатная квартира',
-    '4-х комнатная квартира',
-    '5-комнатная квартира',
-    'Дом',
-    'Участок',
-    'Дом с участком',
-    'Другое(гаражб склад, и др.)',
-  ];
+  let types = Object.keys(global_types);
+  // if(route.params.parent == "AddCheckList") types = ["Любая недвижимость", ...types];
+
   return (
     <ScrollView style={{paddingTop: 10}}>
       <Header
@@ -25,6 +18,7 @@ export const FlatTypes = ({navigation, route}) => {
           navigation.navigate(route.params?.parent, {
             type: route.params?.type,
             flat: route.params?.flat,
+            check_list: route.params?.check_list,
           })
         }
       />
@@ -60,7 +54,11 @@ const Type = ({type, navigation, route}) => (
       borderRadius: 20,
     }}
     onPress={() =>
-      navigation.navigate(route.params.parent, {type, flat: route.params?.flat})
+      navigation.navigate(route.params.parent, {
+        type,
+        flat: route.params?.flat,
+        check_list: route.params?.check_list,
+      })
     }>
     <View
       style={{

@@ -25,7 +25,6 @@ export const AddWorker = ({navigation}) => {
   const [is_sex_open, SetIsSexOpen] = useState(false);
   const [email_error, SetEmailError] = useState('');
   const [is_load, SetIsLoad] = useState(false);
-  console.log(authentication.token);
   const handleAddWorker = async () => {
     SetIsLoad(true);
     let is_ok = await api.addWorker(
@@ -183,7 +182,6 @@ export const AddWorker = ({navigation}) => {
                 borderRadius: 18,
                 flexDirection: 'row',
                 overflow: 'hidden',
-                // justifyContent: 'space-between',
               }}
               startColor={sex ? '#00000010' : '#0000'}
               finalColor={sex ? '#00000002' : '#0000'}

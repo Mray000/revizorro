@@ -34,7 +34,8 @@ export const FlatsList = ({navigation}) => {
           style={{
             color: 'black',
             fontFamily: 'Inter-SemiBold',
-            fontSize: moderateScale(18),
+            fontWeight: '800',
+            fontSize: moderateScale(19),
           }}>
           Мои квартиры
         </Text>

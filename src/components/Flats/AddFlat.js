@@ -14,17 +14,8 @@ import X from 'assets/x.svg';
 import {bytesToSize} from 'utils/BytesToSize';
 import {Button} from 'utils/Button';
 import {api} from 'utils/api';
-const types = {
-  '1-комнатная квартира': '1_room_flat',
-  '2-х комнатная квартира': '2_room_flat',
-  '3-х комнатная квартира': '3_room_flat',
-  '4-х комнатная квартира': '4_room_flat',
-  '5-комнатная квартира': '5_room_flat',
-  Дом: 'house',
-  Участок: 'land',
-  'Дом с участком': 'house_with_land',
-  'Другое(гаражб склад, и др.)': 'other',
-};
+import { types } from 'utils/flat_types';
+
 
 export const AddFlat = ({navigation, route}) => {
   const [title, SetTitle] = useState('');
@@ -85,18 +76,6 @@ export const AddFlat = ({navigation, route}) => {
           placeholder="Введите адрес"
           title={'адрес'}
         />
-
-        {type ? (
-          <Text
-            style={{
-              color: '#A9A7A6',
-              fontSize: moderateScale(14),
-              marginTop: 10,
-              marginLeft: 10,
-            }}>
-            тип недвижимости
-          </Text>
-        ) : null}
 
         <TouchableOpacity
           onPress={() =>

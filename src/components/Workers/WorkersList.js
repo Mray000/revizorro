@@ -14,12 +14,13 @@ export const WorkersList = ({navigation}) => {
 
   useEffect(() => {
     navigation.addListener('focus', () => {
-      SetWorkers(null);
-      api.getCompanyWorkers().then(SetWorkers);
+        SetWorkers(null);
+        api.getCompanyWorkers().then(SetWorkers);
     });
   }, []);
-
+console.log(workers, "(((995435349053405934895")
   if (!workers) return <Loader />;
+  console.log(workers, "4390634690546945890546890549564908")
   return (
     <ScrollView>
       <View
@@ -60,8 +61,6 @@ export const WorkersList = ({navigation}) => {
 
 const Worker = ({worker, navigation}) => {
   let {avatar, role, first_name, last_name, rating} = worker;
-  // rating = '4.5';
-  console.log(worker);
   return (
     <TouchableOpacity
       onPress={() => navigation.navigate('WorkerProfile', {worker})}
@@ -74,7 +73,7 @@ const Worker = ({worker, navigation}) => {
         shadowOpacity: 0.51,
         shadowRadius: 13.16,
         elevation: 20,
-        paddingHorizontal: 20,
+        paddingHorizontal: 10,
         paddingVertical: 5,
       }}>
       <View

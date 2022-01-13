@@ -18,7 +18,6 @@ export const Flats = () => {
       initialRouteName="FlatsList">
       <Stack.Screen name="FlatsList" component={FlatsList} />
       <Stack.Screen name="AddFlat" component={AddFlat} />
-      <Stack.Screen name="FlatTypes" component={FlatTypes} />
       <Stack.Screen name="FlatProfile" component={FlatProfile} />
       <Stack.Screen name="EditFlat" component={EditFlat} />
     </Stack.Navigator>

@@ -25,6 +25,8 @@ import {Workers} from 'components/Workers/Workers.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Button} from 'utils/Button.js';
 import {Flats} from 'components/Flats/Flats.js';
+import {CheckLists} from 'components/CheckLists/CheckLists.js';
+import { FlatTypes } from 'components/Flats/FlatTypes.js';
 const Tab = createBottomTabNavigator();
 const App = () => {
   const [is_login, setIsLogin] = useState(false);
@@ -54,7 +56,7 @@ const App = () => {
           }}
           tabBar={props => <BottomNavigator {...props} />}
           // initialRouteName={is_login ? 'Flats' : 'Login'}
-          initialRouteName={is_login ? 'Flats' : 'Login'}
+          initialRouteName={is_login ? 'CheckLists' : 'Login'}
           // initialRouteName={'Flats'}
         >
           <Tab.Screen
@@ -76,6 +78,7 @@ const App = () => {
             }}
             component={Flats}
           />
+
           <Tab.Screen
             name="Cleanings"
             options={{
@@ -109,6 +112,7 @@ const App = () => {
             component={Registration}
             options={{hidden: true}}
           />
+
           <Tab.Screen name="Login" component={Login} options={{hidden: true}} />
           <Tab.Screen
             name="Success"
@@ -122,7 +126,6 @@ const App = () => {
 };
 
 const Cleanings = () => <View></View>;
-const CheckLists = () => <View></View>;
 const Settings = ({navigation}) => {
   const logout = () => {
     authentication.logout();
