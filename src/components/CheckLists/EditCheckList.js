@@ -53,6 +53,7 @@ export const EditCheckList = ({navigation, route}) => {
   const [is_info_visible, SetIsInfoVisible] = useState(false);
   const [is_delete_modal_open, SetIsDeleteModalOpen] = useState(false);
   const [is_cancel_modal_open, SetIsCancelModalOpen] = useState(false);
+  const [is_warging_modal_open, SetIsWargingModalOpen] = useState(false);
 
   let type = route.params?.type || convertType(check_list.type);
 
@@ -157,6 +158,7 @@ export const EditCheckList = ({navigation, route}) => {
 
   const handleEditCheckList = async () => {
     SetIsLoad(true);
+
     await api.editCheckList({
       id: check_list.id,
       name: title,
@@ -173,6 +175,7 @@ export const EditCheckList = ({navigation, route}) => {
           answer: q.answers,
           new: q.new,
           changed: q.changed,
+          check_list_id: check_list.id,
         })),
         ...photos_tasks.map(q => ({
           id: q.id,
@@ -180,6 +183,7 @@ export const EditCheckList = ({navigation, route}) => {
           question_text: q.text,
           new: q.new,
           changed: q.changed,
+          check_list_id: check_list.id,
         })),
       ].map(el => {
         if (el.new) return api.addQuestion(el);
@@ -203,8 +207,7 @@ export const EditCheckList = ({navigation, route}) => {
     if (photoBottomSheet.current) photoBottomSheet.current.show();
   }, [is_photo_modal_visible]);
 
-  let is_button_disabled =
-    !(questions.length || photos_tasks.length || type || title) || is_load;
+  let is_button_disabled = !(questions.length && type && title) || is_load;
 
   return (
     <>
@@ -223,7 +226,7 @@ export const EditCheckList = ({navigation, route}) => {
                 style={{
                   fontSize: moderateScale(15),
                   fontFamily: 'Inter-Medium',
-                  color: colors.orange,
+                  color: is_button_disabled ? '#AAA8A7' : colors.orange,
                 }}>
                 Готово
               </Text>
@@ -368,7 +371,7 @@ export const EditCheckList = ({navigation, route}) => {
               }}
               startColor={price ? '#00000010' : '#0000'}
               finalColor={price ? '#00000002' : '#0000'}
-              offset={price ? [0, 5] : [0, 0]}
+              offseta={price ? [0, 5] : [0, 0]}
               distance={!price ? 0 : undefined}
               corners={!price ? [] : undefined}
               sides={!price ? [] : undefined}
@@ -432,19 +435,17 @@ export const EditCheckList = ({navigation, route}) => {
             </Text>
           ) : null}
           <View>
-            {questions.length ? (
-              <Text
-                style={{
-                  marginTop: 10,
-                  color: 'rgb(159,156,155)',
-                  fontFamily: 'Inter-Medium',
-                  fontSize: moderateScale(15),
-                }}>
-                вопросы
-              </Text>
-            ) : null}
+            <Text
+              style={{
+                marginTop: 10,
+                color: 'rgb(159,156,155)',
+                fontFamily: 'Inter-Medium',
+                fontSize: moderateScale(15),
+              }}>
+              вопросы
+            </Text>
 
-            {/* <TouchableOpacity
+            <TouchableOpacity
               onPress={ChangeIsOpenQuestionModal}
               style={{
                 height: dimensions.height / 10,
@@ -485,7 +486,7 @@ export const EditCheckList = ({navigation, route}) => {
                 }}>
                 Добавить вопрос
               </Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
           </View>
         </View>
         <View style={{paddingHorizontal: 10}}>
@@ -525,19 +526,16 @@ export const EditCheckList = ({navigation, route}) => {
           ))}
 
           <View>
-            {photos_tasks.length ? (
-              <Text
-                style={{
-                  marginTop: 10,
-                  color: 'rgb(159,156,155)',
-                  fontFamily: 'Inter-Medium',
-                  fontSize: moderateScale(15),
-                }}>
-                фото
-              </Text>
-            ) : null}
-
-            {/* <TouchableOpacity
+            <Text
+              style={{
+                marginTop: 10,
+                color: 'rgb(159,156,155)',
+                fontFamily: 'Inter-Medium',
+                fontSize: moderateScale(15),
+              }}>
+              фото
+            </Text>
+            <TouchableOpacity
               onPress={ChangeIsOpenPhotoModal}
               style={{
                 height: dimensions.height / 10,
@@ -578,7 +576,7 @@ export const EditCheckList = ({navigation, route}) => {
                 }}>
                 Добавить задачу сделать фото
               </Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
             {photos_tasks.map(({text, id}, i) => (
               <TouchableOpacity
                 style={{
@@ -615,7 +613,7 @@ export const EditCheckList = ({navigation, route}) => {
                 fontSize: moderateScale(16),
                 marginBottom: 20,
               }}>
-              Удалить квартиру
+              Удалить чек-лист
             </Text>
           </TouchableOpacity>
         </View>
@@ -885,11 +883,16 @@ export const EditCheckList = ({navigation, route}) => {
             navigation.navigate('ListOfCheckLists');
           }}
           CloseModalWithSave={async () => {
-            await handleEditCheckList();
+            if (!is_button_disabled) {
+              await handleEditCheckList();
+              navigation.navigate('ListOfCheckLists');
+            } else SetIsWargingModalOpen(true);
             SetIsCancelModalOpen(false);
-            navigation.navigate('ListOfCheckLists');
           }}
         />
+      ) : null}
+      {is_warging_modal_open ? (
+        <WarningModal CloseModal={() => SetIsWargingModalOpen(false)} warning={"Заполните название"} />
       ) : null}
     </>
   );
@@ -1054,6 +1057,63 @@ const CancelModal = ({CloseModal, CloseModalWithSave}) => {
                   textAlign: 'center',
                 }}>
                 Сохранить
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
+const WarningModal = ({CloseModal, warning}) => {
+  return (
+    <Modal animationType="fade" transparent>
+      <View
+        style={{
+          backgroundColor: 'rgba(0,0,0,0.2)',
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <View
+          style={{
+            backgroundColor: 'white',
+            borderRadius: 15,
+            width: '70%',
+            alignItems: 'center',
+          }}>
+          <Text
+            style={{
+              fontFamily: 'Inter-SemiBold',
+              fontSize: moderateScale(15),
+              color: 'black',
+              marginTop: verticalScale(15),
+            }}>
+           {warning}
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              marginTop: 10,
+              borderTopColor: '#E5E3E2',
+              borderTopWidth: 1,
+            }}>
+  
+            <TouchableOpacity
+              onPress={CloseModal}
+              style={{
+                width: '100%',
+                padding: 8,
+              }}>
+              <Text
+                style={{
+                  fontFamily: 'Inter-SemiBold',
+                  fontSize: moderateScale(15),
+                  color: 'black',
+                  textAlign: 'center',
+                }}>
+                Ок
               </Text>
             </TouchableOpacity>
           </View>

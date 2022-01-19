@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  Modal,
 } from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {R, Shadow} from 'react-native-shadow-2';
@@ -37,6 +38,7 @@ export const AddCheckList = ({navigation, route}) => {
     useState(false);
   const [is_photo_modal_visible, SetIsPhotoModalVisible] = useState(false);
   const [is_info_visible, SetIsInfoVisible] = useState(false);
+  const [is_cancel_modal_open, SetIsCancelModalOpen] = useState(false);
 
   let questionbBottomSheet = useRef();
   let photoBottomSheet = useRef();
@@ -164,8 +166,7 @@ export const AddCheckList = ({navigation, route}) => {
   }, [is_photo_modal_visible]);
 
   let type = route.params?.type;
-  let is_button_disabled =
-    !(questions.length || photos_tasks.length || type || title) || is_load;
+  let is_button_disabled = !(questions.length && type && title) || is_load;
   return (
     <>
       <KeyboardAwareScrollView>
@@ -173,6 +174,7 @@ export const AddCheckList = ({navigation, route}) => {
           to={'ListOfCheckLists'}
           navigation={navigation}
           title={'Добавление чек-листа'}
+          onBack={() => SetIsCancelModalOpen(true)}
         />
         <View style={{paddingHorizontal: 10}}>
           <Input
@@ -802,6 +804,98 @@ export const AddCheckList = ({navigation, route}) => {
           </View>
         </BottomSheet>
       ) : null}
+      {is_cancel_modal_open ? (
+        <CancelModal
+          GoBack={() => {
+            SetIsCancelModalOpen(false);
+            navigation.navigate('ListOfCheckLists');
+          }}
+          Stay={() => SetIsCancelModalOpen(false)}
+        />
+      ) : null}
     </>
+  );
+};
+
+const CancelModal = ({GoBack, Stay}) => {
+  return (
+    <Modal animationType="fade" transparent>
+      <View
+        style={{
+          backgroundColor: 'rgba(0,0,0,0.2)',
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <View
+          style={{
+            backgroundColor: 'white',
+            borderRadius: 15,
+            width: '70%',
+            alignItems: 'center',
+          }}>
+          <Text
+            style={{
+              fontFamily: 'Inter-SemiBold',
+              fontSize: moderateScale(15),
+              color: 'black',
+              marginTop: verticalScale(15),
+            }}>
+            Сохранить изменения?
+          </Text>
+          <Text
+            style={{
+              fontFamily: 'Inter-Regular',
+              fontSize: moderateScale(13),
+              paddingHorizontal: 5,
+              color: '#8B8887',
+              marginTop: 3,
+              textAlign: 'center',
+            }}>
+            При нажатии на кнопку “Уйти” данные не сохранятся
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              marginTop: 10,
+              borderTopColor: '#E5E3E2',
+              borderTopWidth: 1,
+            }}>
+            <TouchableOpacity
+              onPress={GoBack}
+              style={{width: '50%', padding: 8}}>
+              <Text
+                style={{
+                  fontFamily: 'Inter-Regular',
+                  fontSize: moderateScale(15),
+                  color: '#E6443A',
+                  textAlign: 'center',
+                }}>
+                Уйти
+              </Text>
+            </TouchableOpacity>
+            <View
+              style={{backgroundColor: '#E5E3E2', width: 1, height: '100%'}}
+            />
+            <TouchableOpacity
+              onPress={Stay}
+              style={{
+                width: '50%',
+                padding: 8,
+              }}>
+              <Text
+                style={{
+                  fontFamily: 'Inter-SemiBold',
+                  fontSize: moderateScale(15),
+                  color: 'black',
+                  textAlign: 'center',
+                }}>
+                Остаться
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
   );
 };

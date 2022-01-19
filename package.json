@@ -6,8 +6,8 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
-    "servers_kill": "taskkill /F /IM node.exe",
-    "build_adnroid": "cd android && gradlew assembleRelease",
+    "reload_servers": "netstat -vanp tcp | grep 8081 && react-native start",
+    "build_adnroid": "cd android && gradle assembleRelease",
     "test": "jest",
     "lint": "eslint ."
   },

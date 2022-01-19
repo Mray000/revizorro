@@ -10,7 +10,6 @@ export const BottomNavigator = observer(({state, descriptors, navigation}) => {
   if (focusedOptions.hidden || !app.is_bottom_navigator_visible) {
     return null;
   }
-
   return (
     <View
       style={{
@@ -18,12 +17,12 @@ export const BottomNavigator = observer(({state, descriptors, navigation}) => {
         height: verticalScale(50),
         backgroundColor: 'white',
         borderWidth: 1,
-        borderColor: app.bottom_navigator_color  || '#F2F1F0',
+        borderColor: app.bottom_navigator_color || '#F2F1F0',
         justifyContent: 'space-between',
         bottom: -0.0000000000001,
         width: '100%',
         alignItems: 'center',
-      }}>
+      }}> 
       {state.routes.map((route, index) => {
         const {options} = descriptors[route.key];
         const isFocused = state.index === index;
@@ -52,7 +51,7 @@ export const BottomNavigator = observer(({state, descriptors, navigation}) => {
               justifyContent: 'center',
               width: '20%',
               height: '100%',
-              backgroundColor: app.bottom_navigator_color || "white"
+              backgroundColor: app.bottom_navigator_color || 'white',
             }}>
             <View
               style={{
