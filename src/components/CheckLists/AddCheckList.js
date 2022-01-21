@@ -186,7 +186,7 @@ export const AddCheckList = ({navigation, route}) => {
           />
           <TouchableOpacity
             onPress={() =>
-              navigation.navigate('FlatTypes', {type, parent: 'AddCheckList'})
+              navigation.navigate('CheckListsFlatTypes', {type, parent: 'AddCheckList'})
             }
             style={{
               height: dimensions.height / 10,

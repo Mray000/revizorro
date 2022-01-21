@@ -1,11 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TouchableOpacity, Image, ScrollView} from 'react-native';
+import {View, Text, TouchableOpacity, Image, ScrollView, Dimensions} from 'react-native';
 import {api} from 'utils/api';
 import {colors} from 'utils/colors';
 import {Loader} from 'utils/Loader';
 import {moderateScale, scale, verticalScale} from 'utils/Normalize';
 import ArrowRight from 'assets/arrow_right.svg';
 import Star from 'assets/star.svg';
+import { dimensions } from 'utils/dimisions';
 export const WorkersList = ({navigation}) => {
   const [workers, SetWorkers] = useState(null);
   useEffect(() => {
@@ -14,13 +15,12 @@ export const WorkersList = ({navigation}) => {
 
   useEffect(() => {
     navigation.addListener('focus', () => {
-        SetWorkers(null);
-        api.getCompanyWorkers().then(SetWorkers);
+      SetWorkers(null);
+      api.getCompanyWorkers().then(SetWorkers);
     });
   }, []);
-console.log(workers, "(((995435349053405934895")
+
   if (!workers) return <Loader />;
-  console.log(workers, "4390634690546945890546890549564908")
   return (
     <ScrollView>
       <View
@@ -50,7 +50,7 @@ console.log(workers, "(((995435349053405934895")
           </Text>
         </TouchableOpacity>
       </View>
-      <View style={{marginTop: 10}}>
+      <View style={{marginTop: 10, paddingHorizontal: 10}}>
         {workers.map(el => (
           <Worker worker={el} navigation={navigation} key={el.id} />
         ))}
@@ -92,7 +92,7 @@ const Worker = ({worker, navigation}) => {
             style={{
               width: '100%',
               aspectRatio: 1,
-              borderRadius: 100,
+              borderRadius: dimensions.width * 0.2,
             }}
           />
         </View>

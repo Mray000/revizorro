@@ -50,7 +50,7 @@ export const FlatsList = ({navigation}) => {
           </Text>
         </TouchableOpacity>
       </View>
-      <View style={{marginTop: 10}}>
+      <View style={{marginTop: 10, paddingHorizontal: 10}}>
         {flats.map(flat => (
           <Flat flat={flat} navigation={navigation} />
         ))}

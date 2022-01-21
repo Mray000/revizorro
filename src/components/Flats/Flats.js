@@ -20,6 +20,7 @@ export const Flats = () => {
       <Stack.Screen name="AddFlat" component={AddFlat} />
       <Stack.Screen name="FlatProfile" component={FlatProfile} />
       <Stack.Screen name="EditFlat" component={EditFlat} />
+      <Stack.Screen name="FlatTypes" component={FlatTypes} />
     </Stack.Navigator>
   );
 };

@@ -89,7 +89,7 @@ export const ListOfCheckLists = ({navigation}) => {
           </Text>
         </TouchableOpacity>
       </View>
-      <View style={{paddingBottom: 200, marginTop: 10}}>
+      <View style={{paddingBottom: 200, marginTop: 10, paddingHorizontal: 10}}>
         {check_lists.map(check_list => (
           <CheckList
             SetSelectedId={SetSelectedId}

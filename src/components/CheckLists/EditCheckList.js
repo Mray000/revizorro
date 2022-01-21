@@ -243,7 +243,7 @@ export const EditCheckList = ({navigation, route}) => {
           />
           <TouchableOpacity
             onPress={() =>
-              navigation.navigate('FlatTypes', {
+              navigation.navigate('CheckListsFlatTypes', {
                 type,
                 check_list,
                 parent: 'EditCheckList',

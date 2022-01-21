@@ -2,6 +2,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {FlatTypes} from 'components/Flats/FlatTypes';
 import React, {useState, useEffect} from 'react';
 import {AddCheckList} from './AddCheckList';
+import {CheckListsFlatTypes} from './CheckListsFlatTypes';
 import {EditCheckList} from './EditCheckList';
 import {ListOfCheckLists} from './ListOfCheckLists';
 
@@ -15,7 +16,7 @@ export const CheckLists = () => {
       }}
       initialRouteName="ListOfCheckLists">
       <Stack.Screen name="AddCheckList" component={AddCheckList} />
-      <Stack.Screen name="FlatTypes" component={FlatTypes} />
+      <Stack.Screen name="CheckListsFlatTypes" component={CheckListsFlatTypes} />
       <Stack.Screen name="ListOfCheckLists" component={ListOfCheckLists} />
       <Stack.Screen name="EditCheckList" component={EditCheckList} />
     </Stack.Navigator>
