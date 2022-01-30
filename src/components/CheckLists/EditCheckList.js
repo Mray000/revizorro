@@ -22,10 +22,10 @@ import X from 'assets/x.svg';
 import {Button} from 'utils/Button';
 import {api} from 'utils/api';
 import {convertType, types} from 'utils/flat_types';
+import {AddButton} from 'utils/AddButton';
+import { ModalPicker } from 'utils/ModalPicker';
 export const EditCheckList = ({navigation, route}) => {
   let check_list = route.params.check_list;
-  console.log(check_list);
-
   const [title, SetTitle] = useState(check_list.name);
   const [price, SetPrice] = useState(
     check_list.cost ? String(check_list.cost) : '',
@@ -46,6 +46,12 @@ export const EditCheckList = ({navigation, route}) => {
   const [photos_text, SetPhotosText] = useState('');
   const [photos_count, SetPhotosCount] = useState(0);
   const [edit_id, SetEditId] = useState(null);
+  const [hours, SetHours] = useState(Math.floor(check_list.interval / 60));
+  const [minutes, SetMinutes] = useState(
+    check_list.interval - Math.floor(check_list.interval / 60),
+  );
+  const [is_hours_modal_visible, SetIsHoursModalVisible] = useState(false);
+  const [is_minutes_modal_visible, SetIsMinutesModalVisible] = useState(false);
   const [is_load, SetIsLoad] = useState(false);
   const [is_question_modal_visible, SetIsQuestionModalVisible] =
     useState(false);
@@ -164,6 +170,7 @@ export const EditCheckList = ({navigation, route}) => {
       name: title,
       type: types[type],
       cost: Number(price),
+      interval: hours * 60 + minutes,
     });
 
     await Promise.all(
@@ -209,6 +216,8 @@ export const EditCheckList = ({navigation, route}) => {
 
   let is_button_disabled = !(questions.length && type && title) || is_load;
 
+  let hours_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+  let minutes_values = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
   return (
     <>
       <KeyboardAwareScrollView>
@@ -243,7 +252,7 @@ export const EditCheckList = ({navigation, route}) => {
           />
           <TouchableOpacity
             onPress={() =>
-              navigation.navigate('CheckListsFlatTypes', {
+              navigation.navigate('FlatTypes', {
                 type,
                 check_list,
                 parent: 'EditCheckList',
@@ -318,6 +327,64 @@ export const EditCheckList = ({navigation, route}) => {
               </Text>
             ) : null}
           </TouchableOpacity>
+          <View style={{marginTop: 10}}>
+            <Text
+              style={{
+                fontFamily: 'Inter-Regular',
+                fontSize: moderateScale(14),
+                color: '#AEACAB',
+                marginLeft: 10,
+              }}>
+              ДЛИТЕЛЬНОСТЬ
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                marginTop: 10,
+                justifyContent: 'space-between',
+              }}>
+              <TouchableOpacity
+                onPress={() => SetIsHoursModalVisible(true)}
+                style={{
+                  height: dimensions.height / 11,
+                  borderColor: '#C5BFBE',
+                  borderRadius: 20,
+                  borderWidth: 1,
+                  width: '48%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: '#C5BFBE',
+                    fontSize: moderateScale(14),
+                    fontFamily: 'Inter-Regular',
+                  }}>
+                  {hours} ч
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => SetIsMinutesModalVisible(true)}
+                style={{
+                  height: dimensions.height / 11,
+                  borderColor: '#C5BFBE',
+                  borderRadius: 20,
+                  borderWidth: 1,
+                  width: '48%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: '#C5BFBE',
+                    fontSize: moderateScale(14),
+                    fontFamily: 'Inter-Regular',
+                  }}>
+                  {minutes} мин
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
           <View
             style={{
               height: dimensions.height / 10,
@@ -444,49 +511,11 @@ export const EditCheckList = ({navigation, route}) => {
               }}>
               вопросы
             </Text>
-
-            <TouchableOpacity
+            <AddButton
               onPress={ChangeIsOpenQuestionModal}
-              style={{
-                height: dimensions.height / 10,
-                backgroundColor: 'white',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'row',
-                borderRadius: 20,
-                marginTop: 10,
-              }}>
-              <View
-                style={{
-                  backgroundColor: 'rgba(243, 132, 52, 0.1)',
-                  width: scale(30),
-                  aspectRatio: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: 12,
-                }}>
-                <Text
-                  style={{
-                    color: colors.orange,
-                    fontFamily: 'Inter-Regular',
-                    fontSize: moderateScale(16),
-                    textAlignVertical: 'center',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  +
-                </Text>
-              </View>
-              <Text
-                style={{
-                  color: colors.orange,
-                  fontFamily: 'Inter-Medium',
-                  marginLeft: 10,
-                  fontSize: moderateScale(16),
-                }}>
-                Добавить вопрос
-              </Text>
-            </TouchableOpacity>
+              text={'Добавить задачу сделать фото'}
+              marginTop={10}
+            />
           </View>
         </View>
         <View style={{paddingHorizontal: 10}}>
@@ -641,7 +670,7 @@ export const EditCheckList = ({navigation, route}) => {
                 }}
                 value={question}
                 placeholderTextColor={`#979493`}
-                placeholder="напр: вы нормально убрали?"
+                placeholder="Например: вы нормально убрали?"
                 onChangeText={SetQuestion}
               />
               <Text
@@ -678,7 +707,7 @@ export const EditCheckList = ({navigation, route}) => {
                     borderWidth: 1,
                     paddingLeft: 25,
                   }}
-                  placeholder="напр: безусловно"
+                  placeholder="Например: безусловно"
                   placeholderTextColor={`#979493`}
                   value={answer}
                   onChangeText={SetAnswer}
@@ -710,7 +739,13 @@ export const EditCheckList = ({navigation, route}) => {
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
-                <Check fill={answer ? 'white' : '#FACCAB'} />
+                <Check
+                  width={14}
+                  height={10}
+                  width={14}
+                  height={10}
+                  fill={answer ? 'white' : '#FACCAB'}
+                />
               </TouchableOpacity>
             </View>
             {answers.length ? (
@@ -789,7 +824,7 @@ export const EditCheckList = ({navigation, route}) => {
                 }}
                 value={photos_text}
                 placeholderTextColor={`#979493`}
-                placeholder="напр: сделайте фото заправленной кровати"
+                placeholder="Например: сделайте фото заправленной кровати"
                 onChangeText={SetPhotosText}
               />
               <Text
@@ -892,8 +927,23 @@ export const EditCheckList = ({navigation, route}) => {
         />
       ) : null}
       {is_warging_modal_open ? (
-        <WarningModal CloseModal={() => SetIsWargingModalOpen(false)} warning={"Заполните название"} />
+        <WarningModal
+          CloseModal={() => SetIsWargingModalOpen(false)}
+          warning={'Заполните название'}
+        />
       ) : null}
+      <ModalPicker
+        data={hours_values}
+        onPick={SetHours}
+        visible={is_hours_modal_visible}
+        closeModal={() => SetIsHoursModalVisible(false)}
+      />
+      <ModalPicker
+        data={minutes_values}
+        onPick={SetMinutes}
+        visible={is_minutes_modal_visible}
+        closeModal={() => SetIsMinutesModalVisible(false)}
+      />
     </>
   );
 };
@@ -1090,7 +1140,7 @@ const WarningModal = ({CloseModal, warning}) => {
               color: 'black',
               marginTop: verticalScale(15),
             }}>
-           {warning}
+            {warning}
           </Text>
           <View
             style={{
@@ -1099,7 +1149,6 @@ const WarningModal = ({CloseModal, warning}) => {
               borderTopColor: '#E5E3E2',
               borderTopWidth: 1,
             }}>
-  
             <TouchableOpacity
               onPress={CloseModal}
               style={{

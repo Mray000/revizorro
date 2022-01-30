@@ -5,7 +5,7 @@ import {AddFlat} from './AddFlat';
 import {EditFlat} from './EditFlat';
 import {FlatProfile} from './FlatProfile';
 import {FlatsList} from './FlatsList';
-import {FlatTypes} from './FlatTypes';
+import {FlatTypes} from 'utils/FlatTypes';
 
 const Stack = createStackNavigator();
 export const Flats = () => {

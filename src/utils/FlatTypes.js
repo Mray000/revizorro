@@ -6,7 +6,7 @@ import {types as global_types} from 'utils/flat_types';
 import {Header} from 'utils/Header';
 import {moderateScale} from 'utils/Normalize';
 
-export const CheckListsFlatTypes = ({navigation, route}) => {
+export const FlatTypes = ({navigation, route}) => {
   let types = Object.keys(global_types);
   // if(route.params.parent == "AddCheckList") types = ["Любая недвижимость", ...types];
 
@@ -41,7 +41,7 @@ const Type = ({type, navigation, route}) => (
       shadowColor: '#C8C7C7',
       shadowOffset: {
         width: 0,
-        height: 10,
+        height: 0,
       },
       shadowOpacity: 0.51,
       shadowRadius: 13.16,
@@ -60,16 +60,7 @@ const Type = ({type, navigation, route}) => (
         check_list: route.params?.check_list,
       })
     }>
-    <View
-      style={{
-        width: 20,
-        height: 20,
-        borderRadius: 100,
-        borderWidth: 1,
-        borderColor: '#C5BEBE',
-        marginRight: 5,
-      }}
-    />
+
     <Text
       style={{
         fontSize: moderateScale(16),

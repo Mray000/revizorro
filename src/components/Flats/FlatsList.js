@@ -5,11 +5,10 @@ import {moderateScale, scale, verticalScale} from 'utils/Normalize';
 import ArrowRight from 'assets/arrow_right.svg';
 import {colors} from 'utils/colors';
 import {Loader} from 'utils/Loader';
+import moment from 'moment';
 export const FlatsList = ({navigation}) => {
   const [flats, SetFlats] = useState(null);
-  useEffect(() => {
-    api.getFlats().then(SetFlats);
-  }, []);
+
   useEffect(() => {
     if (!flats) api.getFlats().then(SetFlats);
   }, [flats]);
@@ -52,7 +51,7 @@ export const FlatsList = ({navigation}) => {
       </View>
       <View style={{marginTop: 10, paddingHorizontal: 10}}>
         {flats.map(flat => (
-          <Flat flat={flat} navigation={navigation} />
+          <Flat flat={flat} navigation={navigation} key={flat.id} />
         ))}
       </View>
     </ScrollView>
@@ -60,7 +59,7 @@ export const FlatsList = ({navigation}) => {
 };
 
 const Flat = ({flat, navigation}) => {
-  const {title, address, last_cleaning, status} = flat;
+  const {title, address, last_cleaning, status, time_created} = flat;
   return (
     <TouchableOpacity
       onPress={() => navigation.navigate('FlatProfile', {flat})}
@@ -102,17 +101,17 @@ const Flat = ({flat, navigation}) => {
             }}>
             {address}
           </Text>
-          {last_cleaning == 'time_created' ? (
+          {moment(last_cleaning).format('YYYY-MM-DD') !==
+          moment(time_created).format('YYYY-MM-DD') ? (
             <Text
               style={{
                 fontFamily: 'Inter-Medium',
                 fontSize: moderateScale(15),
                 color: 'black',
               }}>
-              {last_cleaning}
+              Последняя уборка: {moment(last_cleaning).format('DD MMM HH:mm')}
             </Text>
           ) : null}
-
           {getStatusBlock(status)}
         </View>
         <View
@@ -128,7 +127,7 @@ const Flat = ({flat, navigation}) => {
   );
 };
 
-const getStatusBlock = status => {
+const getStatusBlock = (status) => {
   if (status == 'сleaning_is_not_required') return null;
   let text = '';
   let color = '';
@@ -147,12 +146,13 @@ const getStatusBlock = status => {
       break;
     }
     case 'сleaning_is_scheduled': {
-      text = '';
+      text = 'Уборка ' + moment().format('DD MMM');
       color = '#8B8887';
       backgroundColor = 'white';
       break;
     }
   }
+
   return (
     <View style={{alignItems: 'flex-start', marginTop: 10}}>
       <Text

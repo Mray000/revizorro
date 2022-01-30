@@ -9,9 +9,7 @@ class Authentication {
     makeAutoObservable(this);
   }
   login = async (login, password) => {
-    console.log(999);
     let is_ok = await api.login(login, password);
-    console.log(435345);
     return is_ok;
   };
 
@@ -37,9 +35,7 @@ class Authentication {
       email,
       password,
     };
-    console.log(body);
     let data = await api.registration(body);
-    console.log(data);
     if (data.Error)
       return data.Error.includes('email') ? 'email_exist' : 'phone_exist';
     if (data.email) return 'email_incorrect';

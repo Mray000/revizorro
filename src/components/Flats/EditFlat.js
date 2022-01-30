@@ -11,8 +11,6 @@ import Picture from 'assets/picture.svg';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {launchImageLibrary} from 'react-native-image-picker';
 import X from 'assets/x.svg';
-import {bytesToSize} from 'utils/BytesToSize';
-import {Button} from 'utils/Button';
 import {api} from 'utils/api';
 import {Loader} from 'utils/Loader';
 import {convertType, types} from 'utils/flat_types';
@@ -37,9 +35,7 @@ export const EditFlat = ({navigation, route}) => {
 
   const handleAddImage = async () => {
     const result = await launchImageLibrary({mediaType: 'photo'});
-    console.log(result);
     if (!result.didCancel) {
-      console.log(added_images);
       SetAddedImages(prev => [...prev, ...result.assets]);
     }
   };

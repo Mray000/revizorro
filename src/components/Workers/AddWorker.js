@@ -12,7 +12,7 @@ import {Button} from 'utils/Button';
 import ArrowRight from 'assets/arrow_right.svg';
 import ArrowBottom from 'assets/arrow_down.svg';
 import {authentication} from 'store/authentication';
-export const AddWorker = ({navigation}) => {
+export const AddWorker = ({navigation, route}) => {
   const [is_housemaid, SetIsHousemaid] = useState(true);
   const [email, SetEmail] = useState('');
   const [name, SetName] = useState('');
@@ -40,7 +40,7 @@ export const AddWorker = ({navigation}) => {
     );
     if (is_ok) {
       navigation.navigate('Success', {
-        to: 'WorkersList',
+        to: route.params.parent,
         title: 'Сотрудник добавлен',
         description:
           'Сообщите вашему сотруднику, что на его почту отправлено письмо с паролем для входа в приложение',
@@ -53,8 +53,7 @@ export const AddWorker = ({navigation}) => {
     <KeyboardAwareScrollView style={{backgroundColor: 'white'}}>
       <Header
         title={'Добавление сотрудников'}
-        navigation={navigation}
-        to={'WorkersList'}
+        onBack={navigation.goBack}
       />
       <View
         style={{

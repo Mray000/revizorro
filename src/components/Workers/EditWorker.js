@@ -29,7 +29,6 @@ export const EditWorker = ({navigation, route}) => {
     manager_permission_cleaning,
   } = route.params.worker;
   let is_housemaid = role == 'role_maid';
-  console.log(route.params.worker);
   const [email, SetEmail] = useState(route.params.worker.email);
   const [name, SetName] = useState(first_name);
   const [surname, SetSurname] = useState(last_name);
@@ -105,7 +104,6 @@ export const EditWorker = ({navigation, route}) => {
             alignSelf: 'center',
             aspectRatio: 1,
             borderRadius: 100,
-            backgroundColor: 'red',
             marginTop: 10,
           }}
         />

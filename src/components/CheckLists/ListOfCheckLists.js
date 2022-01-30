@@ -20,10 +20,6 @@ export const ListOfCheckLists = ({navigation}) => {
   const [selected_id, SetSelectedId] = useState(0);
 
   useEffect(() => {
-    api.getCheckLists().then(SetCheckLists);
-  }, []);
-
-  useEffect(() => {
     navigation.addListener('focus', () => {
       SetCheckLists(null);
       api.getCheckLists().then(SetCheckLists);
@@ -91,7 +87,10 @@ export const ListOfCheckLists = ({navigation}) => {
       </View>
       <View style={{paddingBottom: 200, marginTop: 10, paddingHorizontal: 10}}>
         {check_lists.map(check_list => (
-          <CheckList
+          <Check
+            width={14}
+            height={10}
+            List
             SetSelectedId={SetSelectedId}
             CopyCheckList={CopyCheckList}
             DeleteCheckList={DeleteCheckList}
@@ -106,7 +105,7 @@ export const ListOfCheckLists = ({navigation}) => {
   );
 };
 
-const CheckList = ({
+const Check = ({
   check_list,
   SetSelectedId,
   selected_id,

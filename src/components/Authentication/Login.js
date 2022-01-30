@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
+  DeviceEventEmitter,
   Dimensions,
   KeyboardAvoidingView,
   Platform,
@@ -13,31 +14,39 @@ import {authentication} from 'store/authentication';
 import {Input} from 'utils/Input';
 import {Button} from 'utils/Button';
 import {colors} from 'utils/colors';
-import {moderateScale} from 'utils/Normalize';
-// import {} from "utils/"
-export const Login = ({navigation}) => {
+import {moderateScale, scale} from 'utils/Normalize';
+export const Login = ({navigation, route}) => {
   const [email, SetEmail] = useState('');
   const [password, setPassword] = useState('');
   const [incorrect_data, setIncorrectData] = useState(false);
   const [isLoad, setIsLoad] = useState(false);
+  const [is_warnning_show, SetIsWarningShow] = useState(true);
   let is_button_disabled = !(email && password) || incorrect_data || isLoad;
   const henderLogin = async () => {
     setIsLoad(true);
-    console.log(234);
     let is_ok = await authentication.login(email, password);
-    console.log(634);
-
-    if (is_ok) navigation.navigate('Workers');
-    else setIncorrectData(true);
+    if (is_ok) {
+      navigation.navigate('Workers');
+      DeviceEventEmitter.removeAllListeners('keyboardDidShow');
+    } else setIncorrectData(true);
     setIsLoad(false);
   };
+
+  useEffect(() => {
+    DeviceEventEmitter.addListener('keyboardDidShow', () =>
+      SetIsWarningShow(false),
+    );
+    return () => {};
+  }, []);
+  let is_owner = route.params.role == 'owner';
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : null}
       style={{
         flex: 1,
         backgroundColor: 'white',
-      }}>
+      }}
+      >
       <View
         style={{
           flex: 1,
@@ -101,21 +110,67 @@ export const Login = ({navigation}) => {
           absolute={true}
           onPress={henderLogin}
         />
-        <View style={{flexDirection: 'row', marginTop: 15}}>
-          <Text style={{color: '#AEACAB', fontSize: moderateScale(15)}}>
-            Еще нет аккаунта?
-          </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Registration')}>
+        {is_owner ? (
+          <View style={{flexDirection: 'row', marginTop: 15}}>
+            <Text style={{color: '#AEACAB', fontSize: moderateScale(15)}}>
+              Еще нет аккаунта?
+            </Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Registration')}>
+              <Text
+                style={{
+                  color: colors.orange,
+                  fontSize: moderateScale(15),
+                  marginLeft: 5,
+                }}>
+                Регистрация
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : null}
+        {!is_owner && is_warnning_show ? (
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 40,
+              borderColor: '#E5E3E2',
+              borderWidth: 1,
+              borderRadius: 20,
+              flexDirection: 'row',
+              padding: 10,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <View
+              style={{
+                backgroundColor: 'red',
+                borderRadius: 40,
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: scale(20),
+                aspectRatio: 1,
+              }}>
+              <Text
+                style={{
+                  fontSize: moderateScale(14),
+                  color: 'white',
+                  fontFamily: 'Inter-SemiBold',
+                }}>
+                i
+              </Text>
+            </View>
             <Text
               style={{
-                color: colors.orange,
+                color: 'black',
+                fontFamily: 'Inter-Regular',
                 fontSize: moderateScale(15),
-                marginLeft: 5,
+                marginLeft: 10,
               }}>
-              Регистрация
+              Если вы новый сотрудник, обратитесь к вашему нанимателю, чтобы он
+              вас зарегистрировал в приложении.
             </Text>
-          </TouchableOpacity>
-        </View>
+          </View>
+        ) : null}
       </View>
     </KeyboardAvoidingView>
   );

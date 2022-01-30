@@ -26,7 +26,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Button} from 'utils/Button.js';
 import {Flats} from 'components/Flats/Flats.js';
 import {CheckLists} from 'components/CheckLists/CheckLists.js';
-import { FlatTypes } from 'components/Flats/FlatTypes.js';
+import {Onboarding} from 'components/Onboarding/Onboarding.js';
+import {Cleanings} from 'components/Cleanings/Cleanings.js';
 const Tab = createBottomTabNavigator();
 const App = () => {
   const [is_login, setIsLogin] = useState(false);
@@ -39,7 +40,6 @@ const App = () => {
         authentication.SetRefreshToken(data.refreshToken);
 
         let is_token_normal = await api.refresh_token();
-        // console.log(is_token_normal, 'token normal');
         if (is_token_normal) setIsLogin(true);
       }
       setIsLoad(true);
@@ -55,10 +55,7 @@ const App = () => {
             contentStyle: {backgroundColor: 'white'},
           }}
           tabBar={props => <BottomNavigator {...props} />}
-          // initialRouteName={is_login ? 'Flats' : 'Login'}
-          initialRouteName={is_login ? 'CheckLists' : 'Login'}
-          // initialRouteName={'Flats'}
-        >
+          initialRouteName={is_login ? 'Cleanings' : 'Onboarding'}>
           <Tab.Screen
             name="Workers"
             options={{
@@ -88,6 +85,7 @@ const App = () => {
             }}
             component={Cleanings}
           />
+
           <Tab.Screen
             name="CheckLists"
             options={{
@@ -97,6 +95,7 @@ const App = () => {
             }}
             component={CheckLists}
           />
+
           <Tab.Screen
             name="Settings"
             options={{
@@ -108,12 +107,19 @@ const App = () => {
           />
 
           <Tab.Screen
+            name="Onboarding"
+            component={Onboarding}
+            options={{hidden: true}}
+          />
+
+          <Tab.Screen
             name="Registration"
             component={Registration}
             options={{hidden: true}}
           />
 
           <Tab.Screen name="Login" component={Login} options={{hidden: true}} />
+
           <Tab.Screen
             name="Success"
             component={Success}
@@ -125,12 +131,10 @@ const App = () => {
   );
 };
 
-const Cleanings = () => <View></View>;
 const Settings = ({navigation}) => {
   const logout = () => {
     authentication.logout();
-    navigation.navigate('Login');
-    console.log(123);
+    navigation.navigate('Onboarding');
   };
   return (
     <View>

@@ -11,7 +11,8 @@ const getJson = async responce => {
   }
 };
 const middleware = async responce => {
-  console.log(responce, authentication.accessToken);
+  // console.log(responce.url, responce.status, authentication.accessToken);
+  console.log(responce.url, responce.status);
   let status = String(responce.status);
   let data = await getJson(responce);
   if (status == '401') {
@@ -76,7 +77,6 @@ const request = {
     } else return data;
   },
   post_form_data: async (url, body) => {
-    console.log(body);
     let responce = await fetch(URL + url, {
       method: 'POST',
       headers: {
@@ -144,7 +144,15 @@ export const api = {
 
   refresh_token: async () => {
     let refresh = authentication.refreshToken;
-    let data = await request.post('/users/auth/token/refresh/', {refresh});
+
+    let data = await fetch(URL + '/users/auth/token/refresh/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({refresh}),
+    }).then(res => res.json());
+
     if (data?.access) await SetAuthData(data.access, data.refresh);
     else {
       await AsyncStorage.removeItem('accessToken');
@@ -228,6 +236,11 @@ export const api = {
     return data;
   },
 
+  getHousemaids: async () => {
+    let data = await api.getCompanyWorkers();
+    return data.filter(w => w.role == 'role_maid');
+  },
+
   addFlat: async body => {
     let form_data = new FormData();
     Object.keys(body).forEach(key => {
@@ -238,7 +251,6 @@ export const api = {
       } else form_data.append(key, body[key]);
     });
     let data = await request.post_form_data('/flats', form_data);
-    console.log(data, 'AFDSFDSKLGJSFGSDGKKKKKKKKKKKKKKK');
     return data;
   },
 
@@ -270,6 +282,11 @@ export const api = {
     return flats;
   },
 
+  getFlat: async id => {
+    let flat = await request.get(`/flats/${id}`);
+    return flat;
+  },
+
   addCheckList: async body => {
     let data = await request.post('/check-lists', body);
     return data;
@@ -298,5 +315,15 @@ export const api = {
   editCheckList: async body => {
     let data = await request.put(`/check-lists/${body.id}`, body);
     return data;
+  },
+
+  addCleaning: async body => {
+    let data = await request.post(`/cleaning/multiply`, body);
+    return data;
+  },
+
+  getCleanings: async body => {
+    let cleanings = await request.get('/cleaning');
+    return cleanings;
   },
 };

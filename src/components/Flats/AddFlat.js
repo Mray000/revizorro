@@ -27,7 +27,6 @@ export const AddFlat = ({navigation, route}) => {
   const LoadPhoto = async () => {
     const result = await launchImageLibrary({mediaType: 'photo'});
     if (!result.didCancel) {
-      console.log(result.assets);
       SetImages(prev => [...prev, ...result.assets]);
     }
   };
@@ -44,7 +43,7 @@ export const AddFlat = ({navigation, route}) => {
         name: el.fileName,
       })),
     });
-    navigation.navigate('FlatsList');
+    navigation.goBack();
     SetIsLoad(false);
   };
   let is_button_disabled =
@@ -58,8 +57,7 @@ export const AddFlat = ({navigation, route}) => {
       }}>
       <Header
         title={'Добавление квартиры'}
-        navigation={navigation}
-        to="FlatsList"
+        onBack={() => navigation.goBack()}
       />
       <View style={{paddingHorizontal: 10}}>
         <Input

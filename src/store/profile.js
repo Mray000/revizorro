@@ -23,7 +23,6 @@ class Profile {
     makeAutoObservable(this);
   }
   setAllProfile(data) {
-    console.log(data);
     Object.keys(data).forEach(key => (this[key] = data[key]));
   }
   setProfile() {

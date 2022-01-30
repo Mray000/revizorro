@@ -1,12 +1,19 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TouchableOpacity, Image, ScrollView, Dimensions} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  Dimensions,
+} from 'react-native';
 import {api} from 'utils/api';
 import {colors} from 'utils/colors';
 import {Loader} from 'utils/Loader';
 import {moderateScale, scale, verticalScale} from 'utils/Normalize';
 import ArrowRight from 'assets/arrow_right.svg';
 import Star from 'assets/star.svg';
-import { dimensions } from 'utils/dimisions';
+import {dimensions} from 'utils/dimisions';
 export const WorkersList = ({navigation}) => {
   const [workers, SetWorkers] = useState(null);
   useEffect(() => {
@@ -39,7 +46,10 @@ export const WorkersList = ({navigation}) => {
           }}>
           Мои сотрудники
         </Text>
-        <TouchableOpacity onPress={() => navigation.navigate('AddWorker')}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('AddWorker', {parent: 'WorkersList'})
+          }>
           <Text
             style={{
               color: colors.orange,
@@ -90,7 +100,7 @@ const Worker = ({worker, navigation}) => {
           <Image
             source={{uri: avatar}}
             style={{
-              width: '100%',
+              width: '80%',
               aspectRatio: 1,
               borderRadius: dimensions.width * 0.2,
             }}

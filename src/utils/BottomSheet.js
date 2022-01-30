@@ -66,7 +66,6 @@ class BottomSheet extends Component {
         if (gestureDistance > gestureLimitArea) {
           this.setModalVisible(false);
         } else {
-          console.log(pan);
           Animated.spring(pan, {
             toValue: {x: 0, y: 0},
             useNativeDriver: false,
@@ -109,7 +108,6 @@ class BottomSheet extends Component {
             justifyContent: 'center',
             backgroundColor: 'rgba(0,0,0,0.6)',
           }}>
-          {console.log(minus_height)}
           <Animated.View
             {...(draggable && this.panResponder.panHandlers)}
             style={[

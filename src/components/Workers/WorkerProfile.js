@@ -10,7 +10,6 @@ export const WorkerProfile = ({navigation, route}) => {
     route.params.worker;
   // rating = 0;
   let is_maid = role == 'role_maid';
-  console.log(route.params.worker);
   return (
     <View>
       <Header
