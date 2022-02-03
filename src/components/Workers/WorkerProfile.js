@@ -5,11 +5,25 @@ import Pen from 'assets/pen.svg';
 import Star from 'assets/star.svg';
 import HalfStar from 'assets/half_star.svg';
 import {moderateScale, scale} from 'utils/Normalize';
+import {Loader} from 'utils/Loader';
+import {api} from 'utils/api';
 export const WorkerProfile = ({navigation, route}) => {
-  let {avatar, role, first_name, last_name, middle_name, rating} =
+  let {id, avatar, role, first_name, last_name, middle_name, rating} =
     route.params.worker;
-  // rating = 0;
+
   let is_maid = role == 'role_maid';
+
+  const [cleanings, SetCleanings] = useState(null);
+
+  useEffect(() => {
+    api
+      .getWorker(id)
+      .then(worker =>
+        SetCleanings(is_maid ? worker.history_cleaning : worker.history_checks),
+      );
+  }, []);
+
+  if (!cleanings) return <Loader />;
   return (
     <View>
       <Header
@@ -56,7 +70,7 @@ export const WorkerProfile = ({navigation, route}) => {
           <View
             style={{flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
             {[1, 2, 3, 4, 5].map(el => (
-              <View style={{marginLeft: 3}}>
+              <View style={{marginLeft: 3}} key={el}>
                 {el - Number(rating) < 1 && el - Number(rating) > 0 ? (
                   <HalfStar width={30} height={30} />
                 ) : (
@@ -101,7 +115,7 @@ export const WorkerProfile = ({navigation, route}) => {
             0 проверок
           </Text>
         )}
-        {false ? (
+        {cleanings.length ? (
           <View style={{width: '100%', paddingLeft: 10, marginTop: 20}}>
             <Text
               style={{
@@ -110,10 +124,17 @@ export const WorkerProfile = ({navigation, route}) => {
                 fontFamily: 'inter-Medium',
                 textAlign: 'left',
                 width: '100%',
-                //   backgroundColor: 'red',
               }}>
               история {is_maid ? 'уборок' : 'проверок'}
             </Text>
+            {cleanings.map(cleaning => (
+              <CleaningComponent
+                is_completed={true}
+                cleaning={cleaning}
+                key={cleaning.id}
+                navigation={navigation}
+              />
+            ))}
           </View>
         ) : null}
       </View>

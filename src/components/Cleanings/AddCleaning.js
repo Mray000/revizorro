@@ -111,7 +111,10 @@ export const AddCleaning = observer(({navigation}) => {
           </Text>
           <View style={{width: '100%', marginTop: 10}}>
             <TouchableOpacity
-              onPress={() => navigation.navigate('CleaningFlats')}>
+              onPress={() => {
+                navigation.navigate('CleaningFlats');
+                cleaning.clearAllData();
+              }}>
               <Shadow
                 viewStyle={{
                   width: '100%',
@@ -131,8 +134,7 @@ export const AddCleaning = observer(({navigation}) => {
                 distance={!flat ? 0 : undefined}
                 corners={!flat ? [] : undefined}
                 sides={!flat ? [] : undefined}
-                size={!flat ? 0 : undefined}
-                >
+                size={!flat ? 0 : undefined}>
                 <View
                   style={{
                     justifyContent: 'center',

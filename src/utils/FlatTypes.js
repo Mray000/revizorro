@@ -8,10 +8,10 @@ import {moderateScale} from 'utils/Normalize';
 
 export const FlatTypes = ({navigation, route}) => {
   let types = Object.keys(global_types);
-  // if(route.params.parent == "AddCheckList") types = ["Любая недвижимость", ...types];
+  
 
   return (
-    <ScrollView style={{paddingTop: 10}}>
+    <ScrollView style={{paddingTop: 10, paddingBottom: 20}}>
       <Header
         title={'Тип недвижимости'}
         onBack={() =>
@@ -22,9 +22,9 @@ export const FlatTypes = ({navigation, route}) => {
           })
         }
       />
-      <View>
+      <View style={{paddingBottom: 20}}>
         {types.map(type => (
-          <Type type={type} navigation={navigation} route={route} />
+          <Type type={type} navigation={navigation} route={route} key={type}/>
         ))}
       </View>
     </ScrollView>

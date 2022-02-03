@@ -1,4 +1,6 @@
 export const types = {
+  "Номер": "room",
+  "Студия": "studio_flat",
   '1-комнатная квартира': '1_room_flat',
   '2-х комнатная квартира': '2_room_flat',
   '3-х комнатная квартира': '3_room_flat',
@@ -7,7 +9,7 @@ export const types = {
   Дом: 'house',
   Участок: 'land',
   'Дом с участком': 'house_with_land',
-  'Другое(гаражб склад, и др.)': 'other',
+  'Другое': 'other',
 };
 
 export const convertType = type =>

@@ -39,7 +39,7 @@ export const CleaningFlats = ({navigation, route}) => {
       </View>
       <View style={{marginBottom: 20}}>
         {flats.map(flat => (
-          <Flat flat={flat} navigation={navigation} />
+          <Flat flat={flat} navigation={navigation} key={flat.id}/>
         ))}
       </View>
     </ScrollView>

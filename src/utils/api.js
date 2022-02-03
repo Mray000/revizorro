@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {authentication} from 'store/authentication';
 // import {error} from '../store/error';
-const URL = 'http://92.53.97.165/api';
-
+export const URL = 'http://92.53.97.165/api';
+export const ImageURL = 'http://92.53.97.165/media/';
 const getJson = async responce => {
   try {
     return await responce.json();
@@ -12,11 +12,12 @@ const getJson = async responce => {
 };
 const middleware = async responce => {
   // console.log(responce.url, responce.status, authentication.accessToken);
+  // console.log(responce.url, responce.status, authentication.accessToken);
   console.log(responce.url, responce.status);
   let status = String(responce.status);
   let data = await getJson(responce);
   if (status == '401') {
-    api.refresh_token();
+    await api.refresh_token();
     return 'try_again';
   }
   return data;
@@ -58,7 +59,7 @@ const request = {
     });
     let data = await middleware(responce);
     if (data == 'try_again') {
-      return request.post(url, body);
+      return await request.post(url, body);
     } else return data;
   },
   put: async (url, body) => {
@@ -73,7 +74,7 @@ const request = {
     });
     let data = await middleware(responce);
     if (data == 'try_again') {
-      return request.put(url, body);
+      return await request.put(url, body);
     } else return data;
   },
   post_form_data: async (url, body) => {
@@ -89,7 +90,7 @@ const request = {
 
     let data = await middleware(responce);
     if (data == 'try_again') {
-      return request.post_form_data(url, body);
+      return await request.post_form_data(url, body);
     } else return data;
   },
   delete: async (url, body) => {
@@ -103,7 +104,7 @@ const request = {
     });
     let data = await middleware(responce);
     if (data == 'try_again') {
-      return request.delete(url, body);
+      return await request.delete(url, body);
     } else return data;
   },
 
@@ -117,7 +118,7 @@ const request = {
     });
     let data = await middleware(responce);
     if (data == 'try_again') {
-      return request.get(url);
+      return await request.get(url);
     } else return data;
   },
 };
@@ -221,6 +222,11 @@ export const api = {
     return typeof data != 'string';
   },
 
+  getWorker: async id => {
+    let data = await request.get(`/users/staff/${id}`);
+    return data;
+  },
+
   deleteWorker: async id => {
     let data = await request.delete(`/users/staff/${id}`);
     return data;
@@ -322,8 +328,19 @@ export const api = {
     return data;
   },
 
-  getCleanings: async body => {
-    let cleanings = await request.get('/cleaning');
+  editCleaning: async body => {
+    let data = await request.put(`/cleaning/${body.id}`, body);
+    console.log(data);
+    return data;
+  },
+
+  deleteCleaning: async id => {
+    let data = await request.delete(`/cleaning/${id}`);
+    console.log(data);
+    return data;
+  },
+  getCleanings: async () => {
+    let cleanings = await request.get('/cleaning/me');
     return cleanings;
   },
 };

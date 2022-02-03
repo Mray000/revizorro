@@ -14,8 +14,7 @@ import X from 'assets/x.svg';
 import {bytesToSize} from 'utils/BytesToSize';
 import {Button} from 'utils/Button';
 import {api} from 'utils/api';
-import { types } from 'utils/flat_types';
-
+import {types} from 'utils/flat_types';
 
 export const AddFlat = ({navigation, route}) => {
   const [title, SetTitle] = useState('');
@@ -181,6 +180,7 @@ export const AddFlat = ({navigation, route}) => {
             <View style={{marginTop: 10}}>
               {images.map(photo => (
                 <Shadow
+                  key={photo.image}
                   viewStyle={{
                     width: '100%',
                     alignItems: 'center',

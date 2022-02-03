@@ -32,15 +32,9 @@ export const DayCleaningsList = ({navigation, route}) => {
       <View style={{padding: 10, paddingTop: 0}}>
         {cleanings.map(cleaning => (
           <CleaningComponent
+            navigation={navigation}
             key={cleaning.id}
             cleaning={cleaning}
-            is_need_check={true}
-            repeat_count={cleanings
-              .filter(el => el.maid.id == cleaning.maid.id)
-              .sort(
-                (a, b) => new Date(a.time_cleaning) - new Date(b.time_cleaning),
-              )
-              .findIndex(el => el.id == cleaning.id)}
           />
         ))}
       </View>

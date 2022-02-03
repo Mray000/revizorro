@@ -11,11 +11,10 @@ import Picture from 'assets/picture.svg';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {launchImageLibrary} from 'react-native-image-picker';
 import X from 'assets/x.svg';
-import {api} from 'utils/api';
+import {api, ImageURL} from 'utils/api';
 import {Loader} from 'utils/Loader';
 import {convertType, types} from 'utils/flat_types';
 
-const URL = 'http://92.53.97.165/media/';
 
 export const EditFlat = ({navigation, route}) => {
   let flat = route.params.flat;
@@ -201,6 +200,7 @@ export const EditFlat = ({navigation, route}) => {
             .filter(image => !delited_images.includes(image))
             .map(photo => (
               <Shadow
+                key={photo.image}
                 viewStyle={{
                   width: '100%',
                   alignItems: 'center',
@@ -223,7 +223,7 @@ export const EditFlat = ({navigation, route}) => {
                     borderRadius: 20,
                   }}>
                   <Image
-                    source={{uri: photo.uri || URL + photo.image}}
+                    source={{uri: photo.uri || ImageURL + photo.image}}
                     style={{
                       aspectRatio: 1,
                       borderRadius: 10,

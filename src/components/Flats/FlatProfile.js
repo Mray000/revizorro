@@ -7,14 +7,34 @@ import Pen from 'assets/pen.svg';
 import {moderateScale, scale} from 'utils/Normalize';
 import {dimensions} from 'utils/dimisions';
 import {convertType} from 'utils/flat_types';
-
+import ArrowDown from 'assets/arrow_down.svg';
+import ArrowUp from 'assets/arrow_up.svg';
+import {CleaningComponent} from 'components/Cleanings/CleaningComponent';
+import {api, ImageURL} from 'utils/api';
+import {Loader} from 'utils/Loader';
 export const FlatProfile = ({navigation, route}) => {
-  let flat = route.params?.flat;
-  let {title, address, type, images} = flat;
-  const URL = 'http://92.53.97.165/media/';
+  let flat = route.params.flat;
+  let {id, title, address, type, images} = flat;
+
+  const [cleanings, SetCleanings] = useState(null);
+  const [is_need_check_cleanings_full, SetIsNeedCheckCleaningsFull] =
+    useState(false);
+  const [is_future_cleanings_full, SetIsFutureCleaningsFull] = useState(false);
+  const [is_complited_cleanings_full, SetIsComplitedCleaningsFull] =
+    useState(false);
+
+  useEffect(() => {
+    api.getFlat(id).then(flat => SetCleanings(flat.cleaning));
+  }, []);
+
+  if (!cleanings) return <Loader />;
+
+  let need_check_cleanings = cleanings.filter(el => el.status == 'on_check');
+  let future_cleanings = cleanings.filter(el => el.status == 'not_accepted');
+  let complited_cleanings = cleanings.filter(el => el.state == 'accepted');
 
   return (
-    <View style={{paddingVertical: 10}}>
+    <ScrollView style={{paddingVertical: 10, paddingBottom: 100}}>
       <Header
         navigation={navigation}
         title={title}
@@ -82,7 +102,8 @@ export const FlatProfile = ({navigation, route}) => {
           style={{marginTop: 10}}>
           {images.map(({image}) => (
             <Image
-              source={{uri: URL + image}}
+              key={image}
+              source={{uri: ImageURL + image}}
               style={{
                 width: dimensions.width / 6,
                 aspectRatio: 1,
@@ -92,7 +113,169 @@ export const FlatProfile = ({navigation, route}) => {
             />
           ))}
         </ScrollView>
+        <View
+          style={{
+            width: '100%',
+            paddingBottom: moderateScale(20),
+            alignItems: 'center',
+            width: '100%',
+          }}>
+          {need_check_cleanings.length ? (
+            <View style={{width: '100%', marginTop: 10}}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                {/* <View
+                  style={{
+                    width: scale(18),
+                    aspectRatio: 1,
+                    borderRadius: scale(40),
+                    backgroundColor: '#FCE5E3',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: 5,
+                  }}>
+                  <View
+                    style={{
+                      width: scale(11),
+                      aspectRatio: 1,
+                      borderRadius: scale(20),
+                      backgroundColor: '#E8443A',
+                    }}
+                  />
+                </View> */}
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Text
+                    style={{
+                      textAlign: 'left',
+                      color: '#A9A6A6',
+                      fontSize: moderateScale(15),
+                      fontFamily: 'Inter-Regualar',
+                    }}>
+                    Нужна проверка!
+                  </Text>
+                  <TouchableOpacity
+                    style={{marginLeft: 10}}
+                    onPress={() =>
+                      SetIsNeedCheckCleaningsFull(!is_need_check_cleanings_full)
+                    }>
+                    {!is_need_check_cleanings_full ? (
+                      <ArrowDown fill="black" />
+                    ) : (
+                      <ArrowUp fill="black" />
+                    )}
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View>
+                {need_check_cleanings
+                  .splice(
+                    0,
+                    !is_need_check_cleanings_full
+                      ? 10
+                      : need_check_cleanings.length,
+                  )
+                  .map(cleaning => (
+                    <CleaningComponent
+                      key={cleaning.id}
+                      navigation={navigation}
+                      cleaning={cleaning}
+                      is_need_check={true}
+                      repeat_count={need_check_cleanings
+                        .filter(el => el.maid.id == cleaning.maid.id)
+                        .sort(
+                          (a, b) =>
+                            new Date(a.time_cleaning) -
+                            new Date(b.time_cleaning),
+                        )
+                        .findIndex(el => el.id == cleaning.id)}
+                    />
+                  ))}
+              </View>
+            </View>
+          ) : null}
+          {future_cleanings.length ? (
+            <View style={{width: '100%', marginTop: 10}}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Text
+                  style={{
+                    textAlign: 'left',
+                    color: '#A9A6A6',
+                    fontSize: moderateScale(15),
+                    fontFamily: 'Inter-Regualar',
+                  }}>
+                  предстоящие уборки
+                </Text>
+                <TouchableOpacity
+                  style={{marginLeft: 10}}
+                  onPress={() =>
+                    SetIsFutureCleaningsFull(!is_future_cleanings_full)
+                  }>
+                  {!is_future_cleanings_full ? (
+                    <ArrowDown fill="#A9A6A6" />
+                  ) : (
+                    <ArrowUp fill="#A9A6A6" />
+                  )}
+                </TouchableOpacity>
+              </View>
+
+              {future_cleanings
+                .splice(
+                  0,
+                  !is_future_cleanings_full ? 10 : future_cleanings.length,
+                )
+                .map(cleaning => (
+                  <CleaningComponent
+                    navigation={navigation}
+                    cleaning={cleaning}
+                    key={cleaning.id}
+                    
+                  />
+                ))}
+            </View>
+          ) : null}
+          {complited_cleanings.length ? (
+            <View style={{width: '100%', marginTop: 10}}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Text
+                  style={{
+                    textAlign: 'left',
+                    color: '#A9A6A6',
+                    fontSize: moderateScale(15),
+                    fontFamily: 'Inter-Regualar',
+                  }}>
+                  завершенные уборки
+                </Text>
+                <TouchableOpacity
+                  style={{marginLeft: 10}}
+                  onPress={() =>
+                    SetIsComplitedCleaningsFull(!is_complited_cleanings_full)
+                  }>
+                  {!is_complited_cleanings_full ? (
+                    <ArrowDown fill="#A9A6A6" />
+                  ) : (
+                    <ArrowUp fill="#A9A6A6" />
+                  )}
+                </TouchableOpacity>
+              </View>
+              {complited_cleanings
+                .splice(
+                  0,
+                  !is_complited_cleanings_full
+                    ? 10
+                    : complited_cleanings.length,
+                )
+                .map(cleaning => (
+                  <CleaningComponent
+                    is_completed={true}
+                    cleaning={cleaning}
+                    key={cleaning.id}
+                    navigation={navigation}
+                    
+                  />
+                ))}
+            </View>
+          ) : null}
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };

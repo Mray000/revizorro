@@ -60,6 +60,7 @@ export const CleaningHousemaids = observer(({navigation}) => {
       <View style={{marginBottom: 20}}>
         {housemaids.map(housemaid => (
           <Housemaid
+            key={housemaid.id}
             housemaid={housemaid}
             SetHousemaid={() => {
               cleaning.setHousemaid(housemaid);

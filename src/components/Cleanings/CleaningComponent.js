@@ -2,20 +2,42 @@ import React from 'react';
 import ArrowRight from 'assets/arrow_right.svg';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {Shadow} from 'react-native-shadow-2';
-import { moderateScale, scale } from 'utils/Normalize';
+import {moderateScale, scale} from 'utils/Normalize';
 import moment from 'moment';
+import {cleaning as cleaning_store} from 'store/cleaning';
+import {ImageURL, URL} from 'utils/api';
 
 export const CleaningComponent = React.memo(
-  ({cleaning, is_completed, is_need_check, repeat_count}) => {
-    let {flat, check_lists, maid} = cleaning;
+  ({
+    cleaning,
+    is_completed,
+    is_need_check,
+    repeat_count,
+    navigation,
+    flat_title,
+  }) => {
+    let {id, flat, check_lists, maid, time_cleaning} = cleaning;
+    console.log(cleaning);
     const getDate = () => {
       let today = moment();
-      let date = moment(cleaning.time_cleaning);
+      let date = moment(time_cleaning);
       let time = date.format('HH:mm');
       if (date.format('YYYY-MM-DD') == today.format('YYYY-MM-DD')) return time;
       if (date.format('YYYY-MM-DD') == today.add(1, 'day').format('YYYY-MM-DD'))
         return 'завтра ' + time;
       return date.format('D MMM') + ' ' + time;
+    };
+
+    const onPress = () => {
+      //   if (is_completed) return navigation.navigate('CleaningReport');
+      //   if (is_need_check) return navigaаtion.navigate('CleaningCheck');
+      cleaning_store.setEditId(id);
+      cleaning_store.setFlat(flat);
+      cleaning_store.setCheckLists(check_lists);
+      cleaning_store.setHousemaid(maid);
+      cleaning_store.setTime(time_cleaning);
+      cleaning_store.setDate(time_cleaning);
+      navigation.navigate('EditCleaning');
     };
     return (
       <Shadow
@@ -28,6 +50,7 @@ export const CleaningComponent = React.memo(
         size={is_completed ? 0 : undefined}
         viewStyle={{width: '100%', paddingHorizontal: 1}}>
         <TouchableOpacity
+          onPress={onPress}
           style={{
             backgroundColor: is_completed ? 'transparent' : 'white',
             width: '100%',
@@ -69,11 +92,11 @@ export const CleaningComponent = React.memo(
                 ) : null}
                 <Text
                   style={{
-                    fontSize: moderateScale(15),
+                    fontSize: moderateScale(16),
                     color: 'black',
                     fontFamily: 'Inter-SemiBold',
                   }}>
-                  {flat.title}
+                  {flat?.title || moment(time_cleaning).format('D MMMM HH:mm')}
                 </Text>
               </View>
               <Text
@@ -95,7 +118,10 @@ export const CleaningComponent = React.memo(
                   alignItems: 'center',
                 }}>
                 <Image
-                  source={{uri: maid.avatar}}
+                  source={{
+                    uri:
+                      maid.avatar[0] == 'h' ? maid.avatar : URL + maid.avatar,
+                  }}
                   style={{
                     width: scale(30),
                     aspectRatio: 1,
@@ -120,9 +146,9 @@ export const CleaningComponent = React.memo(
               justifyContent: 'space-between',
               alignItems: 'center',
 
-              marginTop: repeat_count ? 5 : -5,
+              marginTop: repeat_count > 0 ? 5 : -5,
             }}>
-            {repeat_count ? (
+            {repeat_count > 0 ? (
               <Text
                 style={{
                   paddingHorizontal: 10,

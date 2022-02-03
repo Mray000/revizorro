@@ -41,11 +41,13 @@ export const EditCleaning = observer(({navigation}) => {
   const [error_dates, SetErrorDates] = useState([]);
   const [error_housemaid_dates, SetErrorHouseMaidDates] = useState([]);
 
+  let edit_id = cleaning.edit_id;
   let flat = cleaning.flat;
   let check_lists = cleaning.check_lists;
   let housemaid = cleaning.housemaid;
   let date = cleaning.date;
   let time = cleaning.time;
+
 
   const repeat_labels = getRepeatLabels();
   const term_labels = getTermLabels();
@@ -59,7 +61,7 @@ export const EditCleaning = observer(({navigation}) => {
   let is_button_disabled = !(flat && check_lists.length && housemaid);
 
   const handleEditCleaning = async () => {
-    let res = await cleaning.addCleaning();
+    let res = await cleaning.editCleaning();
     if (res?.error_dates) return SetErrorDates(res.error_dates);
     if (res?.error_housemaid_dates)
       return SetErrorHouseMaidDates(res.error_housemaid_dates);
@@ -73,17 +75,24 @@ export const EditCleaning = observer(({navigation}) => {
     navigation.addListener('blur', () => app.setIsBottomNavigatorVisible(true));
   }, []);
 
-  const handleDeleteCleaning = () => {};
+  const handleDeleteCleaning = async () => {
+    await cleaning.deleteCleaning();
+    navigation.navigate('CleaningsList');
+  };
 
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
       <ScrollView
         contentContainerStyle={{
           alignItems: 'center',
+          paddingTop: 10,
         }}>
         <Header
           title={'Редактирование'}
-          onBack={() => navigation.goBack()}
+          onBack={() => {
+            navigation.goBack();
+            cleaning.clearAllData();
+          }}
           children={
             <TouchableOpacity
               style={{position: 'absolute', right: 20}}
@@ -101,39 +110,7 @@ export const EditCleaning = observer(({navigation}) => {
           }
         />
         <View style={{padding: 10, width: '100%'}}>
-          <Shadow
-            startColor={'#00000008'}
-            finalColor={'#00000001'}
-            offset={[0, 8]}
-            distance={15}
-            containerViewStyle={{
-              width: '10%',
-              marginRight: 10,
-              alignSelf: 'flex-end',
-            }}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('CleaningsList')}
-              style={{
-                width: scale(40),
-                height: scale(40),
-                aspectRatio: 1,
-                backgroundColor: 'white',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: 15,
-              }}>
-              <X fill="black" width={15} height={15} />
-            </TouchableOpacity>
-          </Shadow>
-          <Text
-            style={{
-              fontFamily: 'Inter-SemiBold',
-              fontSize: moderateScale(20),
-              color: 'black',
-            }}>
-            Создание уборки
-          </Text>
-          <View style={{width: '100%', marginTop: 10}}>
+          <View style={{width: '100%'}}>
             <TouchableOpacity
               onPress={() => navigation.navigate('CleaningFlats')}>
               <Shadow
@@ -477,15 +454,28 @@ export const EditCleaning = observer(({navigation}) => {
               </View>
             </View>
           </View>
+          <TouchableOpacity
+            onPress={() => SetIsDeleteModalVisible(true)}
+            style={{alignItems: 'center', width: '100%', marginTop: 20}}>
+            <Text
+              style={{
+                color: '#AAA8A7',
+                fontFamily: 'Inter-Medium',
+                fontSize: moderateScale(16),
+                marginBottom: 20,
+              }}>
+              Удалить уборку
+            </Text>
+          </TouchableOpacity>
         </View>
-        <View
+        {/* <View
           style={{
             width: dimensions.width,
             backgroundColor: '#EAE9E9',
             height: 1,
           }}
-        />
-        <View style={{padding: 10, width: '100%'}}>
+        /> */}
+        {/* <View style={{padding: 10, width: '100%'}}>
           <Text
             style={{
               fontFamily: 'Inter-SemiBold',
@@ -593,20 +583,8 @@ export const EditCleaning = observer(({navigation}) => {
               </TouchableOpacity>
             </View>
           </View>
-          <TouchableOpacity
-            onPress={() => SetIsDeleteModalOpen(true)}
-            style={{alignItems: 'center', width: '100%', marginTop: 20}}>
-            <Text
-              style={{
-                color: '#AAA8A7',
-                fontFamily: 'Inter-Medium',
-                fontSize: moderateScale(16),
-                marginBottom: 20,
-              }}>
-              Удалить квартиру
-            </Text>
-          </TouchableOpacity>
-        </View>
+          
+        </View> */}
       </ScrollView>
       <TimePickerModal
         isVisible={is_timepicker_modal_visible}
@@ -938,7 +916,7 @@ const DeleteModal = ({DeleteCleaning, CloseModal}) => {
               color: 'black',
               marginTop: verticalScale(15),
             }}>
-            Удаление квартиры
+            Удаление уборки
           </Text>
           <Text
             style={{

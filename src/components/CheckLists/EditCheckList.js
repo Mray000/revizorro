@@ -23,7 +23,7 @@ import {Button} from 'utils/Button';
 import {api} from 'utils/api';
 import {convertType, types} from 'utils/flat_types';
 import {AddButton} from 'utils/AddButton';
-import { ModalPicker } from 'utils/ModalPicker';
+import {ModalPicker} from 'utils/ModalPicker';
 export const EditCheckList = ({navigation, route}) => {
   let check_list = route.params.check_list;
   const [title, SetTitle] = useState(check_list.name);
@@ -521,6 +521,7 @@ export const EditCheckList = ({navigation, route}) => {
         <View style={{paddingHorizontal: 10}}>
           {questions.map(({text, answers, id}, i) => (
             <TouchableOpacity
+              key={id}
               style={{
                 backgroundColor: 'white',
                 borderRadius: 20,
@@ -608,6 +609,7 @@ export const EditCheckList = ({navigation, route}) => {
             </TouchableOpacity>
             {photos_tasks.map(({text, id}, i) => (
               <TouchableOpacity
+                key={id}
                 style={{
                   backgroundColor: 'white',
                   borderRadius: 20,
@@ -758,6 +760,7 @@ export const EditCheckList = ({navigation, route}) => {
                   }}>
                   {answers.map(el => (
                     <View
+                      key={el}
                       style={{
                         flexDirection: 'row',
                         padding: 5,

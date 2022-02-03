@@ -22,7 +22,7 @@ export const BottomNavigator = observer(({state, descriptors, navigation}) => {
         bottom: -0.0000000000001,
         width: '100%',
         alignItems: 'center',
-      }}> 
+      }}>
       {state.routes.map((route, index) => {
         const {options} = descriptors[route.key];
         const isFocused = state.index === index;
@@ -40,6 +40,7 @@ export const BottomNavigator = observer(({state, descriptors, navigation}) => {
         if (options.hidden) return null;
         return (
           <TouchableOpacity
+            key={options.label}
             accessibilityRole="button"
             accessibilityState={isFocused ? {selected: true} : {}}
             accessibilityLabel={options.tabBarAccessibilityLabel}

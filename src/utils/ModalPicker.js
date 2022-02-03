@@ -33,6 +33,7 @@ export const ModalPicker = ({data, onPick, visible, closeModal}) => {
             <ScrollView>
               {data.map(el => (
                 <TouchableOpacity
+                  key={el}
                   onPress={() => {
                     onPick(el);
                     closeModal();

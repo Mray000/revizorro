@@ -12,6 +12,7 @@ class Cleaning {
   repeat = '7-ой день';
   term = '1-го месяца';
   is_repeat_active = false;
+  edit_id = null;
   constructor() {
     makeAutoObservable(this);
   }
@@ -24,6 +25,10 @@ class Cleaning {
     if (this.check_lists.find(el => el.id == check_list.id))
       this.check_lists = this.check_lists.filter(el => el.id != check_list.id);
     else this.check_lists.push(check_list);
+  }
+
+  setCheckLists(check_lists) {
+    this.check_lists = check_lists;
   }
 
   setHousemaid(housemaid) {
@@ -56,6 +61,10 @@ class Cleaning {
     this.check_lists = [];
   };
 
+  setEditId(id) {
+    this.edit_id = id;
+  }
+
   addCleaning = async () => {
     let new_cleanings = {
       flat_id: this.flat.id,
@@ -72,28 +81,34 @@ class Cleaning {
 
   editCleaning = async () => {
     let new_cleanings = {
+      id: this.edit_id,
       flat_id: this.flat.id,
       check_list_ids: this.check_lists.map(el => el.id),
       maid_id: this.housemaid.id,
-      list_time: this.getCleaningDates(),
+      time_cleaning: this.getCleaningDates()[0],
     };
-    let data = await api.addCleaning(new_cleanings);
+    let data = await api.editCleaning(new_cleanings);
     if (data.time) {
       if (data.detail[0].includes('Cleaning')) return {error_dates: data.time};
       else return {error_housemaid_dates: data.time};
     } else this.clearAllData();
   };
 
+  deleteCleaning = async () => {
+    await api.deleteCleaning(this.edit_id);
+    this.clearAllData();
+  };
 
   clearAllData() {
-    flat = null;
-    check_lists = [];
-    housemaid = null;
-    date = Date.now();
-    time = Date.now();
-    repeat = '7-ой день';
-    term = '1-го месяца';
-    is_repeat_active = false;
+    this.flat = null;
+    this.check_lists = [];
+    this.housemaid = null;
+    this.date = Date.now();
+    this.time = Date.now();
+    this.repeat = '7-ой день';
+    this.term = '1-го месяца';
+    this.is_repeat_active = false;
+    this.edit_id = null;
   }
 
   getCleaningDates() {

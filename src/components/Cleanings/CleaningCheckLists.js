@@ -67,6 +67,7 @@ export const CleaningCheckLists = observer(({navigation}) => {
       <View style={{marginBottom: 20}}>
         {check_lists.map(check_list => (
           <CheckList
+            key={check_list.id}
             check_list={check_list}
             navigation={navigation}
             is_active={active_check_lists.find(el => el.id == check_list.id)}

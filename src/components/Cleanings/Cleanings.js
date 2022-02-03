@@ -11,6 +11,7 @@ import {CleaningFlats} from './CleaningFlats';
 import {CleaningHousemaids} from './CleaningHousemaids';
 import {CleaningsList} from './CleaningsList';
 import {DayCleaningsList} from './DayCleaningsList';
+import { EditCleaning } from './EditCleaning';
 
 const Stack = createStackNavigator();
 export const Cleanings = () => {
@@ -31,6 +32,7 @@ export const Cleanings = () => {
       <Stack.Screen name="CleaningCheckLists" component={CleaningCheckLists} />
       <Stack.Screen name="CleaningHousemaids" component={CleaningHousemaids} />
       <Stack.Screen name="DayCleaningsList" component={DayCleaningsList} />
+      <Stack.Screen name="EditCleaning" component={EditCleaning} />
       <Stack.Screen
         name="AddCleaningCalendar"
         component={AddCleaningCalendar}

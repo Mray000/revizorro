@@ -552,6 +552,7 @@ export const AddCheckList = ({navigation, route}) => {
             />
             {photos_tasks.map(({text, id}, i) => (
               <TouchableOpacity
+                key={id}
                 style={{
                   backgroundColor: 'white',
                   borderRadius: 20,
@@ -696,6 +697,7 @@ export const AddCheckList = ({navigation, route}) => {
                   }}>
                   {answers.map(el => (
                     <View
+                      key={el}
                       style={{
                         flexDirection: 'row',
                         padding: 5,

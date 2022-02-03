@@ -18,6 +18,7 @@ export const FlatsList = ({navigation}) => {
       api.getFlats().then(SetFlats);
     });
   }, []);
+  
   if (!flats) return <Loader />;
   return (
     <ScrollView>
@@ -59,7 +60,7 @@ export const FlatsList = ({navigation}) => {
 };
 
 const Flat = ({flat, navigation}) => {
-  const {title, address, last_cleaning, status, time_created} = flat;
+  const {title, address, last_cleaning, status, time_created, cleaning} = flat;
   return (
     <TouchableOpacity
       onPress={() => navigation.navigate('FlatProfile', {flat})}
@@ -101,8 +102,8 @@ const Flat = ({flat, navigation}) => {
             }}>
             {address}
           </Text>
-          {moment(last_cleaning).format('YYYY-MM-DD') !==
-          moment(time_created).format('YYYY-MM-DD') ? (
+          {moment(last_cleaning).format('YYYY-MM-DD hh:mm') !==
+          moment(time_created).format('YYYY-MM-DD hh:mm') ? (
             <Text
               style={{
                 fontFamily: 'Inter-Medium',
@@ -112,7 +113,7 @@ const Flat = ({flat, navigation}) => {
               Последняя уборка: {moment(last_cleaning).format('DD MMM HH:mm')}
             </Text>
           ) : null}
-          {getStatusBlock(status)}
+          {getStatusBlock(status, cleaning)}
         </View>
         <View
           style={{
@@ -127,7 +128,7 @@ const Flat = ({flat, navigation}) => {
   );
 };
 
-const getStatusBlock = (status) => {
+const getStatusBlock = (status, cleaning) => {
   if (status == 'сleaning_is_not_required') return null;
   let text = '';
   let color = '';
@@ -146,7 +147,11 @@ const getStatusBlock = (status) => {
       break;
     }
     case 'сleaning_is_scheduled': {
-      text = 'Уборка ' + moment().format('DD MMM');
+      text =
+        'Уборка ' +
+        moment(
+          cleaning.find(el => el.status == 'not_accepted')?.time_cleaning,
+        ).format('DD MMM');
       color = '#8B8887';
       backgroundColor = 'white';
       break;
