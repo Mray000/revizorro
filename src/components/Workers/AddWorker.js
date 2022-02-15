@@ -12,6 +12,7 @@ import {Button} from 'utils/Button';
 import ArrowRight from 'assets/arrow_right.svg';
 import ArrowBottom from 'assets/arrow_down.svg';
 import {authentication} from 'store/authentication';
+import { SwitchComponent } from 'utils/SwitchComponent';
 export const AddWorker = ({navigation, route}) => {
   const [is_housemaid, SetIsHousemaid] = useState(true);
   const [email, SetEmail] = useState('');
@@ -48,7 +49,7 @@ export const AddWorker = ({navigation, route}) => {
     } else SetEmailError('Сотрудник с такой почтой уже зарегестрирован');
     SetIsLoad(false);
   };
-  let is_button_disabled = !(email && name && surname && sex) || is_load;
+  let is_button_disabled = !(email && name && surname && middlename && sex) || is_load;
   return (
     <KeyboardAwareScrollView style={{backgroundColor: 'white'}}>
       <Header
@@ -399,64 +400,5 @@ export const AddWorker = ({navigation, route}) => {
         />
       </View>
     </KeyboardAwareScrollView>
-  );
-};
-
-const SwitchComponent = ({is_active, SetIsActive, title, disabled}) => {
-  let boxShadow = !is_active
-    ? {
-        startColor: '#00000010',
-        finalColor: '#00000002',
-        offset: [0, 15],
-        distance: 5,
-      }
-    : {
-        startColor: '#0000',
-        finalColor: '#0000',
-        offset: [0, 0],
-        distance: 0,
-        corners: [],
-        sides: [],
-        size: 0,
-      };
-  return (
-    <Shadow
-      {...boxShadow}
-      viewStyle={{
-        flexDirection: 'row',
-        width: '100%',
-        marginTop: 10,
-        height: verticalScale(60),
-      }}>
-      <View
-        style={{
-          flexDirection: 'row',
-          width: '100%',
-          backgroundColor: 'white',
-          borderWidth: 1,
-          borderColor: is_active ? '#E5E3E2' : 'white',
-          borderRadius: 15,
-          paddingHorizontal: 20,
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
-        <Text
-          style={{
-            color: is_active ? '#8B8887' : 'black',
-            fontSize: moderateScale(16),
-            width: '80%',
-          }}>
-          {title}
-        </Text>
-        <ToggleSwitch
-          onColor="#F7AF7B"
-          offColor="#C5BEBE"
-          size="large"
-          isOn={is_active}
-          disabled={disabled}
-          onToggle={() => SetIsActive(!is_active)}
-        />
-      </View>
-    </Shadow>
   );
 };

@@ -23,7 +23,7 @@ import 'moment/locale/ru';
 import {ModalPicker} from 'utils/ModalPicker';
 import {Button} from 'utils/Button';
 import {api} from 'utils/api';
-import {getRepeatLabels, getTermLabels} from 'utils/RepeatUtils';
+import {getRepeatLabels, getTermLabels} from 'utils/date_repeat';
 import {app} from 'store/app';
 import {Header} from 'utils/Header';
 
@@ -590,6 +590,7 @@ export const EditCleaning = observer(({navigation}) => {
         isVisible={is_timepicker_modal_visible}
         mode="time"
         is24Hour={true}
+        date={moment(time).toDate()}
         onConfirm={time => {
           cleaning.setTime(time);
           SetIsTimepickerModalVisible(false);

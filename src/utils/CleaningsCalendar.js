@@ -58,6 +58,7 @@ export const CleaningsCalendar = ({
 }) => (
 
   <Calendar
+  firstDay={1}
     renderArrow={direction => (
       <Shadow
         startColor={'#00000008'}

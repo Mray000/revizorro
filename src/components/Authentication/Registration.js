@@ -17,7 +17,7 @@ import {Shadow} from 'react-native-shadow-2';
 import {authentication} from 'store/authentication';
 import {moderateScale} from 'utils/Normalize';
 
-export const Registration = ({navigation}) => {
+export const Registration = ({navigation, route}) => {
   const [is_first_step, SetIsFirstStep] = useState(true);
   const [name, SetName] = useState('');
   const [surname, SetSurname] = useState('');
@@ -115,7 +115,7 @@ export const Registration = ({navigation}) => {
               <TouchableOpacity
                 onPress={() =>
                   is_first_step
-                    ? navigation.navigate('Login')
+                    ? navigation.navigate('Login', {role: 'owner'})
                     : SetIsFirstStep(true)
                 }
                 style={{

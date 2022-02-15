@@ -25,9 +25,7 @@ export const AddFlat = ({navigation, route}) => {
 
   const LoadPhoto = async () => {
     const result = await launchImageLibrary({mediaType: 'photo'});
-    if (!result.didCancel) {
-      SetImages(prev => [...prev, ...result.assets]);
-    }
+    if (!result.didCancel) SetImages(prev => [...prev, ...result.assets]);
   };
 
   const handleAddFlat = async () => {

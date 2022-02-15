@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {authentication} from 'store/authentication';
 // import {error} from '../store/error';
 export const URL = 'http://92.53.97.165/api';
-export const ImageURL = 'http://92.53.97.165/media/';
+export const ImageURL = 'http://92.53.97.165';
 const getJson = async responce => {
   try {
     return await responce.json();
@@ -11,9 +11,7 @@ const getJson = async responce => {
   }
 };
 const middleware = async responce => {
-  // console.log(responce.url, responce.status, authentication.accessToken);
-  // console.log(responce.url, responce.status, authentication.accessToken);
-  console.log(responce.url, responce.status);
+  console.log(responce.url, responce.status, authentication.accessToken);
   let status = String(responce.status);
   let data = await getJson(responce);
   if (status == '401') {
@@ -251,9 +249,7 @@ export const api = {
     let form_data = new FormData();
     Object.keys(body).forEach(key => {
       if (key == 'images') {
-        body.images.forEach(el => {
-          form_data.append('images', el);
-        });
+        body.images.forEach(el => form_data.append('images', el));
       } else form_data.append(key, body[key]);
     });
     let data = await request.post_form_data('/flats', form_data);
@@ -341,6 +337,43 @@ export const api = {
   },
   getCleanings: async () => {
     let cleanings = await request.get('/cleaning/me');
+    // console.log(cleanings, 'dfsfsdf`');
     return cleanings;
+  },
+
+  getMe: async () => {
+    let me = await request.get('/users/me');
+    console.log(me);
+    return me;
+  },
+
+  comepleteCleaning: async (cleaning_id, questions) => {
+    let form_data = new FormData();
+    form_data.append('cleaning_id', cleaning_id);
+    console.log(cleaning_id, questions);
+    questions.forEach(question => {
+      let answer = question.answer;
+      if (Array.isArray(answer)) {
+        let photo_filenames = [];
+        answer.forEach(photo_answer => {
+          photo_filenames.push(photo_answer.fileName);
+          form_data.append('images', photo_answer);
+        });
+        form_data.append('fill_questions', {
+          question: question.id,
+          photo_filename: photo_filenames,
+        });
+      } else {
+        form_data.append('fill_questions', {
+          question: question.id,
+          answer,
+        });
+      }
+    });
+    console.log(form_data);
+    let data = await request.post_form_data('/fill-questions/send', form_data);
+    console.log(data);
+
+    return data;
   },
 };

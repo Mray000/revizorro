@@ -6,18 +6,21 @@ import {moderateScale, scale} from 'utils/Normalize';
 import moment from 'moment';
 import {cleaning as cleaning_store} from 'store/cleaning';
 import {ImageURL, URL} from 'utils/api';
+import {colors} from 'utils/colors';
+import CleaningOnCheck from 'assets/cleaning_on_check';
 
 export const CleaningComponent = React.memo(
   ({
     cleaning,
     is_completed,
     is_need_check,
-    repeat_count,
+    is_housemaid,
     navigation,
-    flat_title,
+    is_on_check,
+    onpress,
+    disabled,
   }) => {
-    let {id, flat, check_lists, maid, time_cleaning} = cleaning;
-    console.log(cleaning);
+    let {id, flat, check_lists, maid, time_cleaning, amount_checks} = cleaning;
     const getDate = () => {
       let today = moment();
       let date = moment(time_cleaning);
@@ -29,6 +32,7 @@ export const CleaningComponent = React.memo(
     };
 
     const onPress = () => {
+      if (onpress) return onpress();
       //   if (is_completed) return navigation.navigate('CleaningReport');
       //   if (is_need_check) return navigaаtion.navigate('CleaningCheck');
       cleaning_store.setEditId(id);
@@ -39,6 +43,40 @@ export const CleaningComponent = React.memo(
       cleaning_store.setDate(time_cleaning);
       navigation.navigate('EditCleaning');
     };
+
+    const getDeclinationQuestion = (word, count) => {
+      if (count == 0 || count > 4) word += 'ов';
+      if (count >= 2 && count <= 4) word += 'а';
+      return word;
+    };
+
+    const getDeclinationAmountChecks = (word, count) => {
+      if (count == 0 || count > 4) word += 'ок';
+      if (count == 1) word += 'ка';
+      if (count >= 2 && count <= 4) word += 'ки';
+      return word;
+    };
+
+    const getQuestionsCount = () => {
+      let count = 0;
+      check_lists.forEach(check_list => {
+        count += check_list.questions.filter(
+          el => el.question_type == 'type_text',
+        ).length;
+      });
+      return count;
+    };
+
+    const getPhotosCount = () => {
+      let count = 0;
+      check_lists.forEach(check_list => {
+        count += check_list.questions.filter(
+          el => el.question_type == 'type_photo',
+        ).length;
+      });
+      return count;
+    };
+
     return (
       <Shadow
         startColor={!is_completed ? '#00000003' : '#0000'}
@@ -50,6 +88,7 @@ export const CleaningComponent = React.memo(
         size={is_completed ? 0 : undefined}
         viewStyle={{width: '100%', paddingHorizontal: 1}}>
         <TouchableOpacity
+          disabled={disabled}
           onPress={onPress}
           style={{
             backgroundColor: is_completed ? 'transparent' : 'white',
@@ -69,6 +108,11 @@ export const CleaningComponent = React.memo(
             }}>
             <View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                {is_on_check ? (
+                  <View style={{marginRight: 10}}>
+                    <CleaningOnCheck />
+                  </View>
+                ) : null}
                 {is_need_check ? (
                   <View
                     style={{
@@ -99,45 +143,64 @@ export const CleaningComponent = React.memo(
                   {flat?.title || moment(time_cleaning).format('D MMMM HH:mm')}
                 </Text>
               </View>
-              <Text
-                style={{
-                  color: '#8B8887',
-                  fontFamily: 'Inter-Regular',
-                  fontSize: moderateScale(14),
-                  marginTop: 5,
-                }}>
-                {check_lists.map(
-                  (el, i) =>
-                    el.name + (i == check_lists.length - 1 ? ' ' : ', '),
-                )}
-              </Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  marginTop: 5,
-                  alignItems: 'center',
-                }}>
-                <Image
-                  source={{
-                    uri:
-                      maid.avatar[0] == 'h' ? maid.avatar : URL + maid.avatar,
-                  }}
-                  style={{
-                    width: scale(30),
-                    aspectRatio: 1,
-                    borderRadius: 30,
-                    marginRight: 10,
-                  }}
-                />
+              {!is_housemaid ? (
                 <Text
                   style={{
-                    fontFamily: 'Inter-Medium',
-                    fontSize: moderateScale(15),
-                    color: 'black',
+                    color: '#8B8887',
+                    fontFamily: 'Inter-Regular',
+                    fontSize: moderateScale(14),
+                    marginTop: 5,
                   }}>
-                  {maid.first_name + ' ' + maid.last_name}
+                  {check_lists.map(
+                    (el, i) =>
+                      el.name + (i == check_lists.length - 1 ? ' ' : ', '),
+                  )}
                 </Text>
-              </View>
+              ) : null}
+
+              {!is_housemaid ? (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    marginTop: 5,
+                    alignItems: 'center',
+                  }}>
+                  <Image
+                    source={{
+                      uri:
+                        maid.avatar[0] == 'h'
+                          ? maid.avatar
+                          : ImageURL + maid.avatar,
+                    }}
+                    style={{
+                      width: scale(30),
+                      aspectRatio: 1,
+                      borderRadius: 30,
+                      marginRight: 10,
+                    }}
+                  />
+                  <Text
+                    style={{
+                      fontFamily: 'Inter-Medium',
+                      fontSize: moderateScale(15),
+                      color: 'black',
+                    }}>
+                    {maid.first_name + ' ' + maid.last_name}
+                  </Text>
+                </View>
+              ) : (
+                <View>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontSize: moderateScale(15),
+                      fontFamily: 'Inter-Regular',
+                      marginTop: 6,
+                    }}>
+                    {flat.address}
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
           <View
@@ -145,25 +208,58 @@ export const CleaningComponent = React.memo(
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
-
-              marginTop: repeat_count > 0 ? 5 : -5,
+              marginTop: amount_checks > 0 || is_housemaid ? 5 : -5,
             }}>
-            {repeat_count > 0 ? (
+            {!is_housemaid ? (
+              amount_checks > 0 ? (
+                <Text
+                  style={{
+                    paddingHorizontal: 10,
+                    paddingVertical: 5,
+                    backgroundColor: '#FDF2F2',
+                    color: '#EA5A51',
+                    fontSize: moderateScale(14),
+                    fontFamily: 'Inter-Regular',
+                    borderRadius: 10,
+                  }}>
+                  {amount_checks + 1}-я проверка
+                </Text>
+              ) : (
+                <View />
+              )
+            ) : !is_on_check ? (
+              <Text
+                style={{
+                  color: '#8B8887',
+                  fontFamily: 'Inter-Regular',
+                  fontSize: moderateScale(15),
+                }}>
+                {is_completed
+                  ? amount_checks +
+                    ' ' +
+                    getDeclinationAmountChecks('провер', amount_checks)
+                  : getQuestionsCount() +
+                    ' ' +
+                    getDeclinationQuestion('вопрос', getQuestionsCount()) +
+                    ', ' +
+                    getPhotosCount() +
+                    ' фото'}
+              </Text>
+            ) : (
               <Text
                 style={{
                   paddingHorizontal: 10,
                   paddingVertical: 5,
-                  backgroundColor: '#FDF2F2',
-                  color: '#EA5A51',
+                  backgroundColor: '#FEF3EB',
+                  color: colors.orange,
                   fontSize: moderateScale(14),
                   fontFamily: 'Inter-Regular',
                   borderRadius: 10,
                 }}>
-                {repeat_count}-я проверка
+                на проверке
               </Text>
-            ) : (
-              <View />
             )}
+
             <View
               style={{
                 borderColor: '#EEEDED',

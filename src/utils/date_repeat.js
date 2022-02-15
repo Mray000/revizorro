@@ -9,7 +9,7 @@ const repeat = [
 ];
 
 const term = [
-  {label: '1-й недели', value: 1},
+  {label: '1-й недели', value: 7},
   {label: '1-го месяца', value: 30},
   {label: '2-х месяцев', value: 60},
   {label: '4-х месяцев', value: 120},

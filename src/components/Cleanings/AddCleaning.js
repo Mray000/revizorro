@@ -23,7 +23,7 @@ import 'moment/locale/ru';
 import {ModalPicker} from 'utils/ModalPicker';
 import {Button} from 'utils/Button';
 import {api} from 'utils/api';
-import {getRepeatLabels, getTermLabels} from 'utils/RepeatUtils';
+import {getRepeatLabels, getTermLabels} from 'utils/date_repeat';
 import {app} from 'store/app';
 
 export const AddCleaning = observer(({navigation}) => {
@@ -488,14 +488,16 @@ export const AddCleaning = observer(({navigation}) => {
               <TouchableOpacity
                 onPress={() => SetIsRepeatpickerModalVisible(true)}
                 style={{
-                  shadowColor: cleaning.is_repeat_active ? '#A19E9D' : 'white',
+                  shadowColor: cleaning.is_repeat_active
+                    ? '#A19E9D'
+                    : '#FFF9F5',
                   shadowOffset: {
                     width: 0,
                     height: 0,
                   },
-                  shadowOpacity: 0.5,
+                  shadowOpacity: cleaning.is_repeat_active ? 0.5 : 0,
                   shadowRadius: 13.16,
-                  elevation: 10,
+                  elevation: cleaning.is_repeat_active ? 10 : 0,
                   backgroundColor: cleaning.is_repeat_active
                     ? 'white'
                     : 'transparent',
@@ -536,14 +538,14 @@ export const AddCleaning = observer(({navigation}) => {
               <TouchableOpacity
                 onPress={() => SetIsTermpickerModalVisible(true)}
                 style={{
-                  shadowColor: cleaning.is_repeat_active ? '#A19E9D' : 'white',
+                  shadowColor: '#A19E9D',
                   shadowOffset: {
                     width: 0,
                     height: 0,
                   },
-                  shadowOpacity: 0.5,
+                  shadowOpacity: cleaning.is_repeat_active ? 0.5 : 0,
                   shadowRadius: 13.16,
-                  elevation: 10,
+                  elevation: cleaning.is_repeat_active ? 10 : 0,
                   backgroundColor: cleaning.is_repeat_active
                     ? 'white'
                     : 'transparent',
@@ -584,6 +586,7 @@ export const AddCleaning = observer(({navigation}) => {
         isVisible={is_timepicker_modal_visible}
         mode="time"
         is24Hour={true}
+        date={moment(time).toDate()}
         onConfirm={time => {
           cleaning.setTime(time);
           SetIsTimepickerModalVisible(false);

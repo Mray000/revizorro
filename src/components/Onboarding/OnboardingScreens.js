@@ -147,14 +147,14 @@ export const OnboardingScreens = ({
           width: '100%',
           alignItems: 'center',
         }}>
-        {role != 'manger' ? (
+        {role != 'manager' ? (
           <View style={{flexDirection: 'row', marginBottom: 10}}>
             <Dot is_active={index == 0} />
             <Dot is_active={index == 1} />
             <Dot is_active={index == 2} />
           </View>
         ) : null}
-        <Button text="Далее" icon={true} onPress={handleNext} />
+        <Button text={role != "manager" ? "Далее" : "Понятно!"} icon={true} onPress={handleNext} />
       </View>
     </View>
   );

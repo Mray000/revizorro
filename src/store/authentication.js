@@ -1,6 +1,7 @@
 import {makeAutoObservable} from 'mobx';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {api} from 'utils/api';
+import {app} from './app';
 
 class Authentication {
   accessToken = '';
@@ -9,8 +10,9 @@ class Authentication {
     makeAutoObservable(this);
   }
   login = async (login, password) => {
-    let is_ok = await api.login(login, password);
-    return is_ok;
+    let is_login = await api.login(login, password);
+    if (is_login) await app.setMe();
+    return is_login;
   };
 
   SetAccessToken = accessToken => {
@@ -24,6 +26,7 @@ class Authentication {
   logout() {
     this.SetAccessToken('');
     this.SetRefreshToken('');
+    
     AsyncStorage.removeItem('accessToken');
     AsyncStorage.removeItem('refreshToken');
   }

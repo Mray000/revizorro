@@ -28,23 +28,30 @@ import {Flats} from 'components/Flats/Flats.js';
 import {CheckLists} from 'components/CheckLists/CheckLists.js';
 import {Onboarding} from 'components/Onboarding/Onboarding.js';
 import {Cleanings} from 'components/Cleanings/Cleanings.js';
+import {Housemaid} from 'components/Housemaid/Housemaid.js';
+import {observer} from 'mobx-react-lite';
+import {app} from 'store/app.js';
 const Tab = createBottomTabNavigator();
-const App = () => {
-  const [is_login, setIsLogin] = useState(false);
-  const [is_load, setIsLoad] = useState(false);
+const App = observer(() => {
+  console.log('RERNEDNENDN');
+  let role = app.role;
+  let accesses = app.accesses;
+  const [is_load, SetIsLoad] = useState(false);
   useEffect(() => {
     (async () => {
       let data = await getAsyncData();
       if (data) {
         authentication.SetAccessToken(data.accessToken);
         authentication.SetRefreshToken(data.refreshToken);
-
         let is_token_normal = await api.refresh_token();
-        if (is_token_normal) setIsLogin(true);
+        if (is_token_normal) await app.setMe();
       }
-      setIsLoad(true);
+      SetIsLoad(true);
     })();
   }, []);
+
+  console.log(role);
+
   if (!is_load) return null;
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -55,27 +62,18 @@ const App = () => {
             contentStyle: {backgroundColor: 'white'},
           }}
           tabBar={props => <BottomNavigator {...props} />}
-          initialRouteName={is_login ? 'Cleanings' : 'Onboarding'}>
+          initialRouteName={
+            role
+              ? role != 'role_maid'
+                ? 'Cleanings'
+                : 'Housemaid'
+              : 'Onboarding'
+          }>
           <Tab.Screen
-            name="Workers"
-            options={{
-              label: 'Сотрудники',
-              icon: WorkersIcon,
-              icon_active: WorkersActive,
-            }}
-            component={Workers}
+            name="Housemaid"
+            options={{hidden: 'true'}}
+            component={Housemaid}
           />
-
-          <Tab.Screen
-            name="Flats"
-            options={{
-              label: 'Квартиры',
-              icon: FlatsIcon,
-              icon_active: FlatsActive,
-            }}
-            component={Flats}
-          />
-
           <Tab.Screen
             name="Cleanings"
             options={{
@@ -85,16 +83,40 @@ const App = () => {
             }}
             component={Cleanings}
           />
+          {accesses.includes('workers') || role != 'role_manager' ? (
+            <Tab.Screen
+              name="Workers"
+              options={{
+                label: 'Сотрудники',
+                icon: WorkersIcon,
+                icon_active: WorkersActive,
+              }}
+              component={Workers}
+            />
+          ) : null}
+          {accesses.includes('check_lists') || role != 'role_manager' ? (
+            <Tab.Screen
+              name="CheckLists"
+              options={{
+                label: 'Чек-листы',
+                icon: CheckListsIcon,
+                icon_active: CheckListsActive,
+              }}
+              component={CheckLists}
+            />
+          ) : null}
 
-          <Tab.Screen
-            name="CheckLists"
-            options={{
-              label: 'Чек-листы',
-              icon: CheckListsIcon,
-              icon_active: CheckListsActive,
-            }}
-            component={CheckLists}
-          />
+          {role !== 'role_manager' ? (
+            <Tab.Screen
+              name="Flats"
+              options={{
+                label: 'Квартиры',
+                icon: FlatsIcon,
+                icon_active: FlatsActive,
+              }}
+              component={Flats}
+            />
+          ) : null}
 
           <Tab.Screen
             name="Settings"
@@ -105,21 +127,21 @@ const App = () => {
             }}
             component={Settings}
           />
-
           <Tab.Screen
             name="Onboarding"
             component={Onboarding}
             options={{hidden: true}}
           />
-
+          <Tab.Screen
+            name="Login"
+            component={Login}
+            options={{hidden: true, headerLeft: () => null}}
+          />
           <Tab.Screen
             name="Registration"
             component={Registration}
             options={{hidden: true}}
           />
-
-          <Tab.Screen name="Login" component={Login} options={{hidden: true}} />
-
           <Tab.Screen
             name="Success"
             component={Success}
@@ -129,7 +151,7 @@ const App = () => {
       </NavigationContainer>
     </SafeAreaView>
   );
-};
+});
 
 const Settings = ({navigation}) => {
   const logout = () => {

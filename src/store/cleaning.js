@@ -1,7 +1,7 @@
 import {makeAutoObservable} from 'mobx';
 import moment from 'moment';
 import {api} from 'utils/api';
-import {getRepeatValue, getTermValue} from 'utils/RepeatUtils';
+import {getRepeatValue, getTermValue} from 'utils/date_repeat';
 
 class Cleaning {
   flat = null;
@@ -72,6 +72,7 @@ class Cleaning {
       maid_id: this.housemaid.id,
       list_time: this.getCleaningDates(),
     };
+    console.log(new_cleanings.list_time);
     let data = await api.addCleaning(new_cleanings);
     if (data.time) {
       if (data.detail[0].includes('Cleaning')) return {error_dates: data.time};
@@ -87,6 +88,7 @@ class Cleaning {
       maid_id: this.housemaid.id,
       time_cleaning: this.getCleaningDates()[0],
     };
+    console.log(new_cleanings.time_cleaning, 'ttiiiime');
     let data = await api.editCleaning(new_cleanings);
     if (data.time) {
       if (data.detail[0].includes('Cleaning')) return {error_dates: data.time};
@@ -114,8 +116,13 @@ class Cleaning {
   getCleaningDates() {
     let h = moment(this.time).get('h');
     let m = moment(this.time).get('m');
+    console.log(h, m);
     if (!this.is_repeat_active)
-      return [moment(this.date).set('h', h).set('m', m)];
+      return [
+        moment(this.date)
+          .set('hours', h + 3)
+          .set('minutes', m),
+      ];
     else {
       let array_of_dates = [];
       let repeat_number = getRepeatValue(this.repeat);
@@ -125,8 +132,8 @@ class Cleaning {
         array_of_dates.push(
           moment(this.date)
             .add(i * repeat_number, 'd')
-            .set('h', h)
-            .set('m', m),
+            .set('hours', h + 3)
+            .set('minutes', m),
         );
       }
       return array_of_dates;

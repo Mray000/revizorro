@@ -175,7 +175,7 @@ export const AddCheckList = ({navigation, route}) => {
   let is_button_disabled = !(questions.length && type && title) || is_load;
 
   let hours_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-  let minutes_values = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+  let minutes_values = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
   return (
     <>
       <KeyboardAwareScrollView>
@@ -334,37 +334,39 @@ export const AddCheckList = ({navigation, route}) => {
               width: '100%',
               justifyContent: 'center',
             }}>
-            <Shadow
-              startColor={'#00000008'}
-              finalColor={'#00000001'}
-              offset={[0, 5]}
-              distance={8}
-              containerViewStyle={{
+            <TouchableOpacity
+              onPress={() => SetIsInfoVisible(!is_info_visible)}
+              style={{
                 position: 'absolute',
                 left: 10,
                 zIndex: 1,
                 elevation: 1,
                 width: scale(20),
-              }}
-              viewStyle={{
-                borderRadius: 30,
-                aspectRatio: 1,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'white',
               }}>
-              <TouchableOpacity
-                onPress={() => SetIsInfoVisible(!is_info_visible)}>
-                <Text
-                  style={{
-                    color: colors.orange,
-                    fontSize: moderateScale(14),
-                    fontFamily: 'Inter-SemiBold',
-                  }}>
-                  i
-                </Text>
-              </TouchableOpacity>
-            </Shadow>
+              <Shadow
+                startColor={'#00000008'}
+                finalColor={'#00000001'}
+                offset={[0, 5]}
+                distance={8}
+                viewStyle={{
+                  borderRadius: 30,
+                  aspectRatio: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'white',
+                }}>
+                <View>
+                  <Text
+                    style={{
+                      color: colors.orange,
+                      fontSize: moderateScale(14),
+                      fontFamily: 'Inter-SemiBold',
+                    }}>
+                    i
+                  </Text>
+                </View>
+              </Shadow>
+            </TouchableOpacity>
             <Shadow
               viewStyle={{
                 width: '100%',

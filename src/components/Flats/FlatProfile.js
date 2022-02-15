@@ -65,7 +65,7 @@ export const FlatProfile = ({navigation, route}) => {
             alignItems: 'center',
             marginTop: 10,
           }}>
-          <Map />
+          <Map fill="#C5BEBE"/>
           <Text
             style={{
               fontSize: moderateScale(16),
@@ -103,7 +103,7 @@ export const FlatProfile = ({navigation, route}) => {
           {images.map(({image}) => (
             <Image
               key={image}
-              source={{uri: ImageURL + image}}
+              source={{uri: image}}
               style={{
                 width: dimensions.width / 6,
                 aspectRatio: 1,
@@ -179,14 +179,7 @@ export const FlatProfile = ({navigation, route}) => {
                       navigation={navigation}
                       cleaning={cleaning}
                       is_need_check={true}
-                      repeat_count={need_check_cleanings
-                        .filter(el => el.maid.id == cleaning.maid.id)
-                        .sort(
-                          (a, b) =>
-                            new Date(a.time_cleaning) -
-                            new Date(b.time_cleaning),
-                        )
-                        .findIndex(el => el.id == cleaning.id)}
+                      
                     />
                   ))}
               </View>
@@ -227,7 +220,6 @@ export const FlatProfile = ({navigation, route}) => {
                     navigation={navigation}
                     cleaning={cleaning}
                     key={cleaning.id}
-                    
                   />
                 ))}
             </View>
@@ -269,7 +261,6 @@ export const FlatProfile = ({navigation, route}) => {
                     cleaning={cleaning}
                     key={cleaning.id}
                     navigation={navigation}
-                    
                   />
                 ))}
             </View>

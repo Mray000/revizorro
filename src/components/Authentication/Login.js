@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
+  BackHandler,
   DeviceEventEmitter,
   Dimensions,
   KeyboardAvoidingView,
@@ -14,29 +15,51 @@ import {authentication} from 'store/authentication';
 import {Input} from 'utils/Input';
 import {Button} from 'utils/Button';
 import {colors} from 'utils/colors';
-import {moderateScale, scale} from 'utils/Normalize';
-export const Login = ({navigation, route}) => {
-  const [email, SetEmail] = useState('');
-  const [password, setPassword] = useState('');
+import {moderateScale, scale, verticalScale} from 'utils/Normalize';
+import {observer} from 'mobx-react-lite';
+import {app} from 'store/app';
+export const Login = observer(({navigation, route}) => {
+  //ianire@gmail.cted
+  //ainurhabibullin0@gmail.text
+  //ainurhabibullin0@gmail.7657
+  const [email, SetEmail] = useState('ainurhabibullin0@gmail.7657');
+  const [password, setPassword] = useState('1');
   const [incorrect_data, setIncorrectData] = useState(false);
   const [isLoad, setIsLoad] = useState(false);
-  const [is_warnning_show, SetIsWarningShow] = useState(true);
+  const [is_keyboard_show, SetIsKeyboardShow] = useState(false);
+
   let is_button_disabled = !(email && password) || incorrect_data || isLoad;
+
   const henderLogin = async () => {
     setIsLoad(true);
     let is_ok = await authentication.login(email, password);
-    if (is_ok) {
-      navigation.navigate('Workers');
-      DeviceEventEmitter.removeAllListeners('keyboardDidShow');
-    } else setIncorrectData(true);
+    console.log(app.role);
+    if (is_ok)
+      navigation.navigate(app.role == 'role_maid' ? 'Housemaid' : 'Cleanings');
+    else setIncorrectData(true);
     setIsLoad(false);
   };
 
   useEffect(() => {
-    DeviceEventEmitter.addListener('keyboardDidShow', () =>
-      SetIsWarningShow(false),
-    );
-    return () => {};
+    let backhandler;
+
+    navigation.addListener('blur', () => {
+      DeviceEventEmitter.removeAllListeners('keyboardDidShow');
+      DeviceEventEmitter.removeAllListeners('keyboardDidHide');
+      backhandler?.remove();
+    });
+    navigation.addListener('focus', () => {
+      backhandler = BackHandler.addEventListener('hardwareBackPress', () => {
+        navigation.navigate('Onboarding');
+        return true;
+      });
+      DeviceEventEmitter.addListener('keyboardDidShow', () =>
+        SetIsKeyboardShow(true),
+      );
+      DeviceEventEmitter.addListener('keyboardDidHide', () =>
+        SetIsKeyboardShow(false),
+      );
+    });
   }, []);
   let is_owner = route.params.role == 'owner';
   return (
@@ -45,8 +68,7 @@ export const Login = ({navigation, route}) => {
       style={{
         flex: 1,
         backgroundColor: 'white',
-      }}
-      >
+      }}>
       <View
         style={{
           flex: 1,
@@ -128,11 +150,11 @@ export const Login = ({navigation, route}) => {
             </TouchableOpacity>
           </View>
         ) : null}
-        {!is_owner && is_warnning_show ? (
+        {!is_owner && !is_keyboard_show ? (
           <View
             style={{
               position: 'absolute',
-              bottom: 40,
+              bottom: verticalScale(35),
               borderColor: '#E5E3E2',
               borderWidth: 1,
               borderRadius: 20,
@@ -174,4 +196,4 @@ export const Login = ({navigation, route}) => {
       </View>
     </KeyboardAvoidingView>
   );
-};
+});
