@@ -34,7 +34,6 @@ export const CleaningsList = observer(({navigation}) => {
   }, [cleanings]);
 
   if (!cleanings) return <Loader />;
-  cleanings.map(el => console.log(el.id, el.status, "status"));
   let need_check_cleanings = cleanings.filter(el => el.status == 'on_check');
   let future_cleanings = cleanings.filter(el => el.status == 'not_accepted');
   let complited_cleanings = cleanings.filter(el => el.state == 'accepted');

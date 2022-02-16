@@ -72,7 +72,6 @@ class Cleaning {
       maid_id: this.housemaid.id,
       list_time: this.getCleaningDates(),
     };
-    console.log(new_cleanings.list_time);
     let data = await api.addCleaning(new_cleanings);
     if (data.time) {
       if (data.detail[0].includes('Cleaning')) return {error_dates: data.time};
@@ -88,7 +87,6 @@ class Cleaning {
       maid_id: this.housemaid.id,
       time_cleaning: this.getCleaningDates()[0],
     };
-    console.log(new_cleanings.time_cleaning, 'ttiiiime');
     let data = await api.editCleaning(new_cleanings);
     if (data.time) {
       if (data.detail[0].includes('Cleaning')) return {error_dates: data.time};
@@ -116,7 +114,6 @@ class Cleaning {
   getCleaningDates() {
     let h = moment(this.time).get('h');
     let m = moment(this.time).get('m');
-    console.log(h, m);
     if (!this.is_repeat_active)
       return [
         moment(this.date)

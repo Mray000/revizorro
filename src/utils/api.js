@@ -326,13 +326,11 @@ export const api = {
 
   editCleaning: async body => {
     let data = await request.put(`/cleaning/${body.id}`, body);
-    console.log(data);
     return data;
   },
 
   deleteCleaning: async id => {
     let data = await request.delete(`/cleaning/${id}`);
-    console.log(data);
     return data;
   },
   getCleanings: async () => {
@@ -343,37 +341,47 @@ export const api = {
 
   getMe: async () => {
     let me = await request.get('/users/me');
-    console.log(me);
     return me;
   },
 
   comepleteCleaning: async (cleaning_id, questions) => {
     let form_data = new FormData();
+
     form_data.append('cleaning_id', cleaning_id);
-    console.log(cleaning_id, questions);
+    let fill_questions = [];
+
     questions.forEach(question => {
       let answer = question.answer;
       if (Array.isArray(answer)) {
         let photo_filenames = [];
         answer.forEach(photo_answer => {
           photo_filenames.push(photo_answer.fileName);
-          form_data.append('images', photo_answer);
+          form_data.append('images', {
+            uri: photo_answer.uri,
+            type: photo_answer.type,
+            name: photo_answer.fileName,
+          });
         });
-        form_data.append('fill_questions', {
+        fill_questions.push({
           question: question.id,
           photo_filename: photo_filenames,
         });
       } else {
-        form_data.append('fill_questions', {
+        fill_questions.push({
           question: question.id,
           answer,
         });
       }
     });
-    console.log(form_data);
+
+    form_data.append('fill_questions', JSON.stringify(fill_questions));
     let data = await request.post_form_data('/fill-questions/send', form_data);
-    console.log(data);
 
     return data;
+  },
+
+  getCleaning: async id => {
+    let cleaning = await request.get(`/cleaning/${id}`);
+    return cleaning;
   },
 };

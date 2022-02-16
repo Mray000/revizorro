@@ -32,9 +32,11 @@ export const CleaningComponent = React.memo(
     };
 
     const onPress = () => {
+      console.log(id)
       if (onpress) return onpress();
       //   if (is_completed) return navigation.navigate('CleaningReport');
-      //   if (is_need_check) return navigaаtion.navigate('CleaningCheck');
+      if (is_need_check) return navigation.navigate('ReportCleaning', {id});
+      
       cleaning_store.setEditId(id);
       cleaning_store.setFlat(flat);
       cleaning_store.setCheckLists(check_lists);

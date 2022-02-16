@@ -14,7 +14,7 @@ import {api, ImageURL} from 'utils/api';
 import {Loader} from 'utils/Loader';
 export const FlatProfile = ({navigation, route}) => {
   let flat = route.params.flat;
-  let {id, title, address, type, images} = flat;
+let {id, title, address, type, images} = flat;
 
   const [cleanings, SetCleanings] = useState(null);
   const [is_need_check_cleanings_full, SetIsNeedCheckCleaningsFull] =

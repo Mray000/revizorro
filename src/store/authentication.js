@@ -36,7 +36,7 @@ class Authentication {
       last_name: surname,
       company_name: company,
       email,
-      password,
+      password, 
     };
     let data = await api.registration(body);
     if (data.Error)

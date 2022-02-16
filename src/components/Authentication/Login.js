@@ -33,7 +33,6 @@ export const Login = observer(({navigation, route}) => {
   const henderLogin = async () => {
     setIsLoad(true);
     let is_ok = await authentication.login(email, password);
-    console.log(app.role);
     if (is_ok)
       navigation.navigate(app.role == 'role_maid' ? 'Housemaid' : 'Cleanings');
     else setIncorrectData(true);

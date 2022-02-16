@@ -130,7 +130,6 @@ const DayComponent = ({
   last_days_disabled,
 }) => {
   let {day, dateString, timestamp} = data.date;
-  console.log(last_days_disabled)
   let is_current_day = moment().format('YYYY-MM-DD') == dateString;
   let is_last_day = moment().isAfter(moment(timestamp));
 

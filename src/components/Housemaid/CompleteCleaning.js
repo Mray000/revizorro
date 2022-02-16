@@ -27,7 +27,6 @@ import {api} from 'utils/api';
 export const CompleteCleaning = ({navigation, route}) => {
   let cleaning = route.params.cleaning;
   let check_lists = cleaning.check_lists;
-  console.log(check_lists[0].questions)
   let questions_and_photos = check_lists
     .reduce((acc, el) => {
       acc = [...acc, ...el.questions];
@@ -420,12 +419,7 @@ export const CompleteCleaning = ({navigation, route}) => {
         <Swiper
           ref={swipper}
           autoplay={false}
-          onIndexChanged={index => {
-            console.log(index);
-            // console.log(swipper.current.state.index);
-            SetQuestionIndex(index);
-            // swipper.current.scrollBy(swipper.current.state.index)
-          }}
+          onIndexChanged={SetQuestionIndex}
           //   scrollEnabled={!(question_index == 0 || is_next_disabled)}
           showsHorizontalScrollIndicator={false}
           showsPagination={false}
