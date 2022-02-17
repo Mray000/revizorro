@@ -384,4 +384,12 @@ export const api = {
     let cleaning = await request.get(`/cleaning/${id}`);
     return cleaning;
   },
+
+  reportCleaning: async (assessment, cleaning_id, fill_questions) => {
+    let body = {assessment, cleaning_id, fill_questions};
+    console.log(body)
+    let data = await request.post(`/fill-questions/check`, body);
+    console.log(data)
+    return data;
+  },
 };

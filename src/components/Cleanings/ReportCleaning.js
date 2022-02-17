@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  Dimensions,
 } from 'react-native';
 import {api} from 'utils/api';
 import {Header} from 'utils/Header';
@@ -16,15 +17,19 @@ import Map from 'assets/map.svg';
 import Home from 'assets/home.svg';
 import Check from 'assets/check.svg';
 import CheckList from 'assets/check_list.svg';
+import RedNext from 'assets/red_next.svg';
+import Star from 'assets/star.svg';
 import {dimensions} from 'utils/dimisions';
 import {convertType} from 'utils/flat_types';
 import {colors} from 'utils/colors';
+import {Button} from 'utils/Button';
 export const ReportCleaning = ({navigation, route}) => {
   let id = route.params.id;
 
   const [cleaning, SetCleaning] = useState(null);
-  const [is_reject, SetIsReject] = useState(true);
+  const [is_reject, SetIsReject] = useState(false);
   const [rejected_answers, SetRejectedAnswers] = useState([]);
+  const [rating, SetRating] = useState(0);
 
   useEffect(() => {
     api.getCleaning(id).then(SetCleaning);
@@ -33,14 +38,36 @@ export const ReportCleaning = ({navigation, route}) => {
   if (!cleaning) return <Loader />;
   let {flat, check_lists, maid, time_cleaning, fill_questions} = cleaning;
 
+  const handleReportCleaning = async () => {
+    console.log(rejected_answers);
+    await api.reportCleaning(
+      rating,
+      id,
+      fill_questions.map(answer =>
+        rejected_answers.find(el => el.id == answer.id)
+          ? {
+              fill_question_id: answer.id,
+              checked: false,
+              comment: rejected_answers.find(el => el.id == answer.id)
+                .reject_text,
+            }
+          : {
+              fill_question_id: answer.id,
+              checked: true,
+            },
+      ),
+    );
+    navigation.navigate('CleaningsList');
+  };
+
   return (
     <ScrollView>
       <Header onBack={() => navigation.goBack()} />
-      <View style={{padding: 20}}>
+      <View style={{padding: 20, paddingTop: 10}}>
         <Text
           style={{
             fontFamily: 'Inter-SemiBold',
-            fontSize: moderateScale(17),
+            fontSize: moderateScale(18),
             color: 'black',
           }}>
           {is_reject
@@ -319,15 +346,144 @@ export const ReportCleaning = ({navigation, route}) => {
             SetIsRejected={() =>
               SetRejectedAnswers(() => {
                 if (!rejected_answers.find(el => el.id == fill_question.id))
-                  return [...rejected_answers, fill_question];
+                  return [
+                    ...rejected_answers,
+                    {...fill_question, reject_text: ''},
+                  ];
                 else
                   return rejected_answers.filter(
                     el => el.id != fill_question.id,
                   );
               })
             }
+            reject_text={
+              rejected_answers.find(el => el.id == fill_question.id)
+                ?.reject_text
+            }
+            SetRejectText={reject_text => {
+              SetRejectedAnswers(() => {
+                let new_rejected_answers = rejected_answers.map(el => {
+                  if (el.id == fill_question.id) el.reject_text = reject_text;
+                  return el;
+                });
+                return new_rejected_answers;
+              });
+            }}
           />
         ))}
+        {console.log(rejected_answers)}
+        {!is_reject ? (
+          <View>
+            <View style={{alignItems: 'center', justifyContent: 'center'}}>
+              <Text
+                style={{
+                  fontFamily: 'Inter-SemiBold',
+                  color: 'black',
+                  fontSize: moderateScale(17),
+                  marginTop: 10,
+                }}>
+                Оцените качество уборки
+              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginTop: 10,
+                  justifyContent: 'center',
+                }}>
+                {[1, 2, 3, 4, 5].map(el => (
+                  <TouchableOpacity
+                    onPress={() => SetRating(el)}
+                    style={{marginLeft: 3}}
+                    key={el}>
+                    <Star
+                      fill={Number(rating) < el ? '#DFDCDC' : '#F38434'}
+                      width={45}
+                      height={45}
+                    />
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginTop: 20,
+              }}>
+              <TouchableOpacity
+              onPress={handleReportCleaning}
+                disabled={!rating}
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '49%',
+                  borderRadius: 20,
+                  height: dimensions.height / 10,
+                  backgroundColor: rating ? colors.orange : '#ECEAEA',
+                }}>
+                <Text
+                  style={{
+                    fontSize: moderateScale(16),
+                    fontFamily: 'Inter-Medium',
+                    color: rating ? 'white' : '#A19E9D',
+                  }}>
+                  Принять
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => SetIsReject(true)}
+                style={{
+                  backgroundColor: '#F8ECEC',
+                  width: '49%',
+                  borderRadius: 20,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderColor: '#F5CAC8',
+                  height: dimensions.height / 10,
+                  borderWidth: 1,
+                }}>
+                <Text
+                  style={{
+                    fontSize: moderateScale(16),
+                    fontFamily: 'Inter-Medium',
+                    color: '#E8443A',
+                  }}>
+                  Отклонить
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : (
+          <TouchableOpacity
+            onPress={handleReportCleaning}
+            style={{
+              height: dimensions.height / 10,
+              backgroundColor: '#F8ECEC',
+              width: '100%',
+              borderRadius: 20,
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderColor: '#F5CAC8',
+              borderWidth: 1,
+              marginTop: 15,
+            }}>
+            <Text
+              style={{
+                color: '#E8443A',
+                fontSize: moderateScale(15),
+                fontFamily: 'Inter-Medium',
+              }}>
+              Отправить отказ
+            </Text>
+            <RedNext
+              width={23}
+              height={23}
+              style={{position: 'absolute', right: 20}}
+            />
+          </TouchableOpacity>
+        )}
       </View>
     </ScrollView>
   );
@@ -339,10 +495,11 @@ const AnswerComponent = ({
   is_reject,
   is_answer_rejected,
   question_text,
+  reject_text,
+  SetRejectText,
   SetIsRejected,
 }) => {
   const [is_input_active, SetIsInputActive] = useState(false);
-  const [reject_text, SetRejectText] = useState('');
   return (
     <TouchableOpacity
       disabled={!is_reject || is_input_active}
@@ -455,6 +612,7 @@ const AnswerComponent = ({
               Ваш комментарий к пункту № {index + 1}:
             </Text>
             <TextInput
+              multiline={true}
               value={reject_text}
               onChangeText={SetRejectText}
               onFocus={() => SetIsInputActive(true)}
@@ -466,7 +624,7 @@ const AnswerComponent = ({
                   : reject_text
                   ? 'white'
                   : '#E8443A',
-                  paddingVertical: 3,
+                paddingVertical: 3,
                 fontSize: moderateScale(16),
                 fontFamily: 'Inter-Medium',
               }}

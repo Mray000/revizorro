@@ -40,7 +40,6 @@ export const Button = ({
           width={23}
           height={23}
           style={{position: 'absolute', right: 20}}
-          
         />
       ) : null}
     </TouchableOpacity>

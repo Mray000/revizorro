@@ -6,7 +6,7 @@
     "start": "react-native start --reset-cache",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "reload_servers": "netstat -vanp tcp | grep 8081 && react-native start",
+    "reload_servers": "sudo lsof -i tcp:8081",
     "build_adnroid": "cd android && gradle assembleRelease",
     "test": "jest",
     "lint": "eslint ."
