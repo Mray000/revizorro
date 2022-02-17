@@ -123,6 +123,7 @@ export const ReportCleaning = ({navigation, route}) => {
                   }}>
                   <Map fill="#C5BFBE" />
                 </View>
+                <View />
                 <Text
                   numberOfLines={2}
                   style={{
@@ -134,6 +135,7 @@ export const ReportCleaning = ({navigation, route}) => {
                 </Text>
               </View>
             </View>
+
             <View
               style={{
                 width: '100%',
@@ -413,7 +415,7 @@ export const ReportCleaning = ({navigation, route}) => {
                 marginTop: 20,
               }}>
               <TouchableOpacity
-              onPress={handleReportCleaning}
+                onPress={handleReportCleaning}
                 disabled={!rating}
                 style={{
                   alignItems: 'center',
