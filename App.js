@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {SafeAreaView, Text, View} from 'react-native';
 
 import {NavigationContainer} from '@react-navigation/native';
@@ -50,8 +50,6 @@ const App = observer(() => {
     })();
   }, []);
 
-  console.log(role);
-
   if (!is_load) return null;
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -69,11 +67,13 @@ const App = observer(() => {
                 : 'Housemaid'
               : 'Onboarding'
           }>
-          <Tab.Screen
-            name="Housemaid"
-            options={{hidden: 'true'}}
-            component={Housemaid}
-          />
+          {app.role == 'role_maid' ? (
+            <Tab.Screen
+              name="Housemaid"
+              options={{hidden: 'true'}}
+              component={Housemaid}
+            />
+          ) : null}
           <Tab.Screen
             name="Cleanings"
             options={{

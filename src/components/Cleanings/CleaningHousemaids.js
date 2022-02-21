@@ -12,6 +12,7 @@ import {cleaning} from 'store/cleaning';
 import {observer} from 'mobx-react-lite';
 import Star from 'assets/star.svg';
 import ArrowRight from 'assets/arrow_right.svg';
+import {app} from 'store/app';
 export const CleaningHousemaids = observer(({navigation}) => {
   const [housemaids, SetHousemaids] = useState(null);
 
@@ -28,6 +29,7 @@ export const CleaningHousemaids = observer(({navigation}) => {
   }, [housemaids]);
 
   if (!housemaids) return <Loader />;
+  console.log(housemaids);
 
   return (
     <ScrollView style={{paddingVertical: 10}}>
@@ -49,14 +51,16 @@ export const CleaningHousemaids = observer(({navigation}) => {
           </TouchableOpacity>
         }
       />
-      <View style={{paddingHorizontal: 10}}>
-        <AddButton
-          text={'Добавить новую горничную'}
-          onPress={() =>
-            navigation.navigate('AddWorker', {parent: 'CleaningHousemaids'})
-          }
-        />
-      </View>
+      {app.role == 'role_admin' || app.accesses.includes('workers') ? (
+        <View style={{paddingHorizontal: 10}}>
+          <AddButton
+            text={'Добавить новую горничную'}
+            onPress={() =>
+              navigation.navigate('AddWorker', {parent: 'CleaningHousemaids'})
+            }
+          />
+        </View>
+      ) : null}
       <View style={{marginBottom: 20}}>
         {housemaids.map(housemaid => (
           <Housemaid
@@ -74,13 +78,13 @@ export const CleaningHousemaids = observer(({navigation}) => {
 });
 
 const Housemaid = ({housemaid, SetHousemaid}) => {
-  let {avatar, role, first_name, last_name, rating, amount_checks} = housemaid;
+  let {avatar, role, first_name, last_name, rating, amount_cleaning} = housemaid;
 
-  const getDeclination = amount_checks => {
+  const getDeclination = amount_cleaning => {
     let word = 'убор';
-    if (amount_checks == 0 || amount_checks > 4) word += 'ок';
-    if (amount_checks == 1) word += 'ка';
-    if (amount_checks >= 2 && amount_checks <= 4) word += 'ки';
+    if (amount_cleaning == 0 || amount_cleaning > 4) word += 'ок';
+    if (amount_cleaning == 1) word += 'ка';
+    if (amount_cleaning >= 2 && amount_cleaning <= 4) word += 'ки';
     return word;
   };
   return (
@@ -152,7 +156,7 @@ const Housemaid = ({housemaid, SetHousemaid}) => {
                 color: '#9E9494',
                 marginLeft: 5,
               }}>
-              {amount_checks} {getDeclination(amount_checks)}
+              {amount_cleaning} {getDeclination(amount_cleaning)}
             </Text>
           </View>
           <Text

@@ -1,20 +1,28 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TouchableOpacity, Image} from 'react-native';
+import {View, Text, TouchableOpacity, Image, ScrollView} from 'react-native';
 import {Header} from 'utils/Header';
 import Pen from 'assets/pen.svg';
 import Star from 'assets/star.svg';
 import HalfStar from 'assets/half_star.svg';
-import {moderateScale, scale} from 'utils/Normalize';
+import {moderateScale, scale, verticalScale} from 'utils/Normalize';
 import {Loader} from 'utils/Loader';
-import {api} from 'utils/api';
-export const WorkerProfile = ({navigation, route}) => {
-  let {id, avatar, role, first_name, last_name, middle_name, rating} =
-    route.params.worker;
+import {api, ImageURL} from 'utils/api';
+import {CleaningComponent} from 'components/Cleanings/CleaningComponent';
+import {app} from 'store/app';
+import {observer} from 'mobx-react-lite';
+export const WorkerProfile = observer(({navigation, route}) => {
+  let worker = route.params.worker;
+  let {id, avatar, role, first_name, last_name, middle_name, rating} = worker;
 
   let is_maid = role == 'role_maid';
 
   const [cleanings, SetCleanings] = useState(null);
-
+  const getDeclination = (word, count) => {
+    if (count == 0 || count > 4) word += 'ок';
+    if (count == 1) word += 'ка';
+    if (count >= 2 && count <= 4) word += 'ки';
+    return word;
+  };
   useEffect(() => {
     api
       .getWorker(id)
@@ -25,26 +33,33 @@ export const WorkerProfile = ({navigation, route}) => {
 
   if (!cleanings) return <Loader />;
   return (
-    <View>
+    <ScrollView style={{paddingBottom: verticalScale(65)}}>
       <Header
         navigation={navigation}
-        to={'WorkersList'}
+        to="WorkersList"
+        onBack={() => {
+          if (app.role == 'role_admin' || app.accesses.includes('workers')) {
+            navigation.navigate('WorkersList');
+          } else navigation.goBack();
+        }}
         title={is_maid ? 'Горничная' : 'Менеджер'}
         children={
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('EditWorker', {worker: route.params.worker})
-            }
-            style={{
-              position: 'absolute',
-              right: 20,
-              width: 40,
-              height: 40,
-              alignItems: 'flex-end',
-              justifyContent: 'center',
-            }}>
-            <Pen />
-          </TouchableOpacity>
+          app.role == 'role_admin' || app.accesses.includes('workers') ? (
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('EditWorker', {worker: route.params.worker})
+              }
+              style={{
+                position: 'absolute',
+                right: 20,
+                width: 40,
+                height: 40,
+                alignItems: 'flex-end',
+                justifyContent: 'center',
+              }}>
+              <Pen />
+            </TouchableOpacity>
+          ) : null
         }
       />
       <View style={{alignItems: 'center'}}>
@@ -102,7 +117,11 @@ export const WorkerProfile = ({navigation, route}) => {
                 fontFamily: 'Inter-Medium',
                 fontSize: moderateScale(14),
               }}>
-              (0 уборок)
+              (
+              {cleanings.length +
+                ' ' +
+                getDeclination('уборк', cleanings.length)}
+              )
             </Text>
           </View>
         ) : (
@@ -112,11 +131,19 @@ export const WorkerProfile = ({navigation, route}) => {
               fontFamily: 'Inter-Medium',
               fontSize: moderateScale(14),
             }}>
-            0 проверок
+            {cleanings.length +
+              ' ' +
+              getDeclination('провер', cleanings.length)}
           </Text>
         )}
         {cleanings.length ? (
-          <View style={{width: '100%', paddingLeft: 10, marginTop: 20}}>
+          <View
+            style={{
+              width: '100%',
+              paddingLeft: 10,
+              margintop: 20,
+              marginBottom: 5,
+            }}>
             <Text
               style={{
                 color: '#AAA8A7',
@@ -127,17 +154,19 @@ export const WorkerProfile = ({navigation, route}) => {
               }}>
               история {is_maid ? 'уборок' : 'проверок'}
             </Text>
-            {cleanings.map(cleaning => (
+            {console.log(cleanings.length, 'SADADASD')}
+            {[...cleanings].map(cleaning => (
               <CleaningComponent
                 is_completed={true}
                 cleaning={cleaning}
                 key={cleaning.id}
+                housemaid={is_maid ? worker : null}
                 navigation={navigation}
               />
             ))}
           </View>
         ) : null}
       </View>
-    </View>
+    </ScrollView>
   );
-};
+});

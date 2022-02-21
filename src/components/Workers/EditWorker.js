@@ -7,7 +7,7 @@ import {Input} from 'utils/Input';
 import {dimensions} from 'utils/dimisions';
 import {Shadow} from 'react-native-shadow-2';
 import ToggleSwitch from 'toggle-switch-react-native';
-import {api} from 'utils/api';
+import {api, ImageURL} from 'utils/api';
 import {Button} from 'utils/Button';
 import ArrowRight from 'assets/arrow_right.svg';
 import ArrowBottom from 'assets/arrow_down.svg';
@@ -98,7 +98,7 @@ export const EditWorker = ({navigation, route}) => {
           }
         />
         <Image
-          source={{uri: avatar}}
+          source={{uri:  avatar}}
           style={{
             width: scale(70),
             alignSelf: 'center',

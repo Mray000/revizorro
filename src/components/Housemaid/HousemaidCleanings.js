@@ -10,6 +10,7 @@ import {CleaningComponent} from '../Cleanings/CleaningComponent';
 import ArrowDown from 'assets/arrow_down.svg';
 import ArrowUp from 'assets/arrow_up.svg';
 import HousemaidSettings from 'assets/housemaid_settings.svg';
+import {dimensions} from 'utils/dimisions';
 export const HousemaidClenaings = observer(({navigation}) => {
   const [is_list_active, SetIsListActive] = useState(true);
   const [cleanings, SetCleanings] = useState(null);
@@ -31,6 +32,7 @@ export const HousemaidClenaings = observer(({navigation}) => {
   }, [cleanings]);
 
   if (!cleanings) return <Loader />;
+  console.log(cleanings.forEach(el =>console.log(el.status, "SADASD")))
 
   let on_check_cleanings = cleanings.filter(el => el.status == 'on_check');
 
@@ -39,7 +41,7 @@ export const HousemaidClenaings = observer(({navigation}) => {
   );
 
   let future_cleanings = cleanings.filter(el => el.status == 'not_accepted');
-  let complited_cleanings = cleanings.filter(el => el.state == 'accepted');
+  let complited_cleanings = cleanings.filter(el => el.status == 'accepted');
   let dates = cleanings.map(el =>
     moment(el.time_cleaning).format('YYYY-MM-DD'),
   );
@@ -276,16 +278,28 @@ export const HousemaidClenaings = observer(({navigation}) => {
                   )
 
                   .map(cleaning => (
-                    <CleaningComponent
-                      key={cleaning.id}
-                      is_housemaid={true}
-                      navigation={navigation}
-                      cleaning={cleaning}
-                      is_need_check={true}
-                      onpress={() =>
-                        navigation.navigate('CompleteCleaning', {cleaning})
-                      }
-                    />
+                    <>
+                      {cleaning.amount_checks ? (
+                        <Text
+                          style={{
+                            fontFamily: 'Inter-Regular',
+                            fontSize: moderateScale(14),
+                            color: '#E8443A',
+                            marginLeft: 15,
+                            marginTop: 7
+                          }}>
+                          Ваш отчет не был принят. Пожалуйста, доработайте
+                          некоторые пункты.
+                        </Text>
+                      ) : null}
+                      <CleaningComponent
+                        key={cleaning.id}
+                        is_housemaid={true}
+                        navigation={navigation}
+                        cleaning={cleaning}
+                        is_need_check={true}
+                      />
+                    </>
                   ))}
               </View>
             </View>
@@ -325,6 +339,7 @@ export const HousemaidClenaings = observer(({navigation}) => {
                     navigation={navigation}
                     cleaning={cleaning}
                     key={cleaning.id}
+                    disabled={true}
                   />
                 ))}
             </View>

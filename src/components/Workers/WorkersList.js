@@ -26,8 +26,8 @@ export const WorkersList = ({navigation}) => {
       api.getCompanyWorkers().then(SetWorkers);
     });
   }, []);
-
   if (!workers) return <Loader />;
+  console.log(workers.forEach(el => console.log(el.role)));
   return (
     <ScrollView>
       <View
@@ -61,9 +61,11 @@ export const WorkersList = ({navigation}) => {
         </TouchableOpacity>
       </View>
       <View style={{marginTop: 10, paddingHorizontal: 10}}>
-        {workers.map(el => (
-          <Worker worker={el} navigation={navigation} key={el.id} />
-        ))}
+        {workers
+          .filter(el => el.role != 'role_admin')
+          .map(el => (
+            <Worker worker={el} navigation={navigation} key={el.id} />
+          ))}
       </View>
     </ScrollView>
   );

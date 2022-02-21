@@ -30,7 +30,7 @@ class App {
     await api.getMe().then(me => {
       let accesses = [];
       if (me.manager_permission_cleaning) accesses.push('cleanings');
-      // if (me.manager_permission_check_lists) accesses.push('check_lists');
+      if (me.manager_permission_check_lists) accesses.push('check_lists');
       if (me.manager_permission_users) accesses.push('workers');
       this.setAccesses(accesses);
       this.setRole(me.role);

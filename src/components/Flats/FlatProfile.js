@@ -10,7 +10,7 @@ import {convertType} from 'utils/flat_types';
 import ArrowDown from 'assets/arrow_down.svg';
 import ArrowUp from 'assets/arrow_up.svg';
 import {CleaningComponent} from 'components/Cleanings/CleaningComponent';
-import {api, ImageURL} from 'utils/api';
+import {api} from 'utils/api';
 import {Loader} from 'utils/Loader';
 export const FlatProfile = ({navigation, route}) => {
   let flat = route.params.flat;
@@ -31,7 +31,7 @@ let {id, title, address, type, images} = flat;
 
   let need_check_cleanings = cleanings.filter(el => el.status == 'on_check');
   let future_cleanings = cleanings.filter(el => el.status == 'not_accepted');
-  let complited_cleanings = cleanings.filter(el => el.state == 'accepted');
+  let complited_cleanings = cleanings.filter(el => el.status == 'accepted');
 
   return (
     <ScrollView style={{paddingVertical: 10, paddingBottom: 100}}>

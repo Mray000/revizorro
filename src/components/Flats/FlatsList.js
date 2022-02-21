@@ -106,9 +106,10 @@ const Flat = ({flat, navigation}) => {
           moment(time_created).format('YYYY-MM-DD hh:mm') ? (
             <Text
               style={{
-                fontFamily: 'Inter-Medium',
-                fontSize: moderateScale(15),
+                fontFamily: 'Inter-Regaular',
+                fontSize: moderateScale(14),
                 color: 'black',
+                marginTop: 3
               }}>
               Последняя уборка: {moment(last_cleaning).format('DD MMM HH:mm')}
             </Text>

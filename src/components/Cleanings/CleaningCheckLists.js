@@ -10,6 +10,7 @@ import {moderateScale} from 'utils/Normalize';
 import Check from 'assets/check.svg';
 import {cleaning} from 'store/cleaning';
 import {observer} from 'mobx-react-lite';
+import { app } from 'store/app';
 export const CleaningCheckLists = observer(({navigation}) => {
   const [check_lists, SetCheckLists] = useState(null);
 
@@ -58,12 +59,14 @@ export const CleaningCheckLists = observer(({navigation}) => {
           </TouchableOpacity>
         }
       />
-      <View style={{paddingHorizontal: 10}}>
-        <AddButton
-          text={'Добавить новый чек-лист'}
-          onPress={() => navigation.navigate('AddCheckList')}
-        />
-      </View>
+      {app.role == 'role_admin' || app.accesses.includes('check_lists') ? (
+        <View style={{paddingHorizontal: 10}}>
+          <AddButton
+            text={'Добавить новый чек-лист'}
+            onPress={() => navigation.navigate('AddCheckList')}
+          />
+        </View>
+      ) : null}
       <View style={{marginBottom: 20}}>
         {check_lists.map(check_list => (
           <CheckList

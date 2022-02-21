@@ -5,15 +5,19 @@ import {WorkersList} from './WorkersList';
 import {createStackNavigator} from '@react-navigation/stack';
 import {WorkerProfile} from './WorkerProfile';
 import {EditWorker} from './EditWorker';
+import {app} from 'store/app';
 const Stack = createStackNavigator();
-export const Workers = () => {
+export const Workers = ({navigation, route}) => {
+  useEffect(() => {
+    console.log('UAER');
+  }, []);
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
         contentStyle: {backgroundColor: 'white'},
       }}
-      initialRouteName="WorkersList">
+      initialRouteName={'WorkersList'}>
       <Stack.Screen name="AddWorker" component={AddWorker} />
       <Stack.Screen name="WorkersList" component={WorkersList} />
       <Stack.Screen name="WorkerProfile" component={WorkerProfile} />

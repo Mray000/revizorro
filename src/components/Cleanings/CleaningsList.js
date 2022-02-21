@@ -35,8 +35,10 @@ export const CleaningsList = observer(({navigation}) => {
 
   if (!cleanings) return <Loader />;
   let need_check_cleanings = cleanings.filter(el => el.status == 'on_check');
-  let future_cleanings = cleanings.filter(el => el.status == 'not_accepted');
-  let complited_cleanings = cleanings.filter(el => el.state == 'accepted');
+  let future_cleanings = cleanings.filter(
+    el => el.status == 'not_accepted' || el.status == 'report_required',
+  );
+  let complited_cleanings = cleanings.filter(el => el.status == 'accepted');
   let dates = cleanings.map(el =>
     moment(el.time_cleaning).format('YYYY-MM-DD'),
   );
@@ -209,6 +211,10 @@ export const CleaningsList = observer(({navigation}) => {
                     navigation={navigation}
                     cleaning={cleaning}
                     key={cleaning.id}
+                    disabled={
+                      cleaning.amount_checks ||
+                      cleaning.status == 'report_required'
+                    }
                   />
                 ))}
             </View>
@@ -332,41 +338,43 @@ export const CleaningsList = observer(({navigation}) => {
           </View>
         </View>
       )}
-      <Shadow
-        startColor={'#F4843316'}
-        finalColor={'#F4843301'}
-        offset={[0, 6]}
-        distance={10}
-        containerViewStyle={{
-          position: 'absolute',
-          width: scale(40),
-          aspectRatio: 1,
-          backgroundColor: colors.orange,
-          top: dimensions.height - verticalScale(60) - scale(40) - 50,
-          right: 10,
-          borderRadius: 15,
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: 0,
-        }}
-        viewStyle={{
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '100%',
-          padding: 0,
-        }}>
-        <TouchableOpacity onPress={() => navigation.navigate('AddCleaning')}>
-          <Text
-            style={{
-              color: 'white',
-              fontFamily: 'Inter-Medium',
-              fontSize: moderateScale(30),
-              bottom: 3,
-            }}>
-            +
-          </Text>
-        </TouchableOpacity>
-      </Shadow>
+      {app.role == 'role_admin' || app.accesses.includes('cleanings') ? (
+        <Shadow
+          startColor={'#F4843316'}
+          finalColor={'#F4843301'}
+          offset={[0, 6]}
+          distance={10}
+          containerViewStyle={{
+            position: 'absolute',
+            width: scale(40),
+            aspectRatio: 1,
+            backgroundColor: colors.orange,
+            top: dimensions.height - verticalScale(60) - scale(40) - 50,
+            right: 10,
+            borderRadius: 15,
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 0,
+          }}
+          viewStyle={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            padding: 0,
+          }}>
+          <TouchableOpacity onPress={() => navigation.navigate('AddCleaning')}>
+            <Text
+              style={{
+                color: 'white',
+                fontFamily: 'Inter-Medium',
+                fontSize: moderateScale(30),
+                bottom: 3,
+              }}>
+              +
+            </Text>
+          </TouchableOpacity>
+        </Shadow>
+      ) : null}
     </View>
   );
 });

@@ -5,7 +5,6 @@ import {Shadow} from 'react-native-shadow-2';
 import {moderateScale, scale} from 'utils/Normalize';
 import moment from 'moment';
 import {cleaning as cleaning_store} from 'store/cleaning';
-import {ImageURL, URL} from 'utils/api';
 import {colors} from 'utils/colors';
 import CleaningOnCheck from 'assets/cleaning_on_check';
 
@@ -17,10 +16,19 @@ export const CleaningComponent = React.memo(
     is_housemaid,
     navigation,
     is_on_check,
-    onpress,
+    housemaid,
     disabled,
   }) => {
-    let {id, flat, check_lists, maid, time_cleaning, amount_checks} = cleaning;
+    let {
+      id,
+      flat,
+      check_lists,
+      maid,
+      time_cleaning,
+      amount_checks,
+      fill_questions,
+    } = cleaning;
+    if (housemaid) maid = housemaid;
     const getDate = () => {
       let today = moment();
       let date = moment(time_cleaning);
@@ -32,11 +40,12 @@ export const CleaningComponent = React.memo(
     };
 
     const onPress = () => {
-      console.log(id)
-      if (onpress) return onpress();
-      //   if (is_completed) return navigation.navigate('CleaningReport');
-      if (is_need_check) return navigation.navigate('ReportCleaning', {id});
-      
+      if (is_housemaid && is_need_check)
+        return navigation.navigate('CompleteCleaning', {cleaning});
+
+      if (is_need_check || is_completed)
+        return navigation.navigate('ReportCleaning', {cleaning});
+
       cleaning_store.setEditId(id);
       cleaning_store.setFlat(flat);
       cleaning_store.setCheckLists(check_lists);
@@ -61,21 +70,53 @@ export const CleaningComponent = React.memo(
 
     const getQuestionsCount = () => {
       let count = 0;
-      check_lists.forEach(check_list => {
-        count += check_list.questions.filter(
-          el => el.question_type == 'type_text',
-        ).length;
-      });
+      if (!(is_housemaid && (is_need_check || is_on_check) && amount_checks)) {
+        check_lists.forEach(check_list => {
+          count += check_list.questions.filter(
+            el => el.question_type == 'type_text',
+          ).length;
+        });
+      } else {
+        console.log(fill_questions, 'FILL');
+        fill_questions
+          .filter(el => !el.checked)
+          .forEach(el => {
+            let check_list_with_questions = check_lists.find(check_list =>
+              check_list.questions.find(q => q.id == el.question),
+            );
+            count +=
+              check_list_with_questions.questions.find(q => q.id == el.question)
+                .question_type == 'type_text'
+                ? 1
+                : 0;
+          });
+      }
+
       return count;
     };
 
     const getPhotosCount = () => {
       let count = 0;
-      check_lists.forEach(check_list => {
-        count += check_list.questions.filter(
-          el => el.question_type == 'type_photo',
-        ).length;
-      });
+      if (!(is_housemaid && (is_need_check || is_on_check) && amount_checks)) {
+        check_lists.forEach(check_list => {
+          count += check_list.questions.filter(
+            el => el.question_type == 'type_photo',
+          ).length;
+        });
+      } else {
+        fill_questions
+          .filter(el => !el.checked)
+          .forEach(el => {
+            let check_list_with_questions = check_lists.find(check_list =>
+              check_list.questions.find(q => q.id == el.question),
+            );
+            count +=
+              check_list_with_questions.questions.find(q => q.id == el.question)
+                .question_type == 'type_photo'
+                ? 1
+                : 0;
+          });
+      }
       return count;
     };
 
@@ -168,12 +209,7 @@ export const CleaningComponent = React.memo(
                     alignItems: 'center',
                   }}>
                   <Image
-                    source={{
-                      uri:
-                        maid.avatar[0] == 'h'
-                          ? maid.avatar
-                          : ImageURL + maid.avatar,
-                    }}
+                    source={{uri: maid.avatar}}
                     style={{
                       width: scale(30),
                       aspectRatio: 1,
@@ -210,10 +246,11 @@ export const CleaningComponent = React.memo(
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
-              marginTop: amount_checks > 0 || is_housemaid ? 5 : -5,
+              marginTop:
+                (amount_checks > 0 && !is_completed) || is_housemaid ? 5 : -5,
             }}>
             {!is_housemaid ? (
-              amount_checks > 0 ? (
+              amount_checks > 0 && !is_completed ? (
                 <Text
                   style={{
                     paddingHorizontal: 10,

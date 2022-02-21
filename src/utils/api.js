@@ -83,12 +83,26 @@ const request = {
         Authorization:
           authentication.accessToken && `Bearer ${authentication.accessToken}`,
       },
-      body: body,
+      body,
     });
-
     let data = await middleware(responce);
     if (data == 'try_again') {
       return await request.post_form_data(url, body);
+    } else return data;
+  },
+  put_form_data: async (url, body) => {
+    let responce = await fetch(URL + url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization:
+          authentication.accessToken && `Bearer ${authentication.accessToken}`,
+      },
+      body,
+    });
+    let data = await middleware(responce);
+    if (data == 'try_again') {
+      return await request.put_form_data(url, body);
     } else return data;
   },
   delete: async (url, body) => {
@@ -117,6 +131,21 @@ const request = {
     let data = await middleware(responce);
     if (data == 'try_again') {
       return await request.get(url);
+    } else return data;
+  },
+  patch: async (url, body) => {
+    let responce = await fetch(URL + url, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization:
+          authentication.accessToken && `Bearer ${authentication.accessToken}`,
+      },
+      body: JSON.stringify(body),
+    });
+    let data = await middleware(responce);
+    if (data == 'try_again') {
+      return await request.patch(url, body);
     } else return data;
   },
 };
@@ -189,7 +218,9 @@ export const api = {
       manager_permission_users,
       manager_permission_cleaning,
     };
+    console.log(body)
     let data = await request.post(`/users/company/staff`, body);
+    console.log(data)
     return typeof data != 'string';
   },
 
@@ -232,6 +263,7 @@ export const api = {
 
   getCompanyWorkers: async () => {
     let data = await request.get(`/users/company/staff`);
+    
     return data;
   },
 
@@ -335,7 +367,6 @@ export const api = {
   },
   getCleanings: async () => {
     let cleanings = await request.get('/cleaning/me');
-    // console.log(cleanings, 'dfsfsdf`');
     return cleanings;
   },
 
@@ -346,10 +377,8 @@ export const api = {
 
   comepleteCleaning: async (cleaning_id, questions) => {
     let form_data = new FormData();
-
     form_data.append('cleaning_id', cleaning_id);
     let fill_questions = [];
-
     questions.forEach(question => {
       let answer = question.answer;
       if (Array.isArray(answer)) {
@@ -373,10 +402,40 @@ export const api = {
         });
       }
     });
-
     form_data.append('fill_questions', JSON.stringify(fill_questions));
     let data = await request.post_form_data('/fill-questions/send', form_data);
+    console.log(data);
+    return data;
+  },
 
+  resendCleaning: async questions => {
+    let form_data = new FormData();
+    let fill_questions = [];
+    questions.forEach(question => {
+      let answer = question.answer;
+      if (Array.isArray(answer)) {
+        let photo_filenames = [];
+        answer.forEach(photo_answer => {
+          photo_filenames.push(photo_answer.fileName);
+          form_data.append('images', {
+            uri: photo_answer.uri,
+            type: photo_answer.type,
+            name: photo_answer.fileName,
+          });
+        });
+        fill_questions.push({
+          fill_question: question.id,
+          photo_filename: photo_filenames,
+        });
+      } else {
+        fill_questions.push({
+          fill_question: question.id,
+          answer,
+        });
+      }
+    });
+    form_data.append('fill_questions', JSON.stringify(fill_questions));
+    let data = await request.put_form_data('/fill-questions/resend', form_data);
     return data;
   },
 
@@ -386,10 +445,17 @@ export const api = {
   },
 
   reportCleaning: async (assessment, cleaning_id, fill_questions) => {
-    let body = {assessment, cleaning_id, fill_questions};
-    console.log(body)
+    let body = {cleaning_id, fill_questions};
+    if (assessment) body.assessment = assessment;
     let data = await request.post(`/fill-questions/check`, body);
-    console.log(data)
+    return data;
+  },
+
+  sendCoords: async (cleaning_id, {coords}) => {
+    let body = {
+      location: {latitude: coords.latitude, longitude: coords.longitude},
+    };
+    let data = await request.patch(`/cleaning/${cleaning_id}`, body);
     return data;
   },
 };
