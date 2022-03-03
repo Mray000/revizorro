@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>1064184962939-dkfh331mhdmha28ns3vmtrnutfeg8o5v.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1064184962939-dkfh331mhdmha28ns3vmtrnutfeg8o5v</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>1064184962939-fq1n2pop1tlv8vgb3vq29a5rsa8ibaaa.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDfTXPZC-fU61s6bPE8CN3Ch86Ru-vuv4k</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1064184962939</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.revizorro</string>
+	<key>PROJECT_ID</key>
+	<string>revizorro-b118e</string>
+	<key>STORAGE_BUCKET</key>
+	<string>revizorro-b118e.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1064184962939:ios:1fae00af59b5bbc98727de</string>
+</dict>
+</plist>
