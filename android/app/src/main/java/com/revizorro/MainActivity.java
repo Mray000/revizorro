@@ -1,7 +1,5 @@
-package com.revizorro;
-
+package com.revizorro; 
 import com.facebook.react.ReactActivity;
-
 public class MainActivity extends ReactActivity {
 
   /**

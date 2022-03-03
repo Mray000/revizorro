@@ -23,19 +23,22 @@ export const Login = observer(({navigation, route}) => {
   //ainurhabibullin0@gmail.test
   //ainurhabibullin0@gmail.7657
   const [email, SetEmail] = useState('ianire@gmail.cted');
-  const [password, setPassword] = useState('1');
+  const [password, setPassword] = useState('');
   const [incorrect_data, setIncorrectData] = useState(false);
   const [isLoad, setIsLoad] = useState(false);
   const [is_keyboard_show, SetIsKeyboardShow] = useState(false);
 
-  let is_button_disabled = !(email && password) || incorrect_data || isLoad;
+  let is_button_disabled = !(email && password) || isLoad;
 
   const henderLogin = async () => {
     setIsLoad(true);
     let is_ok = await authentication.login(email, password);
-    if (is_ok)
+    console.log(is_ok);
+    if (is_ok) {
+      SetEmail('');
+      setPassword('');
       navigation.navigate(app.role == 'role_maid' ? 'Housemaid' : 'Cleanings');
-    else setIncorrectData(true);
+    } else setIncorrectData(true);
     setIsLoad(false);
   };
 
@@ -92,6 +95,7 @@ export const Login = observer(({navigation, route}) => {
           absolute={true}
           setError={setIncorrectData}
           is_error={incorrect_data}
+          autoCorrect={false}
         />
         <Input
           value={password}

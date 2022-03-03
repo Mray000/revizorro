@@ -21,12 +21,17 @@ export const CleaningsList = observer(({navigation}) => {
   const [is_future_cleanings_full, SetIsFutureCleaningsFull] = useState(false);
   const [is_complited_cleanings_full, SetIsComplitedCleaningsFull] =
     useState(false);
-
+  let interval;
   useEffect(() => {
     navigation.addListener('focus', () => {
       SetCleanings(null);
       api.getCleanings().then(SetCleanings);
+      interval = setInterval(
+        () => api.getCleanings().then(SetCleanings),
+        1000 * 60,
+      );
     });
+    navigation.addListener('blur', () => clearInterval(interval));
   }, []);
 
   useEffect(() => {
@@ -34,6 +39,7 @@ export const CleaningsList = observer(({navigation}) => {
   }, [cleanings]);
 
   if (!cleanings) return <Loader />;
+  // console.log(cleanings.forEach(el => console.log(el.id)));
   let need_check_cleanings = cleanings.filter(el => el.status == 'on_check');
   let future_cleanings = cleanings.filter(
     el => el.status == 'not_accepted' || el.status == 'report_required',
@@ -174,10 +180,7 @@ export const CleaningsList = observer(({navigation}) => {
               </View>
             </View>
           ) : null}
-          {future_cleanings.length &&
-          (app.role == 'role_manager'
-            ? app.accesses.includes('cleanings')
-            : true) ? (
+          {future_cleanings.length ? (
             <View style={{width: '100%', marginTop: 10}}>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Text
@@ -185,7 +188,7 @@ export const CleaningsList = observer(({navigation}) => {
                     textAlign: 'left',
                     color: '#A9A6A6',
                     fontSize: moderateScale(15),
-                    fontFamily: 'Inter-Regualar',
+                    fontFamily: 'Inter-Regular',
                   }}>
                   предстоящие уборки
                 </Text>
@@ -212,8 +215,10 @@ export const CleaningsList = observer(({navigation}) => {
                     cleaning={cleaning}
                     key={cleaning.id}
                     disabled={
-                      cleaning.amount_checks ||
-                      cleaning.status == 'report_required'
+                      app.accesses.includes('cleanings')
+                        ? cleaning.amount_checks ||
+                          cleaning.status == 'report_required'
+                        : true
                     }
                   />
                 ))}
@@ -227,7 +232,7 @@ export const CleaningsList = observer(({navigation}) => {
                     textAlign: 'left',
                     color: '#A9A6A6',
                     fontSize: moderateScale(15),
-                    fontFamily: 'Inter-Regualar',
+                    fontFamily: 'Inter-Regular',
                   }}>
                   завершенные уборки
                 </Text>
@@ -349,8 +354,8 @@ export const CleaningsList = observer(({navigation}) => {
             width: scale(40),
             aspectRatio: 1,
             backgroundColor: colors.orange,
-            top: dimensions.height - verticalScale(60) - scale(40) - 50,
             right: 10,
+            bottom: verticalScale(50),
             borderRadius: 15,
             alignItems: 'center',
             justifyContent: 'center',

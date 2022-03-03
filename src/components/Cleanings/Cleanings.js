@@ -12,11 +12,8 @@ import {CleaningHousemaids} from './CleaningHousemaids';
 import {CleaningsList} from './CleaningsList';
 import {DayCleaningsList} from './DayCleaningsList';
 import {EditCleaning} from './EditCleaning';
-import {HousemaidClenaings} from '../Housemaid/HousemaidCleanings';
-import {HousemaidSettings} from 'components/Housemaid/HousemaidSettings';
 import { ReportCleaning } from './ReportCleaning';
 import { WorkerProfile } from 'components/Workers/WorkerProfile';
-import { EditWorker } from 'components/Workers/EditWorker';
 
 const Stack = createStackNavigator();
 export const Cleanings = () => {

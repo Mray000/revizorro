@@ -148,13 +148,13 @@ export const EditFlat = ({navigation, route}) => {
             paddingHorizontal: 1,
             backgroundColor: 'white',
             flexDirection: 'row',
-            shadowColor: '#434343',
+            shadowColor: '#C8C7C7',
             shadowOffset: {
               width: 0,
               height: 10,
             },
-            shadowOpacity: 0.51,
-            shadowRadius: 13.16,
+            shadowOpacity: 0.50,
+            shadowRadius: 10,
             elevation: 20,
             paddingHorizontal: 10,
             paddingVertical: 5,
@@ -223,7 +223,7 @@ export const EditFlat = ({navigation, route}) => {
                     borderRadius: 20,
                   }}>
                   <Image
-                    source={{uri: photo.uri || ImageURL + photo.image}}
+                    source={{uri: photo.uri ||  photo.image}}
                     style={{
                       aspectRatio: 1,
                       borderRadius: 10,
@@ -231,7 +231,6 @@ export const EditFlat = ({navigation, route}) => {
                     }}
                   />
                   <View style={{width: '70%'}} />
-
                   <TouchableOpacity
                     onPress={() => handleDeleteImage(photo)}
                     style={{width: '10%', alignItems: 'flex-end'}}>

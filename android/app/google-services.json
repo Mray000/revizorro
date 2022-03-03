@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1064184962939",
+    "project_id": "revizorro-b118e",
+    "storage_bucket": "revizorro-b118e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1064184962939:android:88eb83af64497c518727de",
+        "android_client_info": {
+          "package_name": "com.revizorro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1064184962939-fq1n2pop1tlv8vgb3vq29a5rsa8ibaaa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.revizorro",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "1064184962939-roi5pcljinqr20lmhahtj8gov441roh5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAly9pvh78VUVhvULZiS5VBhXJqnSFmNPE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1064184962939-roi5pcljinqr20lmhahtj8gov441roh5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

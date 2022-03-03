@@ -26,7 +26,8 @@ class Authentication {
   logout() {
     this.SetAccessToken('');
     this.SetRefreshToken('');
-    
+    app.setAccesses([])
+    app.setRole(null)
     AsyncStorage.removeItem('accessToken');
     AsyncStorage.removeItem('refreshToken');
   }
@@ -36,13 +37,13 @@ class Authentication {
       last_name: surname,
       company_name: company,
       email,
-      password, 
+      password,
     };
     let data = await api.registration(body);
-    if (data.Error)
+    if (data?.Error)
       return data.Error.includes('email') ? 'email_exist' : 'phone_exist';
-    if (data.email) return 'email_incorrect';
-    await api.login(email, password);
+    if (data?.email) return 'email_incorrect';
+    await this.login(email, password);
     await api.setTarif(1);
     return 'is_ok';
   };

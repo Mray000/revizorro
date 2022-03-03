@@ -9,6 +9,7 @@ import {
 import {Shadow} from 'react-native-shadow-2';
 import {colors} from 'utils/colors';
 import Eye from 'assets/eye.svg';
+import {moderateScale} from './Normalize';
 
 export const Input = ({
   value,
@@ -18,6 +19,7 @@ export const Input = ({
   setError,
   onChangeText,
   is_password,
+  onBlur,
   ...props
 }) => {
   const [is_focused, SetIsFocused] = useState(false);
@@ -70,7 +72,10 @@ export const Input = ({
             fontSize: 17,
           }}
           value={value}
-          onBlur={() => SetIsFocused(false)}
+          onBlur={() => {
+            onBlur();
+            SetIsFocused(false);
+          }}
           onFocus={() => SetIsFocused(true)}
           onChangeText={text => {
             onChangeText(text);
@@ -80,7 +85,7 @@ export const Input = ({
         />
       </Shadow>
       {title && value ? (
-        <Text
+        <View
           style={{
             position: 'absolute',
             padding: 3,
@@ -89,11 +94,17 @@ export const Input = ({
             paddingRight: 8,
             backgroundColor: 'white',
             left: '5%',
-            borderRadius: 8,
-            color: '#C5BEBE',
+            borderRadius: 10,
           }}>
-          {title}
-        </Text>
+          <Text
+            style={{
+              color: '#C5BEBE',
+              fontFamily: 'Inter-Regular',
+              fontSize: moderateScale(14),
+            }}>
+            {title}
+          </Text>
+        </View>
       ) : null}
 
       {is_password ? (

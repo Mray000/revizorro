@@ -52,8 +52,12 @@ export const AddCleaning = observer(({navigation}) => {
     {title: 'завтра', date: moment(Date.now()).add(1, 'day')},
     {title: 'послезавтра', date: moment(Date.now()).add(2, 'day')},
   ];
-
-  let is_button_disabled = !(flat && check_lists.length && housemaid);
+  let is_button_disabled =
+    !(flat && check_lists.length && housemaid) ||
+    !moment(date)
+      .set('h', moment(time).get('h'))
+      .set('m', moment(time).get('m'))
+      .isAfter(moment());
 
   const SaveCleaning = async () => {
     let res = await cleaning.addCleaning();
@@ -533,7 +537,7 @@ export const AddCleaning = observer(({navigation}) => {
                   fontSize: moderateScale(14),
                   marginLeft: 5,
                 }}>
-                в течение
+                в течении
               </Text>
               <TouchableOpacity
                 onPress={() => SetIsTermpickerModalVisible(true)}

@@ -65,14 +65,13 @@ const Flat = ({flat, navigation}) => {
     <TouchableOpacity
       onPress={() => navigation.navigate('FlatProfile', {flat})}
       style={{
-        shadowColor: 'black',
+        shadowColor: '#C8C7C7',
         shadowOffset: {
           width: 0,
           height: 10,
         },
         shadowOpacity: 0.51,
-        shadowRadius: 13.16,
-        elevation: 30,
+        shadowRadius: 10,
         paddingHorizontal: 10,
         paddingVertical: 5,
       }}>
@@ -106,7 +105,7 @@ const Flat = ({flat, navigation}) => {
           moment(time_created).format('YYYY-MM-DD hh:mm') ? (
             <Text
               style={{
-                fontFamily: 'Inter-Regaular',
+                fontFamily: 'Inter-Regular',
                 fontSize: moderateScale(14),
                 color: 'black',
                 marginTop: 3

@@ -8,7 +8,7 @@ class Cleaning {
   check_lists = [];
   housemaid = null;
   date = Date.now();
-  time = Date.now();
+  time = moment('12:00', 'HH:mm').toDate();
   repeat = '7-ой день';
   term = '1-го месяца';
   is_repeat_active = false;
@@ -104,7 +104,7 @@ class Cleaning {
     this.check_lists = [];
     this.housemaid = null;
     this.date = Date.now();
-    this.time = Date.now();
+    this.time = moment('12:00', 'HH:mm').toDate();
     this.repeat = '7-ой день';
     this.term = '1-го месяца';
     this.is_repeat_active = false;

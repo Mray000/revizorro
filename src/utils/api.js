@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { app } from 'store/app';
 import {authentication} from 'store/authentication';
 // import {error} from '../store/error';
 export const URL = 'http://92.53.97.165/api';
@@ -130,6 +131,7 @@ const request = {
     });
     let data = await middleware(responce);
     if (data == 'try_again') {
+      console.log(authentication.accessToken);
       return await request.get(url);
     } else return data;
   },
@@ -152,7 +154,8 @@ const request = {
 
 export const api = {
   registration: async body => {
-    let data = await request.post('/users/auth/register', body);
+    let data = await request.post('/users/auth/register/', body);
+    console.log(data);
     return data;
   },
   login: async (email, password) => {
@@ -163,7 +166,7 @@ export const api = {
       },
       body: JSON.stringify({email, password}),
     }).then(res => res.json());
-
+    console.log(data);
     if (data?.access) {
       await SetAuthData(data.access, data.refresh);
       return true;
@@ -172,23 +175,26 @@ export const api = {
 
   refresh_token: async () => {
     let refresh = authentication.refreshToken;
+    try {
+      let data = await fetch(URL + '/users/auth/token/refresh/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({refresh}),
+      }).then(res => res.json());
 
-    let data = await fetch(URL + '/users/auth/token/refresh/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({refresh}),
-    }).then(res => res.json());
-
-    if (data?.access) await SetAuthData(data.access, data.refresh);
-    else {
-      await AsyncStorage.removeItem('accessToken');
-      await AsyncStorage.removeItem('refreshToken');
-      authentication.SetAccessToken('');
-      authentication.SetRefreshToken('');
+      if (data?.access) await SetAuthData(data.access, data.refresh);
+      else {
+        await AsyncStorage.removeItem('accessToken');
+        await AsyncStorage.removeItem('refreshToken');
+        authentication.SetAccessToken('');
+        authentication.SetRefreshToken('');
+      }
+      return data?.access;
+    } catch {
+      return false;
     }
-    return data?.access;
   },
 
   getProfile: async () => {
@@ -218,9 +224,8 @@ export const api = {
       manager_permission_users,
       manager_permission_cleaning,
     };
-    console.log(body)
-    let data = await request.post(`/users/company/staff`, body);
-    console.log(data)
+    let data = await request.post(`/users/company/staff/`, body);
+    console.log(data);
     return typeof data != 'string';
   },
 
@@ -247,23 +252,25 @@ export const api = {
       manager_permission_users,
       manager_permission_cleaning,
     };
-    let data = await request.put(`/users/staff/${id}`, body);
+    console.log(body);
+    let data = await request.put(`/users/staff/${id}/`, body);
+    console.log(data);
     return typeof data != 'string';
   },
 
   getWorker: async id => {
-    let data = await request.get(`/users/staff/${id}`);
+    let data = await request.get(`/users/staff/${id}/`);
     return data;
   },
 
   deleteWorker: async id => {
-    let data = await request.delete(`/users/staff/${id}`);
+    let data = await request.delete(`/users/staff/${id}/`);
     return data;
   },
 
   getCompanyWorkers: async () => {
-    let data = await request.get(`/users/company/staff`);
-    
+    let data = await request.get(`/users/company/staff/`);
+
     return data;
   },
 
@@ -371,7 +378,7 @@ export const api = {
   },
 
   getMe: async () => {
-    let me = await request.get('/users/me');
+    let me = await request.get('/users/me/');
     return me;
   },
 
@@ -458,4 +465,42 @@ export const api = {
     let data = await request.patch(`/cleaning/${cleaning_id}`, body);
     return data;
   },
+
+  changePassword: async (old_password, new_password) => {
+    let body = {old_password, new_password};
+    let data = await request.put('/users/auth/change-password/', body);
+    console.log(data);
+    if (data?.non_field_errors) return false;
+    return true;
+  },
+
+  registerNotifys: async (token, device) => {
+    let data = await request.post('/fcm-tokens', {token, device});
+    console.log(data);
+    return data;
+  },
+
+  refreshNotifys: async (token, device) => {
+    let data = await request.put('/fcm-tokens/update', {token, device});
+    return data;
+  },
+
+  changeCompany: async (title, active) => {
+    let data = await request.put('/company', {title, active});
+    console.log(data, 'CO');
+    return data;
+  },
+  getCompany: async () => {
+    let data = await request.get('/company');
+    return data;
+  },
+
+  getRate: async () => {
+    let tarif = await request.get("/rates/company")
+    return tarif
+  },
+  setNotification: async (notification) => {
+    let data = await request.patch(`/users/staff/${app.id}/`, {notification});
+    return data;
+  }
 };

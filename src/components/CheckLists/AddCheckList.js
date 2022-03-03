@@ -253,20 +253,25 @@ export const AddCheckList = ({navigation, route}) => {
               </View>
             </Shadow>
             {title ? (
-              <Text
+              <View
                 style={{
                   position: 'absolute',
-                  padding: 3,
+                  paddingVertical: 3,
                   top: '-10%',
-                  paddingLeft: 8,
-                  paddingRight: 8,
+                  paddingHorizontal: 8,
                   backgroundColor: 'white',
                   left: '5%',
                   borderRadius: 8,
-                  color: '#C5BEBE',
                 }}>
-                Подщодящий тип недвижимости
-              </Text>
+                <Text
+                  style={{
+                    color: '#C5BEBE',
+                    fontFamily: 'Inter-Regular',
+                    fontSize: moderateScale(14),
+                  }}>
+                  подходящий тип недвижимости
+                </Text>
+              </View>
             ) : null}
           </TouchableOpacity>
           <View style={{marginTop: 10}}>
@@ -420,20 +425,25 @@ export const AddCheckList = ({navigation, route}) => {
                 </Text>
               </View>
             </Shadow>
-            <Text
-              style={{
-                position: 'absolute',
-                padding: 3,
-                top: '-10%',
-                paddingLeft: 8,
-                paddingRight: 8,
-                backgroundColor: 'white',
-                left: '5%',
-                borderRadius: 8,
-                color: '#C5BEBE',
-              }}>
-              стоимость
-            </Text>
+            <View
+                style={{
+                  position: 'absolute',
+                  paddingVertical: 3,
+                  top: '-10%',
+                  paddingHorizontal: 8,
+                  backgroundColor: 'white',
+                  left: '5%',
+                  borderRadius: 8,
+                }}>
+                <Text
+                  style={{
+                    color: '#C5BEBE',
+                    fontFamily: 'Inter-Regular',
+                    fontSize: moderateScale(14),
+                  }}>
+                  стоимость
+                </Text>
+              </View>
           </View>
           {is_info_visible ? (
             <Text
@@ -713,7 +723,7 @@ export const AddCheckList = ({navigation, route}) => {
                         style={{
                           color: colors.orange,
                           fontSize: moderateScale(14),
-                          fontFamily: 'Inter-Regualar',
+                          fontFamily: 'Inter-Regular',
                           marginRight: 5,
                         }}>
                         {el}

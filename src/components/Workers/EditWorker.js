@@ -37,11 +37,13 @@ export const EditWorker = ({navigation, route}) => {
     gender == 'man_gender' ? 'Мужской' : 'Женский',
   );
   const [control_check_lists, SetControlCheckLists] = useState(
-    manager_permission_check_lists,
+    manager_permission_check_lists || false,
   );
-  const [add_workers, SetAddWorkers] = useState(manager_permission_users);
+  const [add_workers, SetAddWorkers] = useState(
+    manager_permission_users || false,
+  );
   const [control_cleaning, SetControlCleaning] = useState(
-    manager_permission_cleaning,
+    manager_permission_cleaning || false,
   );
   const [is_sex_open, SetIsSexOpen] = useState(false);
   const [email_error, SetEmailError] = useState('');
@@ -98,7 +100,7 @@ export const EditWorker = ({navigation, route}) => {
           }
         />
         <Image
-          source={{uri:  avatar}}
+          source={{uri: avatar}}
           style={{
             width: scale(70),
             alignSelf: 'center',

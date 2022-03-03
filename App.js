@@ -1,8 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {SafeAreaView, Text, View} from 'react-native';
+import {Dimensions, Platform, SafeAreaView, Text, View} from 'react-native';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {Login} from './src/components/Authentication/Login.js';
+import {ChangePassword} from './src/components/Authentication/ChangePassword.js';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Registration} from './src/components/Authentication/Registration.js';
 import {AddWorker} from './src/components/Workers/AddWorker.js';
@@ -22,35 +23,49 @@ import SettingsActive from 'assets/settings_active.svg';
 import {Success} from './src/components/Success/Success.js';
 import {api, getAsyncData} from 'utils/api.js';
 import {Workers} from 'components/Workers/Workers.js';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {WorkerSettings} from 'components/Workers/WorkerSettings.js';
 import {Button} from 'utils/Button.js';
 import {Flats} from 'components/Flats/Flats.js';
 import {CheckLists} from 'components/CheckLists/CheckLists.js';
 import {Onboarding} from 'components/Onboarding/Onboarding.js';
 import {Cleanings} from 'components/Cleanings/Cleanings.js';
 import {Housemaid} from 'components/Housemaid/Housemaid.js';
+import {Settings} from 'components/Authentication/Settings.js';
+import {fcmService} from './src/utils/FCMService.js';
+import {localNotificationService} from './src/utils/LocalNotificationService';
 import {observer} from 'mobx-react-lite';
 import {app} from 'store/app.js';
+import {Loader} from 'utils/Loader.js';
 const Tab = createBottomTabNavigator();
 const App = observer(() => {
-  console.log('RERNEDNENDN');
   let role = app.role;
   let accesses = app.accesses;
+  console.log(role);
   const [is_load, SetIsLoad] = useState(false);
   useEffect(() => {
+ 
+
     (async () => {
       let data = await getAsyncData();
+      console.log(data, "dsad")
       if (data) {
         authentication.SetAccessToken(data.accessToken);
         authentication.SetRefreshToken(data.refreshToken);
         let is_token_normal = await api.refresh_token();
         if (is_token_normal) await app.setMe();
+       
       }
       SetIsLoad(true);
     })();
+
+    return () => {
+      console.log('APP unreigster');
+      fcmService.unRegitster();
+      localNotificationService.unregister();
+    };
   }, []);
 
-  if (!is_load) return null;
+  if (!is_load) return <Loader />;
   return (
     <SafeAreaView style={{flex: 1}}>
       <NavigationContainer>
@@ -118,14 +133,33 @@ const App = observer(() => {
             />
           ) : null}
 
+          {role == 'role_admin' ? (
+            <Tab.Screen
+              name="Settings"
+              options={{
+                label: 'Настройки',
+                icon: SettingsIcon,
+                icon_active: SettingsActive,
+              }}
+              component={Settings}
+            />
+          ) : null}
+          {role != 'role_admin' ? (
+            <Tab.Screen
+              name="WorkerSettings"
+              options={{
+                label: 'Настройки',
+                icon: SettingsIcon,
+                icon_active: SettingsActive,
+                hidden: app.role == 'role_maid',
+              }}
+              component={WorkerSettings}
+            />
+          ) : null}
           <Tab.Screen
-            name="Settings"
-            options={{
-              label: 'Настройки',
-              icon: SettingsIcon,
-              icon_active: SettingsActive,
-            }}
-            component={Settings}
+            name="ChangePassword"
+            options={{hidden: true}}
+            component={ChangePassword}
           />
           <Tab.Screen
             name="Onboarding"
@@ -133,6 +167,7 @@ const App = observer(() => {
             options={{hidden: true}}
           />
           <Tab.Screen
+            initialParams={{role: 'admin'}}
             name="Login"
             component={Login}
             options={{hidden: true, headerLeft: () => null}}
@@ -152,17 +187,5 @@ const App = observer(() => {
     </SafeAreaView>
   );
 });
-
-const Settings = ({navigation}) => {
-  const logout = () => {
-    authentication.logout();
-    navigation.navigate('Onboarding');
-  };
-  return (
-    <View>
-      <Button text={'Выйти'} onPress={logout} />
-    </View>
-  );
-};
 
 export default App;

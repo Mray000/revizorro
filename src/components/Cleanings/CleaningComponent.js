@@ -28,6 +28,7 @@ export const CleaningComponent = React.memo(
       amount_checks,
       fill_questions,
     } = cleaning;
+    if (!maid) console.log(cleaning.id);
     if (housemaid) maid = housemaid;
     const getDate = () => {
       let today = moment();
@@ -43,7 +44,7 @@ export const CleaningComponent = React.memo(
       if (is_housemaid && is_need_check)
         return navigation.navigate('CompleteCleaning', {cleaning});
 
-      if (is_need_check || is_completed)
+      if (is_completed || is_need_check)
         return navigation.navigate('ReportCleaning', {cleaning});
 
       cleaning_store.setEditId(id);
@@ -251,18 +252,22 @@ export const CleaningComponent = React.memo(
             }}>
             {!is_housemaid ? (
               amount_checks > 0 && !is_completed ? (
-                <Text
+                <View
                   style={{
                     paddingHorizontal: 10,
                     paddingVertical: 5,
                     backgroundColor: '#FDF2F2',
-                    color: '#EA5A51',
-                    fontSize: moderateScale(14),
-                    fontFamily: 'Inter-Regular',
                     borderRadius: 10,
                   }}>
-                  {amount_checks + 1}-я проверка
-                </Text>
+                  <Text
+                    style={{
+                      color: '#EA5A51',
+                      fontSize: moderateScale(14),
+                      fontFamily: 'Inter-Regular',
+                    }}>
+                    {amount_checks + 1}-я проверка
+                  </Text>
+                </View>
               ) : (
                 <View />
               )

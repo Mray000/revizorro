@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
+import { app } from 'store/app';
 import {cleaning} from 'store/cleaning';
 import {AddButton} from 'utils/AddButton';
 import {api} from 'utils/api';
@@ -29,15 +30,17 @@ export const CleaningFlats = ({navigation, route}) => {
   return (
     <ScrollView style={{paddingVertical: 10}}>
       <Header title={'Квартиры'} onBack={navigation.goBack} />
-      <View style={{paddingHorizontal: 10}}>
-        <AddButton
-          text={'Добавить новую квартиру'}
-          onPress={() => navigation.navigate('AddFlat')}
-        />
-      </View>
+      {app.role == 'role_admin' ? (
+        <View style={{paddingHorizontal: 10}}>
+          <AddButton
+            text={'Добавить новую квартиру'}
+            onPress={() => navigation.navigate('AddFlat')}
+          />
+        </View>
+      ) : null}
       <View style={{marginBottom: 20}}>
         {flats.map(flat => (
-          <Flat flat={flat} navigation={navigation} key={flat.id}/>
+          <Flat flat={flat} navigation={navigation} key={flat.id} />
         ))}
       </View>
     </ScrollView>
@@ -66,7 +69,7 @@ const Flat = ({flat, navigation}) => (
     }}
     onPress={() => {
       cleaning.setFlat(flat);
-      cleaning.deleteCheckLists()
+      cleaning.deleteCheckLists();
       navigation.goBack();
     }}>
     <Text

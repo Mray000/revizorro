@@ -83,7 +83,7 @@ export const OnboardingScreens = ({
       style={{
         padding: 10,
         alignItems: 'center',
-        height: dimensions.height,
+        flex: 1,
         backgroundColor: 'white',
       }}>
       <Shadow
@@ -143,7 +143,7 @@ export const OnboardingScreens = ({
       <View
         style={{
           position: 'absolute',
-          bottom: 30,
+          bottom: 20,
           width: '100%',
           alignItems: 'center',
         }}>

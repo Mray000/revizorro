@@ -23,7 +23,7 @@ export const Onboarding = ({navigation, route}) => {
   }, []);
 
   return (
-    <View>
+    <View style={{flex: 1}}>
       {is_select_role_screen ? (
         <SelectRole
           role={role}

@@ -99,7 +99,7 @@ export const CompleteCleaning = ({navigation, route}) => {
     }
     navigation.navigate('Success', {
       to: 'HousemaidCleanings',
-      title: 'Ваша отчет принят',
+      title: 'Ваш отчет принят',
       description: 'Спасибо за уборку!',
     });
     SetIsLoad(false);
@@ -346,7 +346,7 @@ export const CompleteCleaning = ({navigation, route}) => {
             }}>
             {question.question_text}
           </Text>
-          {question_answer.length ? (
+          {question_answer?.length ? (
             <View style={{maxHeight: '85%', paddingBottom: 10}}>
               <ScrollView style={{flexGrow: 0}}>
                 {question_answer.map(photo => (

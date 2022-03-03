@@ -37,13 +37,20 @@ export const Registration = ({navigation, route}) => {
         name,
         surname,
         company,
-        // phone,
         email,
         password,
       );
       switch (data) {
-        case 'is_ok':
+        case 'is_ok': {
+          SetName('');
+          SetSurname('');
+          SetCompany('');
+          SetEmail('');
+          SetPassword('');
+          SetRepeatPassword('');
+          SetIsFirstStep(true)
           return navigation.navigate('Workers');
+        }
         case 'phone_exist': {
           SetIsPhoneError(true);
           SetError('Номер телефона уже зарегестрирован');

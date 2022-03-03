@@ -48,7 +48,6 @@ export const EditCleaning = observer(({navigation}) => {
   let date = cleaning.date;
   let time = cleaning.time;
 
-
   const repeat_labels = getRepeatLabels();
   const term_labels = getTermLabels();
 
@@ -58,7 +57,12 @@ export const EditCleaning = observer(({navigation}) => {
     {title: 'послезавтра', date: moment(Date.now()).add(2, 'day')},
   ];
 
-  let is_button_disabled = !(flat && check_lists.length && housemaid);
+  let is_button_disabled =
+    !(flat && check_lists.length && housemaid) ||
+    !moment(date)
+      .set('h', moment(time).get('h'))
+      .set('m', moment(time).get('m'))
+      .isAfter(moment());
 
   const handleEditCleaning = async () => {
     let res = await cleaning.editCleaning();

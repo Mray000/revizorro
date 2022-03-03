@@ -1,18 +1,32 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Dimensions,
+  StatusBar,
+} from 'react-native';
 import {colors} from 'utils/colors';
 import {dimensions} from 'utils/dimisions';
 import {moderateScale, scale, verticalScale} from 'utils/Normalize';
 import Check from 'assets/check.svg';
 import {Button} from 'utils/Button';
-export const SelectRole = ({SetRole, role, SetIsSelectRoleScreen, navigation}) => {
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+export const SelectRole = ({
+  SetRole,
+  role,
+  SetIsSelectRoleScreen,
+  navigation,
+}) => {
+  const insets = useSafeAreaInsets();
   return (
     <View
       style={{
         padding: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        height: dimensions.height,
+        // height: dimensions.height,
+        flex: 1,
         backgroundColor: 'white',
       }}>
       <View
@@ -57,7 +71,17 @@ export const SelectRole = ({SetRole, role, SetIsSelectRoleScreen, navigation}) =
           />
         </View>
       </View>
-      <View style={{width: '100%', position: 'absolute', bottom: 30}}>
+      {console.log(30 + StatusBar.currentHeight)}
+      <View
+        style={{
+          width: '100%',
+          position: 'absolute',
+          bottom: insets.bottom,
+          bottom:
+            // Dimensions.get('screen').height -
+            // Dimensions.get('window').height +
+            20,
+        }}>
         <Button
           text={'Пропустить'}
           onPress={() => navigation.navigate('Login', {role})}

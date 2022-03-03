@@ -283,7 +283,9 @@ export const ReportCleaning = ({navigation, route}) => {
             </View>
             {is_complited ? (
               <TouchableOpacity
-                disabled={inspector.role == 'role_admin'}
+                disabled={
+                  inspector.role == 'role_admin' || !inspector.is_active
+                }
                 onPress={() => {
                   if (
                     app.role == 'role_admin' ||
@@ -370,6 +372,7 @@ export const ReportCleaning = ({navigation, route}) => {
             ) : null}
 
             <TouchableOpacity
+              disabled={!maid.is_active}
               onPress={() => {
                 if (
                   app.role == 'role_admin' ||
@@ -392,7 +395,7 @@ export const ReportCleaning = ({navigation, route}) => {
                   color: '#AAA8A7',
                   marginLeft: 10,
                 }}>
-                горинчная
+                горничная
               </Text>
               <View
                 style={{

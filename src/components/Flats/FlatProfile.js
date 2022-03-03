@@ -14,7 +14,7 @@ import {api} from 'utils/api';
 import {Loader} from 'utils/Loader';
 export const FlatProfile = ({navigation, route}) => {
   let flat = route.params.flat;
-let {id, title, address, type, images} = flat;
+  let {id, title, address, type, images} = flat;
 
   const [cleanings, SetCleanings] = useState(null);
   const [is_need_check_cleanings_full, SetIsNeedCheckCleaningsFull] =
@@ -65,7 +65,7 @@ let {id, title, address, type, images} = flat;
             alignItems: 'center',
             marginTop: 10,
           }}>
-          <Map fill="#C5BEBE"/>
+          <Map fill="#C5BEBE" />
           <Text
             style={{
               fontSize: moderateScale(16),
@@ -148,7 +148,7 @@ let {id, title, address, type, images} = flat;
                       textAlign: 'left',
                       color: '#A9A6A6',
                       fontSize: moderateScale(15),
-                      fontFamily: 'Inter-Regualar',
+                      fontFamily: 'Inter-Regular',
                     }}>
                     Нужна проверка!
                   </Text>
@@ -179,7 +179,6 @@ let {id, title, address, type, images} = flat;
                       navigation={navigation}
                       cleaning={cleaning}
                       is_need_check={true}
-                      
                     />
                   ))}
               </View>
@@ -193,7 +192,7 @@ let {id, title, address, type, images} = flat;
                     textAlign: 'left',
                     color: '#A9A6A6',
                     fontSize: moderateScale(15),
-                    fontFamily: 'Inter-Regualar',
+                    fontFamily: 'Inter-Regular',
                   }}>
                   предстоящие уборки
                 </Text>
@@ -232,7 +231,7 @@ let {id, title, address, type, images} = flat;
                     textAlign: 'left',
                     color: '#A9A6A6',
                     fontSize: moderateScale(15),
-                    fontFamily: 'Inter-Regualar',
+                    fontFamily: 'Inter-Regular',
                   }}>
                   завершенные уборки
                 </Text>

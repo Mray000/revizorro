@@ -1,5 +1,4 @@
 package com.revizorro;
-
 import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
@@ -10,6 +9,8 @@ import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
+import com.google.firebase.FirebaseApp;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -45,6 +46,7 @@ public class MainApplication extends Application implements ReactApplication {
   @Override
   public void onCreate() {
     super.onCreate();
+    FirebaseApp.initializeApp(this);
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
   }

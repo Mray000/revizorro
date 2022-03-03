@@ -9,7 +9,7 @@ import {CleaningsCalendar} from 'utils/CleaningsCalendar';
 import {CleaningComponent} from '../Cleanings/CleaningComponent';
 import ArrowDown from 'assets/arrow_down.svg';
 import ArrowUp from 'assets/arrow_up.svg';
-import HousemaidSettings from 'assets/housemaid_settings.svg';
+import WorkerSettings from 'assets/worker_settings.svg';
 import {dimensions} from 'utils/dimisions';
 export const HousemaidClenaings = observer(({navigation}) => {
   const [is_list_active, SetIsListActive] = useState(true);
@@ -20,11 +20,17 @@ export const HousemaidClenaings = observer(({navigation}) => {
   const [is_complited_cleanings_full, SetIsComplitedCleaningsFull] =
     useState(false);
 
+  let interval;
   useEffect(() => {
     navigation.addListener('focus', () => {
       SetCleanings(null);
       api.getCleanings().then(SetCleanings);
+      interval = setInterval(
+        () => api.getCleanings().then(SetCleanings),
+        1000 * 60,
+      );
     });
+    navigation.addListener('blur', () => clearInterval(interval));
   }, []);
 
   useEffect(() => {
@@ -32,7 +38,7 @@ export const HousemaidClenaings = observer(({navigation}) => {
   }, [cleanings]);
 
   if (!cleanings) return <Loader />;
-  console.log(cleanings.forEach(el =>console.log(el.status, "SADASD")))
+  console.log(cleanings.forEach(el => console.log(el.status, 'SADASD')));
 
   let on_check_cleanings = cleanings.filter(el => el.status == 'on_check');
 
@@ -109,8 +115,8 @@ export const HousemaidClenaings = observer(({navigation}) => {
         </View>
         <TouchableOpacity
           style={{position: 'absolute', right: '1%'}}
-          onPress={() => navigation.navigate('HousemaidSettings')}>
-          <HousemaidSettings />
+          onPress={() => navigation.navigate('WorkerSettings')}>
+          <WorkerSettings />
         </TouchableOpacity>
       </View>
       {is_list_active ? (
@@ -189,40 +195,6 @@ export const HousemaidClenaings = observer(({navigation}) => {
               </View>
             </View>
           ) : null}
-          {on_check_cleanings.length ? (
-            <View style={{width: '100%', marginTop: 10}}>
-              <Text
-                style={{
-                  fontSize: moderateScale(18),
-                  color: 'black',
-                  fontFamily: 'Inter-SemiBold',
-                  marginLeft: 5,
-                }}>
-                Мои уборки
-              </Text>
-              <Text
-                style={{
-                  textAlign: 'left',
-                  color: '#A9A6A6',
-                  fontSize: moderateScale(15),
-                  fontFamily: 'Inter-Regualar',
-                  marginLeft: 5,
-                  marginTop: 10,
-                }}>
-                ожидайте около 5-ти минут
-              </Text>
-              {on_check_cleanings.map(cleaning => (
-                <CleaningComponent
-                  is_on_check={true}
-                  is_housemaid={true}
-                  navigation={navigation}
-                  cleaning={cleaning}
-                  key={cleaning.id}
-                  disabled={true}
-                />
-              ))}
-            </View>
-          ) : null}
           {need_check_cleanings.length ? (
             <View style={{width: '100%', marginTop: 10}}>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -286,7 +258,7 @@ export const HousemaidClenaings = observer(({navigation}) => {
                             fontSize: moderateScale(14),
                             color: '#E8443A',
                             marginLeft: 15,
-                            marginTop: 7
+                            marginTop: 7,
                           }}>
                           Ваш отчет не был принят. Пожалуйста, доработайте
                           некоторые пункты.
@@ -304,6 +276,40 @@ export const HousemaidClenaings = observer(({navigation}) => {
               </View>
             </View>
           ) : null}
+          {on_check_cleanings.length ? (
+            <View style={{width: '100%', marginTop: 10}}>
+              <Text
+                style={{
+                  fontSize: moderateScale(18),
+                  color: 'black',
+                  fontFamily: 'Inter-SemiBold',
+                  marginLeft: 5,
+                }}>
+                Мои уборки
+              </Text>
+              <Text
+                style={{
+                  textAlign: 'left',
+                  color: '#A9A6A6',
+                  fontSize: moderateScale(15),
+                  fontFamily: 'Inter-Regular',
+                  marginLeft: 5,
+                  marginTop: 10,
+                }}>
+                ожидайте около 5-ти минут
+              </Text>
+              {on_check_cleanings.map(cleaning => (
+                <CleaningComponent
+                  is_on_check={true}
+                  is_housemaid={true}
+                  navigation={navigation}
+                  cleaning={cleaning}
+                  key={cleaning.id}
+                  disabled={true}
+                />
+              ))}
+            </View>
+          ) : null}
           {future_cleanings.length ? (
             <View style={{width: '100%', marginTop: 10}}>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -312,7 +318,7 @@ export const HousemaidClenaings = observer(({navigation}) => {
                     textAlign: 'left',
                     color: '#A9A6A6',
                     fontSize: moderateScale(15),
-                    fontFamily: 'Inter-Regualar',
+                    fontFamily: 'Inter-Regular',
                   }}>
                   предстоящие уборки
                 </Text>
@@ -352,7 +358,7 @@ export const HousemaidClenaings = observer(({navigation}) => {
                     textAlign: 'left',
                     color: '#A9A6A6',
                     fontSize: moderateScale(15),
-                    fontFamily: 'Inter-Regualar',
+                    fontFamily: 'Inter-Regular',
                   }}>
                   завершенные уборки
                 </Text>
@@ -413,8 +419,11 @@ export const HousemaidClenaings = observer(({navigation}) => {
                   color: '#888584',
                   marginLeft: 10,
                 }}>
-                {need_check_cleanings.length}{' '}
-                {getDeclination('текущи', need_check_cleanings.length)}
+                {on_check_cleanings.length + need_check_cleanings.length}{' '}
+                {getDeclination(
+                  'текущи',
+                  on_check_cleanings.length + need_check_cleanings.length,
+                )}
               </Text>
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
