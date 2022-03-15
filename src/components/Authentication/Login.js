@@ -118,17 +118,27 @@ export const Login = observer(({navigation, route}) => {
             неверный email или пароль
           </Text>
         ) : null}
-        <Text
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('ChangePassword', {role: route.params.role})
+          }
           style={{
-            color: colors.orange,
-            fontWeight: '500',
-            marginVertical: 15,
-            textAlignVertical: 'center',
-            alignSelf: 'flex-start',
-            fontSize: moderateScale(15),
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
+            width: '100%',
           }}>
-          Забыли пароль?
-        </Text>
+          <Text
+            style={{
+              color: colors.orange,
+              fontWeight: '500',
+              marginVertical: 15,
+              textAlignVertical: 'center',
+
+              fontSize: moderateScale(15),
+            }}>
+            Забыли пароль?
+          </Text>
+        </TouchableOpacity>
         <Button
           disabled={is_button_disabled}
           text="Войти"

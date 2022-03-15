@@ -4,6 +4,7 @@ import {Dimensions, Platform, SafeAreaView, Text, View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {Login} from './src/components/Authentication/Login.js';
 import {ChangePassword} from './src/components/Authentication/ChangePassword.js';
+import {ChangePasswordModal} from './src/components/Authentication/ChangePasswordModal.js';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Registration} from './src/components/Authentication/Registration.js';
 import {AddWorker} from './src/components/Workers/AddWorker.js';
@@ -31,6 +32,7 @@ import {Onboarding} from 'components/Onboarding/Onboarding.js';
 import {Cleanings} from 'components/Cleanings/Cleanings.js';
 import {Housemaid} from 'components/Housemaid/Housemaid.js';
 import {Settings} from 'components/Authentication/Settings.js';
+import {RateChoice} from 'components/Authentication/RateChoice.js';
 import {fcmService} from './src/utils/FCMService.js';
 import {localNotificationService} from './src/utils/LocalNotificationService';
 import {observer} from 'mobx-react-lite';
@@ -43,17 +45,14 @@ const App = observer(() => {
   console.log(role);
   const [is_load, SetIsLoad] = useState(false);
   useEffect(() => {
- 
-
     (async () => {
       let data = await getAsyncData();
-      console.log(data, "dsad")
+      console.log(data, 'dsad');
       if (data) {
         authentication.SetAccessToken(data.accessToken);
         authentication.SetRefreshToken(data.refreshToken);
         let is_token_normal = await api.refresh_token();
         if (is_token_normal) await app.setMe();
-       
       }
       SetIsLoad(true);
     })();
@@ -75,13 +74,14 @@ const App = observer(() => {
             contentStyle: {backgroundColor: 'white'},
           }}
           tabBar={props => <BottomNavigator {...props} />}
-          initialRouteName={
-            role
-              ? role != 'role_maid'
-                ? 'Cleanings'
-                : 'Housemaid'
-              : 'Onboarding'
-          }>
+          // initialRouteName={
+          //   role
+          //     ? role != 'role_maid'
+          //       ? 'Cleanings'
+          //       : 'Housemaid'
+          //     : 'Onboarding'
+          // }
+          initialRouteName={'RateChoice'}>
           {app.role == 'role_maid' ? (
             <Tab.Screen
               name="Housemaid"
@@ -162,6 +162,11 @@ const App = observer(() => {
             component={ChangePassword}
           />
           <Tab.Screen
+            name="ChangePasswordModal"
+            options={{hidden: true}}
+            component={ChangePasswordModal}
+          />
+          <Tab.Screen
             name="Onboarding"
             component={Onboarding}
             options={{hidden: true}}
@@ -175,6 +180,11 @@ const App = observer(() => {
           <Tab.Screen
             name="Registration"
             component={Registration}
+            options={{hidden: true}}
+          />
+          <Tab.Screen
+            name="RateChoice"
+            component={RateChoice}
             options={{hidden: true}}
           />
           <Tab.Screen

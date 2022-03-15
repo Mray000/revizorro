@@ -73,7 +73,7 @@ export const Input = ({
           }}
           value={value}
           onBlur={() => {
-            onBlur();
+            if (onBlur) onBlur();
             SetIsFocused(false);
           }}
           onFocus={() => SetIsFocused(true)}
@@ -82,6 +82,7 @@ export const Input = ({
             if (setError) setError(false);
           }}
           {...props}
+          
         />
       </Shadow>
       {title && value ? (

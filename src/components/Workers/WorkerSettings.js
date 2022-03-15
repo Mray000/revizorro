@@ -28,7 +28,7 @@ export const WorkerSettings = observer(({navigation}) => {
           />
           <TouchableOpacity
             onPress={() =>
-              navigation.navigate('ChangePassword', {parent: 'WorkerSettings'})
+              navigation.navigate('ChangePasswordModal', {parent: 'WorkerSettings'})
             }>
             <Text
               style={{

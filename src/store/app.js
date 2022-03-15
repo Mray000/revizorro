@@ -40,6 +40,8 @@ class App {
     this.id = id;
   };
 
+  getId = () => this.id;
+
   setMe = async () => {
     const onRegister = async (token, is_refresh) => {
       if (!is_refresh) {

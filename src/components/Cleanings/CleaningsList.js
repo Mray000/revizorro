@@ -60,7 +60,7 @@ export const CleaningsList = observer(({navigation}) => {
   };
 
   return (
-    <View style={{alignItems: 'center', padding: 10}}>
+    <View style={{alignItems: 'center', padding: 10, flex: 1}}>
       <View
         style={{
           flexDirection: 'row',

@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { app } from 'store/app';
+import {app} from 'store/app';
 import {authentication} from 'store/authentication';
 // import {error} from '../store/error';
 export const URL = 'http://92.53.97.165/api';
@@ -496,11 +496,60 @@ export const api = {
   },
 
   getRate: async () => {
-    let tarif = await request.get("/rates/company")
-    return tarif
+    let tarif = await request.get('/rates/company');
+    return tarif;
   },
-  setNotification: async (notification) => {
-    let data = await request.patch(`/users/staff/${app.id}/`, {notification});
+  setNotification: async notification => {
+    let data = await request.patch(
+      app.role != 'role_admin'
+        ? `/users/staff/${app.getId()}/`
+        : `/users/admin/${app.getId()}/`,
+      {notification},
+    );
     return data;
-  }
+  },
+  getPasswordCode: async email => {
+    let data = await request.put('/users/auth/recovery-password/', {email});
+    console.log(email, data)
+    return !(data?.reason || data.email);
+  },
+  sendCodeWithNewPassword: async (key, password) => {
+    let data = await request.patch('/users/auth/recovery-password-key/', {
+      key,
+      password,
+    });
+    return !data?.reason;
+  },
+
+  editAdmin: async (
+    first_name,
+    last_name,
+    email,
+    notification,
+    autocheck_time,
+  ) => {
+    let body = {
+      first_name,
+      last_name,
+      email,
+      notification,
+      autocheck_time,
+    };
+    let data = await request.put(`/users/admin/${app.getId()}/`, body);
+    console.log(data);
+    return Array.isArray(data?.email) ? data.email[0] : null;
+  },
+
+  setInterval: async autocheck_time => {
+    let data = await request.put(`/users/admin/${app.getId()}/`, {
+      autocheck_time,
+    });
+    return data;
+  },
+
+  getDollarCourse: async () => {
+    let data = await fetch('https://www.cbr-xml-daily.ru/latest.js').then(res => res.json());
+    
+    return data.rates.USD;
+  },
 };

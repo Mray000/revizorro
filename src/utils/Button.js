@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Dimensions, Text, TouchableOpacity} from 'react-native';
+import {Dimensions, Text, TouchableOpacity, View} from 'react-native';
 import {colors} from 'utils/colors';
 import Next from 'assets/next.svg';
 import {moderateScale} from './Normalize';
@@ -11,6 +11,7 @@ export const Button = ({
   absolute,
   height,
   marginTop,
+  second_text,
   ...props
 }) => {
   return (
@@ -28,13 +29,25 @@ export const Button = ({
       }}
       {...props}
       disabled={disabled}>
-      <Text
-        style={{
-          color: disabled ? '#A29E9D' : 'white',
-          fontSize: moderateScale(16),
-        }}>
-        {text}
-      </Text>
+      <View style={{alignItems: 'center', justifyContent: 'center'}}>
+        <Text
+          style={{
+            color: disabled ? '#A29E9D' : 'white',
+            fontSize: moderateScale(16),
+          }}>
+          {text}
+        </Text>
+        {second_text ? (
+          <Text
+            style={{
+              color: disabled ? '#A29E9D' : '#FDEEE2',
+              fontSize: moderateScale(13),
+              textAlign: "center"
+            }}>
+            {second_text}
+          </Text>
+        ) : null}
+      </View>
       {icon ? (
         <Next
           width={23}

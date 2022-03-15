@@ -15,7 +15,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Button} from 'utils/Button';
 import {Shadow} from 'react-native-shadow-2';
 import {authentication} from 'store/authentication';
-import {moderateScale} from 'utils/Normalize';
+import {moderateScale, verticalScale} from 'utils/Normalize';
 
 export const Registration = ({navigation, route}) => {
   const [is_first_step, SetIsFirstStep] = useState(true);
@@ -42,6 +42,7 @@ export const Registration = ({navigation, route}) => {
       );
       switch (data) {
         case 'is_ok': {
+          navigation.navigate('RateChoice', {name});
           SetName('');
           SetSurname('');
           SetCompany('');
@@ -49,7 +50,7 @@ export const Registration = ({navigation, route}) => {
           SetPassword('');
           SetRepeatPassword('');
           SetIsFirstStep(true)
-          return navigation.navigate('Workers');
+          break;
         }
         case 'phone_exist': {
           SetIsPhoneError(true);
@@ -81,12 +82,16 @@ export const Registration = ({navigation, route}) => {
     is_load ||
     is_email_error ||
     is_phone_error;
+    console.log(Dimensions.get("window").height - Dimensions.get("screen").height)
   return (
-    <KeyboardAwareScrollView style={{flex: 1}}>
+    <KeyboardAwareScrollView style={{flex: 1}} >
       <View
         style={{
           height:
-            Dimensions.get('window').height - (StatusBar.currentHeight || 24),
+            Dimensions.get('window').height - (StatusBar.currentHeight || 84),
+            // height: "100%",
+            // backgroundColor: "red",
+          // flex: 1,
           padding: 20,
           justifyContent: 'space-between',
         }}>
@@ -143,6 +148,10 @@ export const Registration = ({navigation, route}) => {
               alignItems: 'center',
               justifyContent: 'center',
             }}>
+              <View style={{
+                borderRadius: 8,
+                overflow: "hidden"
+              }}>
             <Text
               style={{
                 color: 'white',
@@ -151,10 +160,14 @@ export const Registration = ({navigation, route}) => {
                 padding: 5,
                 paddingLeft: 8,
                 paddingRight: 8,
-                borderRadius: 8,
               }}>
               шаг {is_first_step ? 1 : 2}
             </Text>
+            </View>
+            <View style={{
+                borderRadius: 8,
+                overflow: "hidden"
+              }}>
             <Text
               style={{
                 color: '#C5BEBE',
@@ -163,6 +176,7 @@ export const Registration = ({navigation, route}) => {
               }}>
               из 2
             </Text>
+            </View>
           </View>
           <Text
             style={{
@@ -227,6 +241,7 @@ export const Registration = ({navigation, route}) => {
                   color: '#E7443A',
                   fontWeight: '500',
                   alignSelf: 'flex-end',
+                  marginBottom: 10,
                   fontSize: moderateScale(15),
                 }}>
                 {error}
@@ -254,13 +269,14 @@ export const Registration = ({navigation, route}) => {
             <View style={{marginTop: 30, height: '30%'}} />
           </View>
         )}
-
+{/* <View style={{position: "absolute", width: "100%",}}> */}
         <Button
           text={'Далее'}
           disabled={is_button_disabled}
           onPress={handleRegistration}
           icon
         />
+        {/* </View> */}
       </View>
     </KeyboardAwareScrollView>
   );

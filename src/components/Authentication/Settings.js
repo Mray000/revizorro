@@ -19,7 +19,6 @@ export const Settings = observer(({navigation}) => {
   const [company, SetCompany] = useState('');
   const [email, SetEmail] = useState('');
   const [rate, SetRate] = useState(null);
-  const [is_email_error, SetIsEmailError] = useState(false);
   const [is_actual_data, SetIsActualData] = useState(false);
   const [interval, SetInterval] = useState(5);
   const [is_cleaning_interval_modal_active, SetIsCleaningIntervalModalActive] =
@@ -38,6 +37,7 @@ export const Settings = observer(({navigation}) => {
       SetSurname(me.last_name);
       SetEmail(me.email);
       SetCompany(me.company.title);
+      SetInterval(me.autocheck_time);
     });
     await api.getRate().then(data => SetRate(data.rate));
     SetIsActualData(true);
@@ -54,19 +54,17 @@ export const Settings = observer(({navigation}) => {
     });
   }, []);
 
-  const SaveAdminProfile = () => {
-    api.editWorker(
-      app.id,
-      'role_admin',
+  const SaveAdminProfile = async () => {
+    let error = await api.editAdmin(
       name,
       surname,
-      '',
       email,
-      'man_gender',
-      true,
-      true,
-      true,
+      app.is_notify,
+      interval,
     );
+    console.log(error)
+    if (error) SetError(error);
+    else SetError("")
   };
 
   const SaveCompanyTitle = () => {
@@ -78,8 +76,8 @@ export const Settings = observer(({navigation}) => {
   const intervals = ['3 минут', '5 минут', '7 минут', '10 минут', '15 минут'];
 
   const SetGlobalInterval = interval => {
-    let minutes = Number(interval.split(" ")[0]);
-    console.log(interval);
+    let minutes = Number(interval.split(' ')[0]);
+    api.setInterval(minutes);
     SetInterval(minutes);
   };
   if (!is_actual_data) return <Loader />;
@@ -134,18 +132,19 @@ export const Settings = observer(({navigation}) => {
           title="e-mail"
           placeholder="Ваш E-mail"
           value={email}
-          is_error={is_email_error}
-          setError={SetIsEmailError}
+          is_error={error}
+          setError={SetError}
           onChangeText={SetEmail}
           onBlur={SaveAdminProfile}
         />
-        {is_email_error ? (
+        {error ? (
           <Text
             style={{
               color: '#E7443A',
               fontWeight: '500',
-              alignSelf: 'flex-end',
               fontSize: moderateScale(15),
+              marginTop: 10,
+              marginLeft: 5
             }}>
             {error}
           </Text>
@@ -153,7 +152,7 @@ export const Settings = observer(({navigation}) => {
       </View>
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate('ChangePassword', {parent: 'Settings'})
+          navigation.navigate('ChangePasswordModal', {parent: 'Settings'})
         }>
         <Text
           style={{

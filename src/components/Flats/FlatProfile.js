@@ -57,6 +57,7 @@ export const FlatProfile = ({navigation, route}) => {
 
       <View style={{paddingHorizontal: 10}}>
         <View
+      
           style={{
             backgroundColor: 'white',
             borderRadius: 15,
@@ -163,7 +164,7 @@ export const FlatProfile = ({navigation, route}) => {
                       <ArrowUp fill="black" />
                     )}
                   </TouchableOpacity>
-                </View>
+                 </View>
               </View>
               <View>
                 {need_check_cleanings

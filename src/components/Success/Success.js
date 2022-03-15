@@ -22,7 +22,9 @@ export const Success = ({navigation, route: {params: params}}) => {
         offset={[0, 8]}
         distance={20}>
         <TouchableOpacity
-          onPress={() => navigation.navigate(params.to)}
+          onPress={() =>
+            navigation.navigate(params.to, params.params ? param.params : null)
+          }
           style={{
             backgroundColor: 'white',
             width: 45,
@@ -61,7 +63,10 @@ export const Success = ({navigation, route: {params: params}}) => {
         ) : null}
       </View>
 
-      <Button text={'Ок'} onPress={() => navigation.navigate(params.to)} />
+      <Button
+        text={params.button_title || 'Ок'}
+        onPress={() => navigation.navigate(params.to)}
+      />
     </View>
   );
 };
