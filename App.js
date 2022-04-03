@@ -1,5 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Dimensions, Platform, SafeAreaView, Text, View} from 'react-native';
+import {
+  Alert,
+  Dimensions,
+  Platform,
+  SafeAreaView,
+  Text,
+  View,
+} from 'react-native';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {Login} from './src/components/Authentication/Login.js';
@@ -33,21 +40,54 @@ import {Cleanings} from 'components/Cleanings/Cleanings.js';
 import {Housemaid} from 'components/Housemaid/Housemaid.js';
 import {Settings} from 'components/Authentication/Settings.js';
 import {RateChoice} from 'components/Authentication/RateChoice.js';
+import {SubscriptionDisactive} from 'components/Authentication/SubscriptionDisactive.js';
 import {fcmService} from './src/utils/FCMService.js';
 import {localNotificationService} from './src/utils/LocalNotificationService';
 import {observer} from 'mobx-react-lite';
-import {app} from 'store/app.js';
+import {app} from './src/store/app.js';
+import {rate} from './src/store/rate.js';
 import {Loader} from 'utils/Loader.js';
+import iap from 'react-native-iap';
+
 const Tab = createBottomTabNavigator();
 const App = observer(() => {
   let role = app.role;
   let accesses = app.accesses;
-  console.log(role);
+
   const [is_load, SetIsLoad] = useState(false);
+
   useEffect(() => {
+    let purchaseUpdatedListener;
+    let purchaseErrorListener;
+
     (async () => {
       let data = await getAsyncData();
-      console.log(data, 'dsad');
+
+      await iap.initConnection();
+      purchaseErrorListener = iap.purchaseErrorListener(async error => {
+        Alert.alert(
+          'Ошибка',
+          'Во время попытки оформить подписку произошла ошибка. Код ошибки-',
+          error.code,
+        );
+      });
+
+      purchaseUpdatedListener = iap.purchaseUpdatedListener(async purhcase => {
+        const receipt = purhcase.transactionReceipt;
+        if (receipt) {
+          // Alert.alert('Тестовое сообщение', 'оплата прошла');
+          // let tarif_id = Number(rate.selected_tarf_id.split('_')[1]);
+          let tarif_id = 1;
+          await api.setTarif(tarif_id);
+          await iap.finishTransaction(purhcase, true);
+          if (!rate.is_rate_choice_screen) {
+            rate.setIsSubscriptionActive(true);
+          } else {
+            rate.setIsSubscriptionPaid(true);
+          }
+        }
+      });
+
       if (data) {
         authentication.SetAccessToken(data.accessToken);
         authentication.SetRefreshToken(data.refreshToken);
@@ -61,9 +101,12 @@ const App = observer(() => {
       console.log('APP unreigster');
       fcmService.unRegitster();
       localNotificationService.unregister();
+      purchaseErrorListener.remove();
+      purchaseUpdatedListener.remove();
+      iap.endConnection();
     };
   }, []);
-
+  let is_company_active = rate.is_subscription_active;
   if (!is_load) return <Loader />;
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -74,31 +117,41 @@ const App = observer(() => {
             contentStyle: {backgroundColor: 'white'},
           }}
           tabBar={props => <BottomNavigator {...props} />}
-          // initialRouteName={
-          //   role
-          //     ? role != 'role_maid'
-          //       ? 'Cleanings'
-          //       : 'Housemaid'
-          //     : 'Onboarding'
-          // }
-          initialRouteName={'RateChoice'}>
-          {app.role == 'role_maid' ? (
+          initialRouteName={
+            role
+              ? role != 'role_maid'
+                ? is_company_active
+                  ? 'Cleanings'
+                  : 'RateChoice'
+                : is_company_active
+                ? 'Housemaid'
+                : 'SubscriptionDisactive'
+              : 'Onboarding'
+          }
+          // initialRouteName={'RateChoice'}
+        >
+          {app.role == 'role_maid' && is_company_active ? (
             <Tab.Screen
               name="Housemaid"
               options={{hidden: 'true'}}
               component={Housemaid}
             />
           ) : null}
-          <Tab.Screen
-            name="Cleanings"
-            options={{
-              label: 'Уборки',
-              icon: CleaningsIcon,
-              icon_active: CleaningsActive,
-            }}
-            component={Cleanings}
-          />
-          {accesses.includes('workers') || role != 'role_manager' ? (
+
+          {is_company_active ? (
+            <Tab.Screen
+              name="Cleanings"
+              options={{
+                label: 'Уборки',
+                icon: CleaningsIcon,
+                icon_active: CleaningsActive,
+              }}
+              component={Cleanings}
+            />
+          ) : null}
+
+          {accesses.includes('workers') ||
+          (role != 'role_manager' && is_company_active) ? (
             <Tab.Screen
               name="Workers"
               options={{
@@ -109,7 +162,8 @@ const App = observer(() => {
               component={Workers}
             />
           ) : null}
-          {accesses.includes('check_lists') || role != 'role_manager' ? (
+          {accesses.includes('check_lists') ||
+          (role != 'role_manager' && is_company_active) ? (
             <Tab.Screen
               name="CheckLists"
               options={{
@@ -121,7 +175,7 @@ const App = observer(() => {
             />
           ) : null}
 
-          {role !== 'role_manager' ? (
+          {role !== 'role_manager' && is_company_active ? (
             <Tab.Screen
               name="Flats"
               options={{
@@ -133,7 +187,7 @@ const App = observer(() => {
             />
           ) : null}
 
-          {role == 'role_admin' ? (
+          {role == 'role_admin' && is_company_active ? (
             <Tab.Screen
               name="Settings"
               options={{
@@ -144,7 +198,7 @@ const App = observer(() => {
               component={Settings}
             />
           ) : null}
-          {role != 'role_admin' ? (
+          {role != 'role_admin' && is_company_active ? (
             <Tab.Screen
               name="WorkerSettings"
               options={{
@@ -185,6 +239,11 @@ const App = observer(() => {
           <Tab.Screen
             name="RateChoice"
             component={RateChoice}
+            options={{hidden: true}}
+          />
+          <Tab.Screen
+            name="SubscriptionDisactive"
+            component={SubscriptionDisactive}
             options={{hidden: true}}
           />
           <Tab.Screen

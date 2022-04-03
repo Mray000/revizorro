@@ -42,14 +42,14 @@ export const Registration = ({navigation, route}) => {
       );
       switch (data) {
         case 'is_ok': {
-          navigation.navigate('RateChoice', {name});
           SetName('');
           SetSurname('');
           SetCompany('');
           SetEmail('');
           SetPassword('');
           SetRepeatPassword('');
-          SetIsFirstStep(true)
+          SetIsFirstStep(true);
+          navigation.navigate('RateChoice', {parent: 'Registration'});
           break;
         }
         case 'phone_exist': {
@@ -82,15 +82,17 @@ export const Registration = ({navigation, route}) => {
     is_load ||
     is_email_error ||
     is_phone_error;
-    console.log(Dimensions.get("window").height - Dimensions.get("screen").height)
+  console.log(
+    Dimensions.get('window').height - Dimensions.get('screen').height,
+  );
   return (
-    <KeyboardAwareScrollView style={{flex: 1}} >
+    <KeyboardAwareScrollView style={{flex: 1}}>
       <View
         style={{
           height:
             Dimensions.get('window').height - (StatusBar.currentHeight || 84),
-            // height: "100%",
-            // backgroundColor: "red",
+          // height: "100%",
+          // backgroundColor: "red",
           // flex: 1,
           padding: 20,
           justifyContent: 'space-between',
@@ -148,34 +150,36 @@ export const Registration = ({navigation, route}) => {
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-              <View style={{
-                borderRadius: 8,
-                overflow: "hidden"
-              }}>
-            <Text
+            <View
               style={{
-                color: 'white',
-                fontSize: moderateScale(16),
-                backgroundColor: colors.orange,
-                padding: 5,
-                paddingLeft: 8,
-                paddingRight: 8,
+                borderRadius: 8,
+                overflow: 'hidden',
               }}>
-              шаг {is_first_step ? 1 : 2}
-            </Text>
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: moderateScale(16),
+                  backgroundColor: colors.orange,
+                  padding: 5,
+                  paddingLeft: 8,
+                  paddingRight: 8,
+                }}>
+                Шаг {is_first_step ? 1 : 2}
+              </Text>
             </View>
-            <View style={{
-                borderRadius: 8,
-                overflow: "hidden"
-              }}>
-            <Text
+            <View
               style={{
-                color: '#C5BEBE',
-                fontSize: moderateScale(16),
-                marginLeft: 8,
+                borderRadius: 8,
+                overflow: 'hidden',
               }}>
-              из 2
-            </Text>
+              <Text
+                style={{
+                  color: '#C5BEBE',
+                  fontSize: moderateScale(16),
+                  marginLeft: 8,
+                }}>
+                из 2
+              </Text>
             </View>
           </View>
           <Text
@@ -269,14 +273,12 @@ export const Registration = ({navigation, route}) => {
             <View style={{marginTop: 30, height: '30%'}} />
           </View>
         )}
-{/* <View style={{position: "absolute", width: "100%",}}> */}
         <Button
           text={'Далее'}
           disabled={is_button_disabled}
           onPress={handleRegistration}
           icon
         />
-        {/* </View> */}
       </View>
     </KeyboardAwareScrollView>
   );

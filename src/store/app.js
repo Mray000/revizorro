@@ -3,14 +3,17 @@ import {Platform} from 'react-native';
 import {api} from 'utils/api';
 import {fcmService} from 'utils/FCMService';
 import {localNotificationService} from 'utils/LocalNotificationService';
+import {rate} from './rate';
 
 class App {
   id = null;
   role = null;
   accesses = [];
+  name = '';
   is_notify = true;
   is_bottom_navigator_visible = true;
   bottom_navigator_color = null;
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -27,12 +30,16 @@ class App {
     this.role = role;
   }
 
+  setName(name) {
+    this.name = name;
+  }
+
   setAccesses(accesses) {
     this.accesses = accesses;
   }
 
   setNotification = is_notify => {
-    api.setNotification(is_notify)
+    api.setNotification(is_notify);
     this.is_notify = is_notify;
   };
 
@@ -49,11 +56,9 @@ class App {
       } else {
         await api.refreshNotifys(token, Platform.OS);
       }
-      console.log('APP registered token: ', token);
     };
 
     const onNotification = notify => {
-      console.log('APP get notify:', notify);
       if (app.is_notify) {
         const options = {
           soundName: 'default',
@@ -68,6 +73,7 @@ class App {
         );
       }
     };
+
     const onOpenNotification = notify => {
       console.log('APP get open notify', notify);
     };
@@ -81,12 +87,16 @@ class App {
       this.setNotification(me.notification);
       this.setAccesses(accesses);
       this.setRole(me.role);
+      this.setName(me.first_name);
       fcmService.registerAppWithFCM();
       fcmService.register(onRegister, onNotification, onOpenNotification);
       localNotificationService.createChannel();
       localNotificationService.configure(onOpenNotification);
     });
+    let company = await api.getCompany();
+    rate.setIsSubscriptionActive(company?.active);
   };
 }
 
 export const app = new App();
+``;

@@ -13,16 +13,19 @@ import {moderateScale} from 'utils/Normalize';
 import {SwitchComponent} from 'utils/SwitchComponent';
 import ArrowRight from 'assets/arrow_right.svg';
 import {ModalPicker} from 'utils/ModalPicker';
+import iap from 'react-native-iap';
+import {rate} from 'store/rate';
+import {rate_prices} from 'utils/rate_constants';
 export const Settings = observer(({navigation}) => {
   const [name, SetName] = useState('');
   const [surname, SetSurname] = useState('');
   const [company, SetCompany] = useState('');
   const [email, SetEmail] = useState('');
-  const [rate, SetRate] = useState(null);
   const [is_actual_data, SetIsActualData] = useState(false);
   const [interval, SetInterval] = useState(5);
   const [is_cleaning_interval_modal_active, SetIsCleaningIntervalModalActive] =
     useState(false);
+  const [tarif, SetTarif] = useState(null);
 
   const [error, SetError] = useState('');
 
@@ -39,9 +42,22 @@ export const Settings = observer(({navigation}) => {
       SetCompany(me.company.title);
       SetInterval(me.autocheck_time);
     });
-    await api.getRate().then(data => SetRate(data.rate));
     SetIsActualData(true);
   };
+
+  useEffect(() => {
+    api.getRate().then(data => {
+      let current_tarif_id = 'revizorro_' + data.rate.id;
+      iap
+        .getSubscriptions([current_tarif_id])
+        .then(tarifs => JSON.parse(tarifs[0].originalJson))
+        .then(tarif => {
+          tarif.price = rate_prices[tarif.productId];
+          SetTarif(tarif);
+        });
+    });
+  }, []);
+  console.log(rate);
 
   useEffect(() => {
     if (!is_actual_data) SetMe();
@@ -62,16 +78,14 @@ export const Settings = observer(({navigation}) => {
       app.is_notify,
       interval,
     );
-    console.log(error)
+    console.log(error);
     if (error) SetError(error);
-    else SetError("")
+    else SetError('');
   };
 
   const SaveCompanyTitle = () => {
     api.changeCompany(company, true);
   };
-
-  let is_year_tarif = false;
 
   const intervals = ['3 минут', '5 минут', '7 минут', '10 минут', '15 минут'];
 
@@ -80,6 +94,7 @@ export const Settings = observer(({navigation}) => {
     api.setInterval(minutes);
     SetInterval(minutes);
   };
+  if (!tarif) return <Loader />;
   if (!is_actual_data) return <Loader />;
   return (
     <ScrollView style={{padding: 10}}>
@@ -144,7 +159,7 @@ export const Settings = observer(({navigation}) => {
               fontWeight: '500',
               fontSize: moderateScale(15),
               marginTop: 10,
-              marginLeft: 5
+              marginLeft: 5,
             }}>
             {error}
           </Text>
@@ -175,79 +190,10 @@ export const Settings = observer(({navigation}) => {
           }}>
           АКТИВНЫЙ ТАРИФ
         </Text>
-        <View
-          style={{
-            shadowColor: '#C8C7C7',
-            shadowOffset: {
-              width: 0,
-              height: 10,
-            },
-            shadowOpacity: 0.51,
-            shadowRadius: 10,
-            padding: 20,
-            backgroundColor: 'white',
-            marginTop: 8,
-            borderRadius: 20,
-          }}>
-          <Text
-            style={{
-              fontFamily: 'Inter-Medium',
-              fontSize: moderateScale(13),
-              color: '#AEA3A4',
-            }}>
-            {!is_year_tarif ? 'ЕЖЕМЕСЯЧНО' : 'ЕЖЕГОДНО'}
-          </Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: 5,
-            }}>
-            <View>
-              <Text
-                style={{
-                  fontFamily: 'Inter-SemiBold',
-                  fontSize: moderateScale(16),
-                  color: 'black',
-                }}>
-                {rate.title}
-              </Text>
-              <Text
-                style={{
-                  fontFamily: 'Inter-Medium',
-                  fontSize: moderateScale(16),
-                  color: '#75706F',
-                  marginTop: 5,
-                }}>
-                {!is_year_tarif ? rate.cleaning_limit : '∞'} уборок в месяц
-              </Text>
-            </View>
-            <View>
-              <Text
-                style={{
-                  fontFamily: 'Inter-SemiBold',
-                  fontSize: moderateScale(16),
-                  color: 'black',
-                }}>
-                {!is_year_tarif ? rate.price_month : rate.price_year} $
-              </Text>
-              <Text
-                style={{
-                  fontFamily: 'Inter-Medium',
-                  fontSize: moderateScale(16),
-                  color: '#AEA3A4',
-                  marginTop: 5,
-                }}>
-                {!is_year_tarif ? 'в месяц' : 'в год'}
-              </Text>
-            </View>
-          </View>
-        </View>
+        <Tarif tarif={tarif} />
       </View>
       <TouchableOpacity
-        onPress={() =>
-          navigation.navigate('ChangePassword', {parent: 'Settings'})
-        }>
+        onPress={() => navigation.navigate('RateChoice', {parent: 'Settings'})}>
         <Text
           style={{
             color: colors.orange,
@@ -371,3 +317,127 @@ export const Settings = observer(({navigation}) => {
     </ScrollView>
   );
 });
+
+const Tarif = ({tarif}) => {
+  let {productId, description, name, subscriptionPeriod, price} = tarif;
+  let is_active = rate.selected_tarf_id == productId;
+  let is_year_tarif = subscriptionPeriod == 'P1Y';
+  let is_sale = productId == 'revizorro_3';
+  return (
+    <View
+      style={{
+        shadowColor: '#C8C7C7',
+        shadowOffset: {
+          width: 0,
+          height: 10,
+        },
+        shadowOpacity: 0.51,
+        shadowRadius: 10,
+        padding: 20,
+        backgroundColor: 'white',
+        marginTop: 8,
+        borderRadius: 20,
+      }}>
+      {is_sale ? (
+        <View
+          style={{
+            flexDirection: 'row',
+            backgroundColor: '#E8443A',
+            paddingHorizontal: 10,
+            paddingVertical: 5,
+            position: 'absolute',
+            borderRadius: 20,
+            borderBottomLeftRadius: 0,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text
+            style={{
+              color: 'white',
+              fontFamily: 'Inter-SemiBold',
+              fontSize: moderateScale(16),
+            }}>
+            выгодно
+          </Text>
+          <Star width="18" height="18" fill="white" />
+        </View>
+      ) : null}
+      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <Text
+          style={{
+            fontFamily: 'Inter-Medium',
+            fontSize: moderateScale(13),
+            color: '#AEA3A4',
+            marginTop: is_sale ? 20 : 0,
+          }}>
+          {!is_year_tarif ? 'ЕЖЕМЕСЯЧНО' : 'ЕЖЕГОДНО'}
+        </Text>
+      </View>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          marginTop: 5,
+        }}>
+        <View>
+          <Text
+            style={{
+              fontFamily: 'Inter-SemiBold',
+              fontSize: moderateScale(16),
+              color: 'black',
+            }}>
+            {name}
+          </Text>
+          <Text
+            style={{
+              fontFamily: 'Inter-Medium',
+              fontSize: moderateScale(16),
+              color: '#75706F',
+              marginTop: 5,
+            }}>
+            {description}
+          </Text>
+        </View>
+        <View style={{alignItems: 'flex-end', flex: 1}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            {is_sale ? (
+              <Text
+                style={{
+                  color: '#CCC6C6',
+                  textDecorationLine: 'line-through',
+                  textDecorationStyle: 'solid',
+                  fontFamily: 'Inter-Regular',
+                  fontSize: moderateScale(16),
+                }}>
+                {price / (1 - 0.6)} ₽
+              </Text>
+            ) : null}
+            <Text
+              style={{
+                fontFamily: 'Inter-SemiBold',
+                fontSize: moderateScale(16),
+                color: is_sale ? '#E8443A' : 'black',
+              }}>
+              {' '}
+              {price} ₽
+            </Text>
+          </View>
+          <Text
+            style={{
+              fontFamily: 'Inter-Medium',
+              fontSize: moderateScale(16),
+              color: '#AEA3A4',
+              marginTop: 5,
+            }}>
+            {!is_year_tarif ? 'в месяц' : 'в год'}
+          </Text>
+        </View>
+      </View>
+    </View>
+  );
+};

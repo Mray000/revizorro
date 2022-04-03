@@ -15,7 +15,8 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		17F997885E334967AAC33C05 /* Inter-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 82777BC71EEB4E4583A77492 /* Inter-Medium.ttf */; };
 		3519663648C3238FB273FC11 /* libPods-revizorro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F58A99A5236BC7D27CDA06A /* libPods-revizorro.a */; };
-		3610723A27C8FBA200202C4A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3610723927C8FBA100202C4A /* GoogleService-Info.plist */; };
+		3695579527E0B77800E124AC /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3695579427E0B77800E124AC /* StoreKit.framework */; };
+		36B37FFD27F1BE5300E82C3E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 36B37FFB27F1BE5300E82C3E /* GoogleService-Info.plist */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		851D86DF484948818660EB37 /* Inter-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 14B3610E195B4A2A8FBC4646 /* Inter-Black.ttf */; };
 		9FFE8B051C30463EA65FC6B5 /* Inter-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 64E712C0205E4A41A87499FD /* Inter-SemiBold.ttf */; };
@@ -50,7 +51,8 @@
 		14B3610E195B4A2A8FBC4646 /* Inter-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Black.ttf"; path = "../src/assets/fonts/Inter-Black.ttf"; sourceTree = "<group>"; };
 		23989B8C60ED4117877D361B /* Inter-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Light.ttf"; path = "../src/assets/fonts/Inter-Light.ttf"; sourceTree = "<group>"; };
 		2EADEC20285541A3B7359A74 /* Inter-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Thin.ttf"; path = "../src/assets/fonts/Inter-Thin.ttf"; sourceTree = "<group>"; };
-		3610723927C8FBA100202C4A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		3695579427E0B77800E124AC /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		36B37FFB27F1BE5300E82C3E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4F58A99A5236BC7D27CDA06A /* libPods-revizorro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-revizorro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5019AD429FE24FADA0FD4392 /* Inter-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-ExtraBold.ttf"; path = "../src/assets/fonts/Inter-ExtraBold.ttf"; sourceTree = "<group>"; };
 		503C2101FDCEED0928EC06DC /* Pods-revizorro.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-revizorro.release.xcconfig"; path = "Target Support Files/Pods-revizorro/Pods-revizorro.release.xcconfig"; sourceTree = "<group>"; };
@@ -80,6 +82,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3519663648C3238FB273FC11 /* libPods-revizorro.a in Frameworks */,
+				3695579527E0B77800E124AC /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -106,7 +109,7 @@
 		13B07FAE1A68108700A75B9A /* revizorro */ = {
 			isa = PBXGroup;
 			children = (
-				3610723927C8FBA100202C4A /* GoogleService-Info.plist */,
+				36B37FFB27F1BE5300E82C3E /* GoogleService-Info.plist */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -120,6 +123,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3695579427E0B77800E124AC /* StoreKit.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				4F58A99A5236BC7D27CDA06A /* libPods-revizorro.a */,
 				5A6113721A83689C674B9DB5 /* libPods-revizorro-revizorroTests.a */,
@@ -286,7 +290,7 @@
 				851D86DF484948818660EB37 /* Inter-Black.ttf in Resources */,
 				D75B60D78507478FA5945272 /* Inter-Bold.ttf in Resources */,
 				04235DAD58D347D6B0BA8C50 /* Inter-ExtraBold.ttf in Resources */,
-				3610723A27C8FBA200202C4A /* GoogleService-Info.plist in Resources */,
+				36B37FFD27F1BE5300E82C3E /* GoogleService-Info.plist in Resources */,
 				BAE38CE1381D4757BA0C3FFA /* Inter-ExtraLight.ttf in Resources */,
 				E7D4C36AC8AB4477B22BBE25 /* Inter-Light.ttf in Resources */,
 				17F997885E334967AAC33C05 /* Inter-Medium.ttf in Resources */,
@@ -557,7 +561,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.revizorro;
+				PRODUCT_BUNDLE_IDENTIFIER = ru.app.aparty;
 				PRODUCT_NAME = revizorro;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -582,7 +586,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.revizorro;
+				PRODUCT_BUNDLE_IDENTIFIER = ru.app.aparty;
 				PRODUCT_NAME = revizorro;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

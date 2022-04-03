@@ -22,7 +22,9 @@ export const Login = observer(({navigation, route}) => {
   //ianire@gmail.cted
   //ainurhabibullin0@gmail.test
   //ainurhabibullin0@gmail.7657
-  const [email, SetEmail] = useState('ianire@gmail.cted');
+  //lega6257632@gmail.com
+
+  const [email, SetEmail] = useState('');
   const [password, setPassword] = useState('');
   const [incorrect_data, setIncorrectData] = useState(false);
   const [isLoad, setIsLoad] = useState(false);

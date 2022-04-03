@@ -720,6 +720,7 @@ export const EditCheckList = ({navigation, route}) => {
                     borderColor: '#E5E3E2',
                     borderWidth: 1,
                     paddingLeft: 25,
+                    color: 'black',
                   }}
                   placeholder="Например: безусловно"
                   placeholderTextColor={`#979493`}
@@ -754,8 +755,6 @@ export const EditCheckList = ({navigation, route}) => {
                   alignItems: 'center',
                 }}>
                 <Check
-                  width={14}
-                  height={10}
                   width={14}
                   height={10}
                   fill={answer ? 'white' : '#FACCAB'}

@@ -455,6 +455,8 @@ PODS:
     - RNFBApp
   - RNGestureHandler (2.1.0):
     - React-Core
+  - RNIap (8.0.5):
+    - React-Core
   - RNPermissions (3.2.0):
     - React-Core
   - RNScreens (3.10.0):
@@ -549,6 +551,7 @@ DEPENDENCIES:
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNIap (from `../node_modules/react-native-iap`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -699,6 +702,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/messaging"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNIap:
+    :path: "../node_modules/react-native-iap"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
   RNScreens:
@@ -790,6 +795,7 @@ SPEC CHECKSUMS:
   RNFBApp: 06c8447270d295edc431bccd55970d8711a07a42
   RNFBMessaging: 8e3575bb0303b43a852bf5decbe99c3272035048
   RNGestureHandler: e5c7cab5f214503dcefd6b2b0cefb050e1f51c4a
+  RNIap: 2bb5fdc51db7f62f194efdd5e9d613ae48605cb1
   RNPermissions: f7ebe52db07c00901127966ca080b4ec6a6ceb0a
   RNScreens: 03ba504f8c98607ad1f07808e71040e0afa335ec
   RNSVG: 8ba35cbeb385a52fd960fd28db9d7d18b4c2974f

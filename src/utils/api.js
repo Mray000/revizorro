@@ -166,7 +166,7 @@ export const api = {
       },
       body: JSON.stringify({email, password}),
     }).then(res => res.json());
-    console.log(data);
+    console.log(data, "DSFDSFKDSKLFJKLSDKFJJKSDFKDSKJLF");
     if (data?.access) {
       await SetAuthData(data.access, data.refresh);
       return true;
@@ -374,6 +374,7 @@ export const api = {
   },
   getCleanings: async () => {
     let cleanings = await request.get('/cleaning/me');
+    console.log(cleanings)
     return cleanings;
   },
 
@@ -486,17 +487,18 @@ export const api = {
   },
 
   changeCompany: async (title, active) => {
-    let data = await request.put('/company', {title, active});
-    console.log(data, 'CO');
+    let data = await request.put('/company/', {title, active});
     return data;
   },
   getCompany: async () => {
     let data = await request.get('/company');
+    console.log(data, "DATEAL:DVSDFфJKLDSJKLFJKLSDF")
     return data;
   },
 
   getRate: async () => {
     let tarif = await request.get('/rates/company');
+    console.log(tarif)
     return tarif;
   },
   setNotification: async notification => {

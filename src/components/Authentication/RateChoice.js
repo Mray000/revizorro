@@ -1,5 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  BackHandler,
+} from 'react-native';
 import RateBackgound1 from 'assets/rate_background_1';
 import RateBackgound2 from 'assets/rate_background_2';
 import RatePro from 'assets/rate_pro';
@@ -14,34 +20,62 @@ import {api} from 'utils/api';
 import {Loader} from 'utils/Loader';
 import {Button} from 'utils/Button';
 import SuccessSvg from 'assets/success.svg';
-export const RateChoice = ({navigation, route}) => {
-  const [selected_tarif_id, SetSelectedTarifId] = useState(1);
-  const [dollar_course, SetDollarCourse] = useState(null);
-  const [is_success, SetIsSuccess] = useState(false);
-  let tarifs = [
-    {id: 1, title: 'Старт', price: 2.5, cleanings_count: 30},
-    {id: 2, title: 'Бизнес', price: 5, cleanings_count: 30},
-    {
-      id: 3,
-      title: 'Профессионал',
-      price: 14,
-      cleanings_count: 'б',
-      is_sale: true,
-    },
-    {
-      id: 4,
-      title: 'Всё включено',
-      price: 156,
-      cleanings_count: 'б',
-      is_year_tarif: true,
-    },
-  ];
-  if (is_success)
-    return <RateSucces navigation={navigation} name={route?.params?.name} tarif={tarifs.find(el => el.id == selected_tarif_id)}/>;
+import iap from 'react-native-iap';
+import {observer} from 'mobx-react-lite';
+import {app} from 'store/app';
+import {rate} from 'store/rate';
+import {rate_items, rate_prices} from 'utils/rate_constants';
+
+export const RateChoice = observer(({navigation, route}) => {
+  const [tarifs, SetTarifs] = useState(null);
+
+  BackHandler.addEventListener('hardwareBackPress', () => true);
+
   useEffect(() => {
-    api.getDollarCourse().then(SetDollarCourse);
+    let backhandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => true,
+    );
+    navigation.addListener('blur', () => {
+      backhandler.remove();
+    });
+    navigation.addListener('focus', () => {
+      backhandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        () => true,
+      );
+    });
   }, []);
-  if (!dollar_course) return <Loader />;
+
+  useEffect(() => {
+    iap
+      .getSubscriptions(rate_items)
+      .then(tarifs => tarifs.map(el => JSON.parse(el.originalJson)))
+      .then(tarifs =>
+        tarifs.map(el => {
+          el.price = rate_prices[el.productId];
+          return el;
+        }),
+      )
+      .then(SetTarifs);
+    rate.setIsRateChoiceScreen(true);
+  }, []);
+
+  const OnTarifSelect = () => {
+    // console.log(rate.selected_tarf_id);
+    iap.requestPurchase(rate.selected_tarif_id);
+  };
+  let parent = route.params?.parent || 'Onboarding';
+
+  if (!tarifs) return <Loader />;
+
+  let selected_tarif = tarifs.find(el => el.productId == rate.selected_tarf_id);
+
+  // if (true) {
+  if (rate.is_subscription_paid) {
+    return <RateSuccess navigation={navigation} tarif={selected_tarif} />;
+  }
+
   return (
     <ScrollView>
       <View>
@@ -57,7 +91,7 @@ export const RateChoice = ({navigation, route}) => {
             top: '2%',
           }}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Registration')}
+            onPress={() => navigation.navigate(parent)}
             style={{
               backgroundColor: 'white',
               width: 45,
@@ -140,9 +174,8 @@ export const RateChoice = ({navigation, route}) => {
           <Tarif
             tarif={el}
             key={el.id}
-            is_active={selected_tarif_id == el.id}
-            SetIsActive={SetSelectedTarifId}
-            dollar_course={dollar_course}
+            is_active={rate.selected_tarif_id == el.productId}
+            SetIsActive={rate.setSelectedTarifId}
           />
         ))}
       </View>
@@ -158,21 +191,25 @@ export const RateChoice = ({navigation, route}) => {
         </Text>
         <Button
           text={`Продолжить`}
-          second_text={`7 дней бесплатно, потом ${Math.round(
-            tarifs.find(el => el.id == selected_tarif_id).price / dollar_course,
-          )}₽ в месяц`}
+          second_text={`7 дней бесплатно, потом ${selected_tarif?.price}₽ в ${
+            selected_tarif?.subscriptionPeriod == 'P1Y' ? 'год' : 'месяц'
+          }`}
+          onPress={OnTarifSelect}
           marginTop={10}
         />
       </View>
     </ScrollView>
   );
-};
+});
 
-const Tarif = ({tarif, is_active, SetIsActive, dollar_course}) => {
-  let {id, is_year_tarif, title, cleanings_count, price, is_sale} = tarif;
+const Tarif = ({tarif}) => {
+  let {productId, description, name, subscriptionPeriod, price} = tarif;
+  let is_active = rate.selected_tarf_id == productId;
+  let is_year_tarif = subscriptionPeriod == 'P1Y';
+  let is_sale = productId == 'revizorro_3';
   return (
     <TouchableOpacity
-      onPress={() => SetIsActive(id)}
+      onPress={() => rate.setSelectedTarifId(tarif.productId)}
       style={{
         shadowColor: '#C8C7C7',
         shadowOffset: {
@@ -237,19 +274,19 @@ const Tarif = ({tarif, is_active, SetIsActive, dollar_course}) => {
       </View>
 
       <View
-       style={{
+        style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
           marginTop: 5,
-      }}>
+        }}>
         <View>
-         <Text
+          <Text
             style={{
               fontFamily: 'Inter-SemiBold',
               fontSize: moderateScale(16),
               color: 'black',
             }}>
-            {title}
+            {name}
           </Text>
           <Text
             style={{
@@ -258,21 +295,38 @@ const Tarif = ({tarif, is_active, SetIsActive, dollar_course}) => {
               color: '#75706F',
               marginTop: 5,
             }}>
-            {cleanings_count} уборок в месяц
+            {description}
           </Text>
         </View>
-        <View style={{alignItems: 'flex-end'}}>
-        
-          <Text
+        <View style={{alignItems: 'flex-end', flex: 1}}>
+          <View
             style={{
-              fontFamily: 'Inter-SemiBold',
-              fontSize: moderateScale(16),
-              color: is_sale ? "#E8443A" : 'black',
-              marginTop: 5,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}>
-        {is_sale ? <Text style={{color: "#CCC6C6", textDecorationLine: 'line-through', textDecorationStyle: 'solid', 
-               fontFamily: 'Inter-Regular',}}>{Math.round((price / dollar_course) / (1 - 0.6))} ₽</Text> : null} {Math.round(price / dollar_course)} ₽
-          </Text>
+            {is_sale ? (
+              <Text
+                style={{
+                  color: '#CCC6C6',
+                  textDecorationLine: 'line-through',
+                  textDecorationStyle: 'solid',
+                  fontFamily: 'Inter-Regular',
+                  fontSize: moderateScale(16),
+                }}>
+                {price / (1 - 0.6)} ₽
+              </Text>
+            ) : null}
+            <Text
+              style={{
+                fontFamily: 'Inter-SemiBold',
+                fontSize: moderateScale(16),
+                color: is_sale ? '#E8443A' : 'black',
+              }}>
+              {' '}
+              {price} ₽
+            </Text>
+          </View>
           <Text
             style={{
               fontFamily: 'Inter-Medium',
@@ -288,70 +342,65 @@ const Tarif = ({tarif, is_active, SetIsActive, dollar_course}) => {
   );
 };
 
+const RateSuccess = ({navigation, tarif}) => {
+  const OnTarifSelectSuccess = () => {
+    rate.setIsSubscriptionPaid(false);
+    rate.setIsRateChoiceScreen(false);
+    rate.setIsSubscriptionActive(true);
+    rate.setSelectedTarifId('revizorro_1');
+    navigation.navigate('Workers');
+  };
 
-const RateSucces = ({navigation, name, tarif}) => (
-  <View
-    style={{
-      flex: 1,
-      justifyContent: 'space-between',
-      backgroundColor: 'white',
-      alignItems: 'flex-end',
-      padding: 20,
-    }}>
-    <Shadow
-      startColor={'#00000008'}
-      finalColor={'#00000001'}
-      offset={[0, 8]}
-      distance={20}>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Workers')}
-        style={{
-          backgroundColor: 'white',
-          width: 45,
-          height: 45,
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderRadius: 17,
-        }}>
-        <X width={13} height={13} fill="#45413E" />
-      </TouchableOpacity>
-    </Shadow>
+  return (
     <View
-      style={{justifyContent: 'center', alignItems: 'center', width: '100%'}}>
-      <SuccessSvg />
-      <Text
-        style={{
-          color: 'black',
-          fontFamily: 'Inter-SemiBold',
-          textAlign: 'center',
-          fontSize: moderateScale(20),
-          marginTop: 10,
-        }}>
-        Регистрация и оплата прошли успешно!
-      </Text>
-      <Text style={{
-          color: 'black',
-          fontFamily: 'Inter-SemiBold',
-          textAlign: 'center',
-          fontSize: moderateScale(18),
-          marginTop: 20,
-        }}>Спасибо, {"Александр"}!</Text>
-      <Text style={{
-            fontSize: moderateScale(16),
-            color: '#686463',
-            fontFamily: 'Inter-Regular',
+      style={{
+        flex: 1,
+        justifyContent: 'space-between',
+        backgroundColor: 'white',
+        alignItems: 'flex-end',
+        padding: 20,
+      }}>
+      <Shadow
+        startColor={'#00000008'}
+        finalColor={'#00000001'}
+        offset={[0, 8]}
+        distance={20}>
+        <TouchableOpacity
+          onPress={OnTarifSelectSuccess}
+          style={{
+            backgroundColor: 'white',
+            width: 45,
+            height: 45,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 17,
+          }}>
+          <X width={13} height={13} fill="#45413E" />
+        </TouchableOpacity>
+      </Shadow>
+      <View
+        style={{justifyContent: 'center', alignItems: 'center', width: '100%'}}>
+        <SuccessSvg />
+        <Text
+          style={{
+            color: 'black',
+            fontFamily: 'Inter-SemiBold',
             textAlign: 'center',
+            fontSize: moderateScale(20),
+            marginTop: 10,
+          }}>
+          Регистрация и оплата прошли успешно!
+        </Text>
+        <Text
+          style={{
+            color: 'black',
+            fontFamily: 'Inter-SemiBold',
+            textAlign: 'center',
+            fontSize: moderateScale(18),
             marginTop: 20,
-          }}>Вы оформили тариф:</Text>
-          <Text style={{
-          color: 'black',
-          fontFamily: 'Inter-SemiBold',
-          textAlign: 'center',
-          fontSize: moderateScale(17),
-          marginTop: 5,
-        }}>
-          {tarif.title} ({tarif.cleanings_count} уборок в месяц)
-          </Text>
+          }}>
+          Спасибо, {app.name}!
+        </Text>
         <Text
           style={{
             fontSize: moderateScale(16),
@@ -360,23 +409,46 @@ const RateSucces = ({navigation, name, tarif}) => (
             textAlign: 'center',
             marginTop: 20,
           }}>
-          Через 7 дней спишется платеж за месяц. Подписка будет автоматически продлеваться каждый месяц.
+          Вы оформили тариф:
         </Text>
-    </View>
-      <View style={{width: "100%"}}>
-        <Text  
+        <Text
           style={{
-                fontSize: moderateScale(14),
-                color: '#AEACAB',
-                fontFamily: 'Inter-Regular',
-                textAlign: 'center',
-              }}>Вы можете в любой момент отменить 
-                  подписку в настройках смартфона.</Text>
+            color: 'black',
+            fontFamily: 'Inter-SemiBold',
+            textAlign: 'center',
+            fontSize: moderateScale(17),
+            marginTop: 5,
+          }}>
+          {tarif.name} ({tarif.description})
+        </Text>
+        <Text
+          style={{
+            fontSize: moderateScale(16),
+            color: '#686463',
+            fontFamily: 'Inter-Regular',
+            textAlign: 'center',
+            marginTop: 20,
+          }}>
+          Через 7 дней спишется платеж за месяц. Подписка будет автоматически
+          продлеваться каждый месяц.
+        </Text>
+      </View>
+      <View style={{width: '100%'}}>
+        <Text
+          style={{
+            fontSize: moderateScale(14),
+            color: '#AEACAB',
+            fontFamily: 'Inter-Regular',
+            textAlign: 'center',
+          }}>
+          Вы можете в любой момент отменить подписку в настройках смартфона.
+        </Text>
         <Button
-          text={"Понятно"}
-          onPress={() => navigation.navigate("Workers")}
+          text={'Понятно'}
+          onPress={OnTarifSelectSuccess}
           marginTop={10}
         />
-        </View>
-  </View>
-);
+      </View>
+    </View>
+  );
+};

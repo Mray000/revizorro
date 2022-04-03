@@ -26,8 +26,14 @@ class Authentication {
   logout() {
     this.SetAccessToken('');
     this.SetRefreshToken('');
-    app.setAccesses([])
-    app.setRole(null)
+    app.setAccesses([]);
+    app.setRole(null);
+    app.setNotification(false);
+    app.setId(null);
+    app.setIsRateChoiceScreen(false);
+    app.setIsSubscriptionActive(false);
+    app.setIsSubscriptionPaid(false);
+    app.setName('');
     AsyncStorage.removeItem('accessToken');
     AsyncStorage.removeItem('refreshToken');
   }
@@ -44,7 +50,6 @@ class Authentication {
       return data.Error.includes('email') ? 'email_exist' : 'phone_exist';
     if (data?.email) return 'email_incorrect';
     await this.login(email, password);
-    await api.setTarif(1);
     return 'is_ok';
   };
 }

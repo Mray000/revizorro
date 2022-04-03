@@ -37,7 +37,6 @@ export const Onboarding = ({navigation, route}) => {
           SetIsSelectRoleScreen={SetIsSelectRoleScreen}
           navigation={navigation}
           route={route}
-          SetIsSelectRoleScreen={SetIsSelectRoleScreen}
         />
       )}
     </View>
