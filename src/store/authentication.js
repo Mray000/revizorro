@@ -2,6 +2,7 @@ import {makeAutoObservable} from 'mobx';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {api} from 'utils/api';
 import {app} from './app';
+import { rate } from './rate';
 
 class Authentication {
   accessToken = '';
@@ -28,12 +29,12 @@ class Authentication {
     this.SetRefreshToken('');
     app.setAccesses([]);
     app.setRole(null);
+    app.setName('');
     app.setNotification(false);
     app.setId(null);
-    app.setIsRateChoiceScreen(false);
-    app.setIsSubscriptionActive(false);
-    app.setIsSubscriptionPaid(false);
-    app.setName('');
+    rate.setIsRateChoiceScreen(false);
+    rate.setIsSubscriptionActive(false);
+    rate.setIsSubscriptionPaid(false);
     AsyncStorage.removeItem('accessToken');
     AsyncStorage.removeItem('refreshToken');
   }

@@ -80,11 +80,8 @@ const App = observer(() => {
           let tarif_id = 1;
           await api.setTarif(tarif_id);
           await iap.finishTransaction(purhcase, true);
-          if (!rate.is_rate_choice_screen) {
-            rate.setIsSubscriptionActive(true);
-          } else {
-            rate.setIsSubscriptionPaid(true);
-          }
+          rate.setIsSubscriptionActive(true);
+          rate.setIsSubscriptionPaid(true);
         }
       });
 

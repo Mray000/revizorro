@@ -5,7 +5,7 @@ class Rate {
   is_subscription_active = false;
   is_rate_choice_screen = false;
   is_subscription_paid = false;
- 
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -23,6 +23,10 @@ class Rate {
   setIsSubscriptionPaid(is_subscription_paid) {
     this.is_subscription_paid = is_subscription_paid;
   }
+
+  getSelectedTarifId = () => {
+    return this.selected_tarf_id;
+  };
 }
 
 export const rate = new Rate();

@@ -62,8 +62,7 @@ export const RateChoice = observer(({navigation, route}) => {
   }, []);
 
   const OnTarifSelect = () => {
-    // console.log(rate.selected_tarf_id);
-    iap.requestPurchase(rate.selected_tarif_id);
+    iap.requestSubscription(rate.getSelectedTarifId());
   };
   let parent = route.params?.parent || 'Onboarding';
 
@@ -344,11 +343,10 @@ const Tarif = ({tarif}) => {
 
 const RateSuccess = ({navigation, tarif}) => {
   const OnTarifSelectSuccess = () => {
+    navigation.navigate('Cleanings');
     rate.setIsSubscriptionPaid(false);
     rate.setIsRateChoiceScreen(false);
-    rate.setIsSubscriptionActive(true);
     rate.setSelectedTarifId('revizorro_1');
-    navigation.navigate('Workers');
   };
 
   return (

@@ -1,5 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {View, BackHandler} from 'react-native';
+import {rate} from 'store/rate';
+import {Button} from 'utils/Button';
 import {OnboardingScreens} from './OnboardingScreens';
 import {SelectRole} from './SelectRole';
 
@@ -39,6 +41,12 @@ export const Onboarding = ({navigation, route}) => {
           route={route}
         />
       )}
+      {/* <Button
+        text={'dslfdsf'}
+        onPress={() => {
+          rate.setIsSubscriptionActive(true);
+        }}
+      /> */}
     </View>
   );
 };
