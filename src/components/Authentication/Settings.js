@@ -1,6 +1,6 @@
 import {observer} from 'mobx-react-lite';
 import React, {useState, useEffect} from 'react';
-import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
+import {View, Text, TouchableOpacity, ScrollView, Platform} from 'react-native';
 import {Shadow} from 'react-native-shadow-2';
 import {app} from 'store/app';
 import {authentication} from 'store/authentication';
@@ -46,15 +46,21 @@ export const Settings = observer(({navigation}) => {
   };
 
   useEffect(() => {
-    api.getRate().then(data => {
-      let current_tarif_id = 'revizorro_' + data.rate.id;
-      iap
-        .getSubscriptions([current_tarif_id])
-        .then(tarifs => JSON.parse(tarifs[0].originalJson))
-        .then(tarif => {
-          tarif.price = rate_prices[tarif.productId];
-          SetTarif(tarif);
-        });
+    iap.initConnection().then(() => {
+      api.getRate().then(data => {
+        let current_tarif_id = 'revizorro_' + data.rate.id;
+        iap
+          .getProducts([current_tarif_id])
+          .then(tarifs => {
+            if (Platform.OS == 'android')
+              return JSON.parse(tarifs[0].originalJson);
+            else return tarifs[0];
+          })
+          .then(tarif => {
+            tarif.price = rate_prices[tarif.productId];
+            SetTarif(tarif);
+          });
+      });
     });
   }, []);
   console.log(rate);
@@ -319,8 +325,7 @@ export const Settings = observer(({navigation}) => {
 });
 
 const Tarif = ({tarif}) => {
-  let {productId, description, name, subscriptionPeriod, price} = tarif;
-  let is_active = rate.selected_tarf_id == productId;
+  let {productId, description, name, title, subscriptionPeriod, price} = tarif;
   let is_year_tarif = subscriptionPeriod == 'P1Y';
   let is_sale = productId == 'revizorro_3';
   return (
@@ -386,7 +391,7 @@ const Tarif = ({tarif}) => {
               fontSize: moderateScale(16),
               color: 'black',
             }}>
-            {name}
+            {Platform.OS == 'ios' ? title : name}
           </Text>
           <Text
             style={{

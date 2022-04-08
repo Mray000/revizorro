@@ -87,7 +87,7 @@ export const ChangePassword = ({navigation, route}) => {
 
     <View style={{marginTop: 10, width: '100%'}}>
       <Input
-        placeholder="Код из смс"
+        placeholder="Код из письма"
         value={code}
         setError={SetIsCodeError}
         is_error={is_code_error}

@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
   BackHandler,
+  Platform,
 } from 'react-native';
 import RateBackgound1 from 'assets/rate_background_1';
 import RateBackgound2 from 'assets/rate_background_2';
@@ -50,7 +51,11 @@ export const RateChoice = observer(({navigation, route}) => {
   useEffect(() => {
     iap
       .getSubscriptions(rate_items)
-      .then(tarifs => tarifs.map(el => JSON.parse(el.originalJson)))
+      .then(tarifs => {
+        if (Platform.OS == 'android')
+          tarifs.map(el => JSON.parse(el.originalJson));
+        else return tarifs;
+      })
       .then(tarifs =>
         tarifs.map(el => {
           el.price = rate_prices[el.productId];
@@ -202,7 +207,7 @@ export const RateChoice = observer(({navigation, route}) => {
 });
 
 const Tarif = ({tarif}) => {
-  let {productId, description, name, subscriptionPeriod, price} = tarif;
+  let {productId, description, name, title, subscriptionPeriod, price} = tarif;
   let is_active = rate.selected_tarf_id == productId;
   let is_year_tarif = subscriptionPeriod == 'P1Y';
   let is_sale = productId == 'revizorro_3';
@@ -285,7 +290,7 @@ const Tarif = ({tarif}) => {
               fontSize: moderateScale(16),
               color: 'black',
             }}>
-            {name}
+            {Platform.OS == 'ios' ? title : name}
           </Text>
           <Text
             style={{

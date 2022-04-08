@@ -106,7 +106,7 @@ const App = observer(() => {
   let is_company_active = rate.is_subscription_active;
   if (!is_load) return <Loader />;
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: 'rgba(40,60,0,0)'}}>
       <NavigationContainer>
         <Tab.Navigator
           screenOptions={{

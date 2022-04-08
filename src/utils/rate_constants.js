@@ -3,6 +3,7 @@ export const rate_items = [
   'revizorro_2',
   'revizorro_3',
   'revizorro_4',
+  'revizorro_5',
   'revizorro_test',
 ];
 
@@ -11,5 +12,5 @@ export const rate_prices = {
   revizorro_2: 999,
   revizorro_3: 1990,
   revizorro_4: 17900,
-  revizorro_test: 5,
+  revizorro_5: 15,
 };

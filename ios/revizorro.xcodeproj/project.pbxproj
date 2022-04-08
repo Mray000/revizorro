@@ -204,7 +204,7 @@
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
 				07C48C868AB9F5236F159B66 /* [CP] Copy Pods Resources */,
-				5331EA77024233E48D6272F8 /* [CP] Embed Pods Frameworks */,
+				93C3F5F83640F113B4B3790A /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -228,7 +228,7 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				F3946BC606CB9C4F70B777C5 /* [CP] Copy Pods Resources */,
 				734264389472A178F3D2B76B /* [CP-User] [RNFB] Core Configuration */,
-				087C1D58663C635B5582A01A /* [CP] Embed Pods Frameworks */,
+				E775D9075AFB9E2687D822DE /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -336,40 +336,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-revizorro-revizorroTests/Pods-revizorro-revizorroTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		087C1D58663C635B5582A01A /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-revizorro/Pods-revizorro-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-revizorro/Pods-revizorro-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-revizorro/Pods-revizorro-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		5331EA77024233E48D6272F8 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-revizorro-revizorroTests/Pods-revizorro-revizorroTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-revizorro-revizorroTests/Pods-revizorro-revizorroTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-revizorro-revizorroTests/Pods-revizorro-revizorroTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		6F0317F0B7C73C4D2DE8B800 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -425,6 +391,40 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		93C3F5F83640F113B4B3790A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-revizorro-revizorroTests/Pods-revizorro-revizorroTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-revizorro-revizorroTests/Pods-revizorro-revizorroTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-revizorro-revizorroTests/Pods-revizorro-revizorroTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E775D9075AFB9E2687D822DE /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-revizorro/Pods-revizorro-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-revizorro/Pods-revizorro-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-revizorro/Pods-revizorro-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F3946BC606CB9C4F70B777C5 /* [CP] Copy Pods Resources */ = {
@@ -555,7 +555,7 @@
 				CODE_SIGN_ENTITLEMENTS = revizorro/revizorro.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = Y64T68TG3X;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = revizorro/Info.plist;
@@ -563,7 +563,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.1.2;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -588,14 +588,14 @@
 				CODE_SIGN_ENTITLEMENTS = revizorro/revizorro.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = Y64T68TG3X;
 				INFOPLIST_FILE = revizorro/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.1.2;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
