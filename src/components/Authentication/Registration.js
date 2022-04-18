@@ -9,13 +9,14 @@ import {
   View,
 } from 'react-native';
 import X from 'assets/x.svg';
-import {Input} from 'utils/Input';
+import {Input} from 'styled_components/Input';
 import {colors} from 'utils/colors';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {Button} from 'utils/Button';
+import {Button} from 'styled_components/Button';
 import {Shadow} from 'react-native-shadow-2';
 import {authentication} from 'store/authentication';
-import {moderateScale, verticalScale} from 'utils/Normalize';
+import {moderateScale, verticalScale} from 'utils/normalize';
+import {dimensions} from 'utils/dimisions';
 
 export const Registration = ({navigation, route}) => {
   const [is_first_step, SetIsFirstStep] = useState(true);
@@ -37,7 +38,7 @@ export const Registration = ({navigation, route}) => {
         name,
         surname,
         company,
-        email,
+        email.toLowerCase(),
         password,
       );
       switch (data) {
@@ -89,11 +90,8 @@ export const Registration = ({navigation, route}) => {
     <KeyboardAwareScrollView style={{flex: 1}}>
       <View
         style={{
-          height:
-            Dimensions.get('window').height - (StatusBar.currentHeight || 84),
-          // height: "100%",
-          // backgroundColor: "red",
-          // flex: 1,
+          height: dimensions.height - (StatusBar.currentHeight || 84),
+
           padding: 20,
           justifyContent: 'space-between',
         }}>

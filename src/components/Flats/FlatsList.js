@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
 import {api} from 'utils/api';
-import {moderateScale, scale, verticalScale} from 'utils/Normalize';
+import {moderateScale, scale, verticalScale} from 'utils/normalize';
 import ArrowRight from 'assets/arrow_right.svg';
 import {colors} from 'utils/colors';
-import {Loader} from 'utils/Loader';
+import {Loader} from 'styled_components/Loader';
 import moment from 'moment';
 export const FlatsList = ({navigation}) => {
   const [flats, SetFlats] = useState(null);
@@ -18,8 +18,9 @@ export const FlatsList = ({navigation}) => {
       api.getFlats().then(SetFlats);
     });
   }, []);
-  
+
   if (!flats) return <Loader />;
+  console.log(flats[0]);
   return (
     <ScrollView>
       <View
@@ -34,7 +35,6 @@ export const FlatsList = ({navigation}) => {
           style={{
             color: 'black',
             fontFamily: 'Inter-SemiBold',
-            fontWeight: '800',
             fontSize: moderateScale(19),
           }}>
           Мои квартиры
@@ -51,7 +51,7 @@ export const FlatsList = ({navigation}) => {
         </TouchableOpacity>
       </View>
       <View style={{marginTop: 10, paddingHorizontal: 10}}>
-        {flats.map(flat => (
+        {flats.reverse().map(flat => (
           <Flat flat={flat} navigation={navigation} key={flat.id} />
         ))}
       </View>
@@ -108,7 +108,7 @@ const Flat = ({flat, navigation}) => {
                 fontFamily: 'Inter-Regular',
                 fontSize: moderateScale(14),
                 color: 'black',
-                marginTop: 3
+                marginTop: 3,
               }}>
               Последняя уборка: {moment(last_cleaning).format('DD MMM HH:mm')}
             </Text>

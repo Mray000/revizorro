@@ -1,17 +1,17 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, Image, ScrollView} from 'react-native';
-import {Header} from 'utils/Header';
+import {Header} from 'styled_components/Header';
 import Map from 'assets/map.svg';
 import Home from 'assets/home_2.svg';
 import Pen from 'assets/pen.svg';
-import {moderateScale, scale} from 'utils/Normalize';
+import {moderateScale, scale} from 'utils/normalize';
 import {dimensions} from 'utils/dimisions';
 import {convertType} from 'utils/flat_types';
 import ArrowDown from 'assets/arrow_down.svg';
 import ArrowUp from 'assets/arrow_up.svg';
 import {CleaningComponent} from 'components/Cleanings/CleaningComponent';
 import {api} from 'utils/api';
-import {Loader} from 'utils/Loader';
+import {Loader} from 'styled_components/Loader';
 export const FlatProfile = ({navigation, route}) => {
   let flat = route.params.flat;
   let {id, title, address, type, images} = flat;
@@ -57,7 +57,6 @@ export const FlatProfile = ({navigation, route}) => {
 
       <View style={{paddingHorizontal: 10}}>
         <View
-      
           style={{
             backgroundColor: 'white',
             borderRadius: 15,
@@ -164,7 +163,7 @@ export const FlatProfile = ({navigation, route}) => {
                       <ArrowUp fill="black" />
                     )}
                   </TouchableOpacity>
-                 </View>
+                </View>
               </View>
               <View>
                 {need_check_cleanings
@@ -234,7 +233,7 @@ export const FlatProfile = ({navigation, route}) => {
                     fontSize: moderateScale(15),
                     fontFamily: 'Inter-Regular',
                   }}>
-                  завершенные уборки
+                  история уборок
                 </Text>
                 <TouchableOpacity
                   style={{marginLeft: 10}}

@@ -6,16 +6,19 @@ import {app} from 'store/app';
 import {authentication} from 'store/authentication';
 import {api} from 'utils/api';
 import {colors} from 'utils/colors';
+import SupportSvg from 'assets/support.svg';
 import {dimensions} from 'utils/dimisions';
-import {Input} from 'utils/Input';
-import {Loader} from 'utils/Loader';
-import {moderateScale} from 'utils/Normalize';
-import {SwitchComponent} from 'utils/SwitchComponent';
+import {Input} from 'styled_components/Input';
+import {Loader} from 'styled_components/Loader';
+import {moderateScale} from 'utils/normalize';
+import {SwitchComponent} from 'styled_components/SwitchComponent';
 import ArrowRight from 'assets/arrow_right.svg';
-import {ModalPicker} from 'utils/ModalPicker';
+import {ModalPicker} from 'styled_components/ModalPicker';
 import iap from 'react-native-iap';
 import {rate} from 'store/rate';
 import {rate_prices} from 'utils/rate_constants';
+import {useToggle} from 'hooks/useToggle';
+import {LogoutModal} from 'styled_components/LogoutModal';
 export const Settings = observer(({navigation}) => {
   const [name, SetName] = useState('');
   const [surname, SetSurname] = useState('');
@@ -25,14 +28,10 @@ export const Settings = observer(({navigation}) => {
   const [interval, SetInterval] = useState(5);
   const [is_cleaning_interval_modal_active, SetIsCleaningIntervalModalActive] =
     useState(false);
+  const [is_logout_modal_visible, SetIsLogoutModalVisible] = useToggle(false);
   const [tarif, SetTarif] = useState(null);
 
   const [error, SetError] = useState('');
-
-  const logout = () => {
-    authentication.logout();
-    navigation.navigate('Onboarding');
-  };
 
   const SetMe = async () => {
     await api.getMe().then(me => {
@@ -63,7 +62,6 @@ export const Settings = observer(({navigation}) => {
       });
     });
   }, []);
-  console.log(rate);
 
   useEffect(() => {
     if (!is_actual_data) SetMe();
@@ -104,15 +102,25 @@ export const Settings = observer(({navigation}) => {
   if (!is_actual_data) return <Loader />;
   return (
     <ScrollView style={{padding: 10}}>
-      <Text
+      <View
         style={{
-          fontFamily: 'Inter-SemiBold',
-          fontSize: moderateScale(20),
-          color: 'black',
-          marginTop: 10,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
         }}>
-        Настройки
-      </Text>
+        <Text
+          style={{
+            fontFamily: 'Inter-SemiBold',
+            fontSize: moderateScale(20),
+            color: 'black',
+            marginTop: 10,
+          }}>
+          Настройки
+        </Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Support')}>
+          <SupportSvg />
+        </TouchableOpacity>
+      </View>
       <Text
         style={{
           fontFamily: 'Inter-Medium',
@@ -297,7 +305,7 @@ export const Settings = observer(({navigation}) => {
       </TouchableOpacity>
 
       <TouchableOpacity
-        onPress={logout}
+        onPress={SetIsLogoutModalVisible}
         style={{
           marginTop: 10,
           width: '100%',
@@ -319,6 +327,11 @@ export const Settings = observer(({navigation}) => {
         data={intervals}
         onPick={SetGlobalInterval}
         closeModal={() => SetIsCleaningIntervalModalActive(false)}
+      />
+      <LogoutModal
+        visible={is_logout_modal_visible}
+        closeModal={SetIsLogoutModalVisible}
+        navigation={navigation}
       />
     </ScrollView>
   );

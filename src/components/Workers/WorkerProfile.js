@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, Image, ScrollView} from 'react-native';
-import {Header} from 'utils/Header';
+import {Header} from 'styled_components/Header';
 import Pen from 'assets/pen.svg';
 import Star from 'assets/star.svg';
 import HalfStar from 'assets/half_star.svg';
-import {moderateScale, scale, verticalScale} from 'utils/Normalize';
-import {Loader} from 'utils/Loader';
+import {moderateScale, scale, verticalScale} from 'utils/normalize';
+import {Loader} from 'styled_components/Loader';
 import {api, ImageURL} from 'utils/api';
 import {CleaningComponent} from 'components/Cleanings/CleaningComponent';
 import {app} from 'store/app';
@@ -24,6 +24,7 @@ export const WorkerProfile = observer(({navigation, route}) => {
     return word;
   };
   useEffect(() => {
+    console.log(342342)
     api
       .getWorker(id)
       .then(worker =>
@@ -154,7 +155,6 @@ export const WorkerProfile = observer(({navigation, route}) => {
               }}>
               история {is_maid ? 'уборок' : 'проверок'}
             </Text>
-            {console.log(cleanings.length, 'SADADASD')}
             {[...cleanings].map(cleaning => (
               <CleaningComponent
                 is_completed={true}

@@ -1,14 +1,14 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, Modal, Image} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {Header} from 'utils/Header';
-import {moderateScale, scale, verticalScale} from 'utils/Normalize';
-import {Input} from 'utils/Input';
+import {Header} from 'styled_components/Header';
+import {moderateScale, scale, verticalScale} from 'utils/normalize';
+import {Input} from 'styled_components/Input';
 import {dimensions} from 'utils/dimisions';
 import {Shadow} from 'react-native-shadow-2';
 import ToggleSwitch from 'toggle-switch-react-native';
 import {api, ImageURL} from 'utils/api';
-import {Button} from 'utils/Button';
+import {Button} from 'styled_components/Button';
 import ArrowRight from 'assets/arrow_right.svg';
 import ArrowBottom from 'assets/arrow_down.svg';
 import {colors} from 'utils/colors';
@@ -52,7 +52,7 @@ export const EditWorker = ({navigation, route}) => {
   let is_button_disabled = !(email && name && surname && sex) || is_load;
   const handleEditWorker = async () => {
     SetIsLoad(true);
-    let is_ok = await api.editWorker(
+    let error = await api.editWorker(
       id,
       is_housemaid ? 'role_maid' : 'role_manager',
       name,
@@ -64,9 +64,9 @@ export const EditWorker = ({navigation, route}) => {
       add_workers,
       control_cleaning,
     );
-    if (is_ok) {
+    if (!error) {
       navigation.navigate('WorkersList');
-    } else SetEmailError('Сотрудник с такой почтой уже зарегестрирован');
+    } else SetEmailError(error);
     SetIsLoad(false);
   };
 

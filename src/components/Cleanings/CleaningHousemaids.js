@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, ScrollView, Image} from 'react-native';
-import {AddButton} from 'utils/AddButton';
+import {AddButton} from 'styled_components/AddButton';
 import {api} from 'utils/api';
 import {colors} from 'utils/colors';
 import {dimensions} from 'utils/dimisions';
-import {Header} from 'utils/Header';
-import {Loader} from 'utils/Loader';
-import {moderateScale, scale, verticalScale} from 'utils/Normalize';
+import {Header} from 'styled_components/Header';
+import {Loader} from 'styled_components/Loader';
+import {moderateScale, scale, verticalScale} from 'utils/normalize';
 import Check from 'assets/check.svg';
 import {cleaning} from 'store/cleaning';
 import {observer} from 'mobx-react-lite';

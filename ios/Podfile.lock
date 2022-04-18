@@ -455,7 +455,7 @@ PODS:
     - RNFBApp
   - RNGestureHandler (2.1.0):
     - React-Core
-  - RNIap (8.0.5):
+  - RNIap (8.0.7):
     - React-Core
   - RNPermissions (3.2.0):
     - React-Core
@@ -795,13 +795,13 @@ SPEC CHECKSUMS:
   RNFBApp: 06c8447270d295edc431bccd55970d8711a07a42
   RNFBMessaging: 8e3575bb0303b43a852bf5decbe99c3272035048
   RNGestureHandler: e5c7cab5f214503dcefd6b2b0cefb050e1f51c4a
-  RNIap: 2bb5fdc51db7f62f194efdd5e9d613ae48605cb1
+  RNIap: 0f95fd117338bd1846e0a77600a02d16056f7795
   RNPermissions: f7ebe52db07c00901127966ca080b4ec6a6ceb0a
   RNScreens: 03ba504f8c98607ad1f07808e71040e0afa335ec
   RNSVG: 8ba35cbeb385a52fd960fd28db9d7d18b4c2974f
   Yoga: 32a18c0e845e185f4a2a66ec76e1fd1f958f22fa
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: b91c1d1900cd6d7d4af38bf0c83751b38922fa8e
+PODFILE CHECKSUM: f21a8c1276e7106bd65b61fcbb00708c15f59ba0
 
 COCOAPODS: 1.11.3

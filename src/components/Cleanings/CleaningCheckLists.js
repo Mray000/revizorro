@@ -1,38 +1,27 @@
 import React, {useState, useEffect, useMemo} from 'react';
 import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
-import {AddButton} from 'utils/AddButton';
+import {AddButton} from 'styled_components/AddButton';
 import {api} from 'utils/api';
 import {colors} from 'utils/colors';
 import {dimensions} from 'utils/dimisions';
-import {Header} from 'utils/Header';
-import {Loader} from 'utils/Loader';
-import {moderateScale} from 'utils/Normalize';
+import {Header} from 'styled_components/Header';
+import {Loader} from 'styled_components/Loader';
+import {moderateScale} from 'utils/normalize';
 import Check from 'assets/check.svg';
 import {cleaning} from 'store/cleaning';
 import {observer} from 'mobx-react-lite';
-import { app } from 'store/app';
+import {app} from 'store/app';
 export const CleaningCheckLists = observer(({navigation}) => {
   const [check_lists, SetCheckLists] = useState(null);
 
   useEffect(() => {
-    if (!check_lists)
-      api
-        .getCheckLists()
-        .then(check_lists =>
-          check_lists.filter(el => el.type == cleaning.flat.type),
-        )
-        .then(SetCheckLists);
+    if (!check_lists) api.getCheckListsForCleanings(cleaning.flat.id).then(SetCheckLists);
   }, [check_lists]);
 
   useEffect(() => {
     navigation.addListener('focus', () => {
       SetCheckLists(null);
-      api
-        .getCheckLists()
-        .then(check_lists =>
-          check_lists.filter(el => el.type == cleaning.flat.type),
-        )
-        .then(SetCheckLists);
+      api.getCheckListsForCleanings(cleaning.flat.id).then(SetCheckLists);
     });
   }, []);
 
@@ -121,7 +110,7 @@ const CheckList = ({check_list, is_active, SetIsActiveCheckList}) => (
       style={{
         fontSize: moderateScale(16),
         color: 'black',
-        fontFamily: 'Inter-Mdeium',
+        fontFamily: 'Inter-Medium',
       }}>
       {check_list.name}
     </Text>
@@ -131,7 +120,7 @@ const CheckList = ({check_list, is_active, SetIsActiveCheckList}) => (
         color: '#C5BFBE',
         position: 'absolute',
         right: 10,
-        fontFamily: 'Inter-Redular',
+        fontFamily: 'Inter-Regular',
         fontSize: moderateScale(16),
       }}>
       {check_list.cost} ₽

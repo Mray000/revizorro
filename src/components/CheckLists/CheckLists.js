@@ -1,5 +1,5 @@
 import {createStackNavigator} from '@react-navigation/stack';
-import {FlatTypes} from 'utils/FlatTypes';
+import {FlatTypes} from 'styled_components/FlatTypes';
 import React, {useState, useEffect} from 'react';
 import {AddCheckList} from './AddCheckList';
 import {EditCheckList} from './EditCheckList';

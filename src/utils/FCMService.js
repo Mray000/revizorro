@@ -1,17 +1,20 @@
-import { ReactNativeFirebase } from '@react-native-firebase/app';
+import {ReactNativeFirebase} from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 import {Platform} from 'react-native';
 class FCMService {
   register = async (onRegister, onNotification, onOpenNotification) => {
-      await this.checkPermission(onRegister)
-      await this.createNotifictionListenners(onRegister, onNotification, onOpenNotification)
-
+    await this.checkPermission(onRegister);
+    await this.createNotifictionListenners(
+      onRegister,
+      onNotification,
+      onOpenNotification,
+    );
   };
 
   registerAppWithFCM = async () => {
-      await messaging().registerDeviceForRemoteMessages()
-      await messaging().setAutoInitEnabled(true)
-  }
+    await messaging().registerDeviceForRemoteMessages();
+    await messaging().setAutoInitEnabled(true);
+  };
 
   checkPermission = onRegister => {
     messaging()
@@ -105,7 +108,7 @@ class FCMService {
   };
 
   unRegitster = () => {
-    this.messageListenner();
+    // if (this) this.messageListenner();
   };
 }
 

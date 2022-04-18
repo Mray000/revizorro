@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 import {colors} from 'utils/colors';
-import {moderateScale} from 'utils/Normalize';
+import {moderateScale} from 'utils/normalize';
 import X from 'assets/x.svg';
 import {Shadow} from 'react-native-shadow-2';
-import {Button} from 'utils/Button';
+import {Button} from 'styled_components/Button';
 import {dimensions} from 'utils/dimisions';
 export const SubscriptionDisactive = ({navigation}) => {
   return (

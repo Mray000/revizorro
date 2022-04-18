@@ -2,14 +2,14 @@ import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 import X from 'assets/x.svg';
 import {Shadow} from 'react-native-shadow-2';
-import {moderateScale, scale} from 'utils/Normalize';
+import {moderateScale, scale} from 'utils/normalize';
 import CleacningPicture from 'assets/cleaning_picture.svg';
 import ControlPicture from 'assets/control_picture.svg';
 import FamilyPicture from 'assets/family_picture.svg';
 import ManagerPicture from 'assets/manager_picture.svg';
 import ReportPicture from 'assets/report_picture.svg';
 import ClockPicture from 'assets/clock_picture.svg';
-import {Button} from 'utils/Button';
+import {Button} from 'styled_components/Button';
 import {dimensions} from 'utils/dimisions';
 import {colors} from 'utils/colors';
 
@@ -52,8 +52,8 @@ export const OnboardingScreens = ({
     },
     {
       image: <ClockPicture />,
-      title: 'Уверенность в качестве выполненной работы',
-      text: 'Приложение невозможно обмануть. Вы будете уверены, что работа сделана хорошо. А ваши гости приедут в чистую квартиру, оставшись довольными.',
+      title: 'Шаг 3: Отправьте отчёт и ждите подтверждения',
+      text: 'В течение 5-ти минут ваш отчёт проверят и вы получите уведомление.\n\n Если уборку приняли, ваша работа завершена. Если есть недочеты, вы можете их исправить и отправить отчёт  на проверку повторно.',
     },
   ];
 
@@ -126,6 +126,7 @@ export const OnboardingScreens = ({
             color: 'black',
             fontFamily: 'Inter-SemiBold',
             marginTop: 10,
+            textAlign: "center"
           }}>
           {screen.title}
         </Text>
@@ -154,7 +155,11 @@ export const OnboardingScreens = ({
             <Dot is_active={index == 2} />
           </View>
         ) : null}
-        <Button text={role != "manager" ? "Далее" : "Понятно!"} icon={true} onPress={handleNext} />
+        <Button
+          text={role != 'manager' ? 'Далее' : 'Понятно!'}
+          icon={true}
+          onPress={handleNext}
+        />
       </View>
     </View>
   );

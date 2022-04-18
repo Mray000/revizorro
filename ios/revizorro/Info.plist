@@ -54,7 +54,7 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>YOUR TEXT</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>YOUR TEXT</string>
+	<string>Необходимо разрешить доступ приложения к вашей геолокации</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>YOUR TEXT</string>
 	<key>NSMotionUsageDescription</key>

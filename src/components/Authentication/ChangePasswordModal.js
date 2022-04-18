@@ -2,9 +2,9 @@ import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 import {Shadow} from 'react-native-shadow-2';
 import X from 'assets/x.svg';
-import {moderateScale} from 'utils/Normalize';
-import {Input} from 'utils/Input';
-import {Button} from 'utils/Button';
+import {moderateScale} from 'utils/normalize';
+import {Input} from 'styled_components/Input';
+import {Button} from 'styled_components/Button';
 import {api} from 'utils/api';
 export const ChangePasswordModal = ({navigation, route}) => {
   const [old_password, SetOldPassword] = useState('');
@@ -43,16 +43,16 @@ export const ChangePasswordModal = ({navigation, route}) => {
         offset={[0, 10]}
         distance={15}
         containerViewStyle={{
-          position: 'absolute',
-          right: 10,
-          top: 10,
+          width: '10%',
+          marginRight: 10,
+          alignSelf: 'flex-end',
         }}>
         <TouchableOpacity
           onPress={() => navigation.navigate(parent)}
           style={{
-            backgroundColor: 'white',
             width: 45,
             height: 45,
+            backgroundColor: 'white',
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: 17,

@@ -10,20 +10,21 @@ import {
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {R, Shadow} from 'react-native-shadow-2';
 import {dimensions} from 'utils/dimisions';
-import {Input} from 'utils/Input';
+import {Input} from 'styled_components/Input';
 import ArrowRight from 'assets/arrow_right.svg';
 import {colors} from 'utils/colors';
-import {Header} from 'utils/Header';
-import {moderateScale, scale, verticalScale} from 'utils/Normalize';
-import BottomSheet from 'utils/BottomSheet';
+import {Header} from 'styled_components/Header';
+import {moderateScale, scale, verticalScale} from 'utils/normalize';
+import BottomSheet from 'styled_components/BottomSheet';
 import Check from 'assets/check.svg';
 import {app} from 'store/app';
 import X from 'assets/x.svg';
-import {Button} from 'utils/Button';
+import {Button} from 'styled_components/Button';
 import {api} from 'utils/api';
 import {convertType, types} from 'utils/flat_types';
-import {AddButton} from 'utils/AddButton';
-import {ModalPicker} from 'utils/ModalPicker';
+import {AddButton} from 'styled_components/AddButton';
+import {ModalPicker} from 'styled_components/ModalPicker';
+import KeyboardAvoidingView from 'react-native/Libraries/Components/Keyboard/KeyboardAvoidingView';
 export const EditCheckList = ({navigation, route}) => {
   let check_list = route.params.check_list;
   const [title, SetTitle] = useState(check_list.name);
@@ -219,8 +220,8 @@ export const EditCheckList = ({navigation, route}) => {
   let hours_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   let minutes_values = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
   return (
-    <>
-      <KeyboardAwareScrollView>
+    <View>
+      <KeyboardAwareScrollView behavior="padding" keyboardVerticalOffset={-64}>
         <Header
           to={'ListOfCheckLists'}
           navigation={navigation}
@@ -525,7 +526,7 @@ export const EditCheckList = ({navigation, route}) => {
             </Text>
             <AddButton
               onPress={ChangeIsOpenQuestionModal}
-              text={'Добавить задачу сделать фото'}
+              text={'Добавить вопрос'}
               marginTop={10}
             />
           </View>
@@ -566,7 +567,6 @@ export const EditCheckList = ({navigation, route}) => {
               <ArrowRight fill="#CAC8C8" />
             </TouchableOpacity>
           ))}
-
           <View>
             <Text
               style={{
@@ -663,69 +663,31 @@ export const EditCheckList = ({navigation, route}) => {
       </KeyboardAwareScrollView>
       {is_question_modal_visible ? (
         <BottomSheet
-          height={verticalScale(370)}
+          height={verticalScale(390)}
           radius={20}
-          minus_height={answers.length ? 0 : 70}
+          plus_height={answers.length ? 0 : 70}
           hasDraggableIcon
           ref={questionbBottomSheet}
           closeFunction={ChangeIsOpenQuestionModal}>
-          <View style={{padding: 10, backgroundColor: 'white'}}>
-            <View style={{height: verticalScale(150)}}>
-              <TextInput
-                multiline={true}
-                style={{
-                  height: '100%',
-                  backgroundColor: 'white',
-                  borderRadius: 20,
-                  borderColor: '#E5E3E2',
-                  borderWidth: 1,
-                  padding: 25,
-                  textAlignVertical: 'top',
-                }}
-                value={question}
-                placeholderTextColor={`#979493`}
-                placeholder="Например: вы нормально убрали?"
-                onChangeText={SetQuestion}
-              />
-              <Text
-                style={{
-                  position: 'absolute',
-                  padding: 3,
-                  top: -10,
-                  paddingLeft: 8,
-                  paddingRight: 8,
-                  backgroundColor: 'white',
-                  left: '5%',
-                  borderRadius: 8,
-                  color: !question ? 'rgb(197, 190, 190)' : 'black',
-                }}>
-                ваш вопрос
-              </Text>
-            </View>
-            <View
-              style={{
-                height: verticalScale(50),
-                marginTop: 10,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginBottom: 10,
-                alignItems: 'center',
-              }}>
-              <View style={{height: '100%', width: '85%'}}>
+          <KeyboardAvoidingView behavior="padding">
+            <View style={{padding: 10, backgroundColor: 'white'}}>
+              <View style={{height: verticalScale(150)}}>
                 <TextInput
+                  multiline={true}
                   style={{
                     height: '100%',
                     backgroundColor: 'white',
                     borderRadius: 20,
                     borderColor: '#E5E3E2',
                     borderWidth: 1,
-                    paddingLeft: 25,
-                    color: 'black',
+                    paddingTop: 15,
+                    paddingLeft: 5,
+                    textAlignVertical: 'top',
                   }}
-                  placeholder="Например: безусловно"
+                  value={question}
                   placeholderTextColor={`#979493`}
-                  value={answer}
-                  onChangeText={SetAnswer}
+                  placeholder="Например: вы нормально убрали?"
+                  onChangeText={SetQuestion}
                 />
                 <Text
                   style={{
@@ -737,126 +699,171 @@ export const EditCheckList = ({navigation, route}) => {
                     backgroundColor: 'white',
                     left: '5%',
                     borderRadius: 8,
-                    color: !answer ? 'rgb(197, 190, 190)' : 'black',
+                    color: !question ? 'rgb(197, 190, 190)' : 'black',
                   }}>
-                  вариант ответа
+                  ваш вопрос
                 </Text>
               </View>
-
-              <TouchableOpacity
-                disabled={!answer}
-                onPress={AddAnswer}
+              <View
                 style={{
-                  backgroundColor: answer ? colors.orange : '#fef3eb',
-                  width: '12%',
-                  aspectRatio: 1,
-                  borderRadius: 15,
-                  justifyContent: 'center',
+                  height: verticalScale(50),
+                  marginTop: 10,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginBottom: 10,
                   alignItems: 'center',
                 }}>
-                <Check
-                  width={14}
-                  height={10}
-                  fill={answer ? 'white' : '#FACCAB'}
-                />
-              </TouchableOpacity>
-            </View>
-            {answers.length ? (
-              <ScrollView style={{height: verticalScale(60), marginBottom: 10}}>
-                <View
-                  style={{
-                    flexWrap: 'wrap',
-                    width: '100%',
-                    flexDirection: 'row',
-                  }}>
-                  {answers.map(el => (
-                    <View
-                      key={el}
-                      style={{
-                        flexDirection: 'row',
-                        padding: 5,
-                        backgroundColor: '#fef3eb',
-                        borderRadius: 8,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        margin: 3,
-                      }}>
-                      <Text
-                        style={{
-                          color: colors.orange,
-                          fontSize: moderateScale(14),
-                          fontFamily: 'Inter-Regular',
-                          marginRight: 5,
-                        }}>
-                        {el}
-                      </Text>
-                      <TouchableOpacity
-                        onPress={() =>
-                          SetAnswers(prev => prev.filter(q => el != q))
-                        }>
-                        <X fill={'#FACCAB'} />
-                      </TouchableOpacity>
-                    </View>
-                  ))}
+                <View style={{height: '100%', width: '85%'}}>
+                  <TextInput
+                    style={{
+                      height: '100%',
+                      backgroundColor: 'white',
+                      borderRadius: 20,
+                      borderColor: '#E5E3E2',
+                      borderWidth: 1,
+                      paddingLeft: 25,
+                      color: 'black',
+                    }}
+                    placeholder="Например: безусловно"
+                    placeholderTextColor={`#979493`}
+                    value={answer}
+                    onChangeText={SetAnswer}
+                  />
+                  <Text
+                    style={{
+                      position: 'absolute',
+                      padding: 3,
+                      top: -10,
+                      paddingLeft: 8,
+                      paddingRight: 8,
+                      backgroundColor: 'white',
+                      left: '5%',
+                      borderRadius: 8,
+                      color: !answer ? 'rgb(197, 190, 190)' : 'black',
+                    }}>
+                    вариант ответа
+                  </Text>
                 </View>
-              </ScrollView>
-            ) : null}
 
-            <Button
-              height={verticalScale(50)}
-              text={'Сохранить вопрос'}
-              onPress={AddQuestion}
-              disabled={!(question && answers.length)}
-            />
-          </View>
+                <TouchableOpacity
+                  disabled={!answer}
+                  onPress={AddAnswer}
+                  style={{
+                    backgroundColor: answer ? colors.orange : '#fef3eb',
+                    width: '12%',
+                    aspectRatio: 1,
+                    borderRadius: 15,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Check
+                    width={14}
+                    height={10}
+                    fill={answer ? 'white' : '#FACCAB'}
+                  />
+                </TouchableOpacity>
+              </View>
+              {answers.length ? (
+                <ScrollView
+                  style={{height: verticalScale(60), marginBottom: 10}}>
+                  <View
+                    style={{
+                      flexWrap: 'wrap',
+                      width: '100%',
+                      flexDirection: 'row',
+                    }}>
+                    {answers.map(el => (
+                      <View
+                        key={el}
+                        style={{
+                          flexDirection: 'row',
+                          padding: 5,
+                          backgroundColor: '#fef3eb',
+                          borderRadius: 8,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          margin: 3,
+                        }}>
+                        <Text
+                          style={{
+                            color: colors.orange,
+                            fontSize: moderateScale(14),
+                            fontFamily: 'Inter-Regular',
+                            marginRight: 5,
+                          }}>
+                          {el}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() =>
+                            SetAnswers(prev => prev.filter(q => el != q))
+                          }>
+                          <X fill={'#FACCAB'} />
+                        </TouchableOpacity>
+                      </View>
+                    ))}
+                  </View>
+                </ScrollView>
+              ) : null}
+              <View style={{marginBottom: verticalScale(20)}}>
+                <Button
+                  height={verticalScale(50)}
+                  text={'Сохранить вопрос'}
+                  onPress={AddQuestion}
+                  disabled={!(question && answers.length)}
+                />
+              </View>
+            </View>
+          </KeyboardAvoidingView>
         </BottomSheet>
       ) : null}
       {is_photo_modal_visible ? (
         <BottomSheet
-          height={verticalScale(310)}
+          height={verticalScale(330)}
           radius={20}
-          minus_height={answers.length ? 0 : 70}
+          plus_height={answers.length ? 0 : 70}
           hasDraggableIcon
           ref={photoBottomSheet}
           closeFunction={ChangeIsOpenPhotoModal}>
-          <View style={{padding: 10, backgroundColor: 'white'}}>
-            <View
-              style={{
-                height: verticalScale(150),
-                marginBottom: verticalScale(10),
-              }}>
-              <TextInput
-                multiline={true}
+          <KeyboardAvoidingView behavior="padding">
+            <View style={{padding: 10, backgroundColor: 'white'}}>
+              <View
                 style={{
-                  height: '100%',
-                  backgroundColor: 'white',
-                  borderRadius: 20,
-                  borderColor: '#E5E3E2',
-                  borderWidth: 1,
-                  padding: 25,
-                  textAlignVertical: 'top',
-                }}
-                value={photos_text}
-                placeholderTextColor={`#979493`}
-                placeholder="Например: сделайте фото заправленной кровати"
-                onChangeText={SetPhotosText}
-              />
-              <Text
-                style={{
-                  position: 'absolute',
-                  padding: 3,
-                  top: -10,
-                  paddingLeft: 8,
-                  paddingRight: 8,
-                  backgroundColor: 'white',
-                  left: '5%',
-                  borderRadius: 8,
-                  color: !question ? 'rgb(197, 190, 190)' : 'black',
+                  height: verticalScale(150),
+                  marginBottom: verticalScale(10),
                 }}>
-                какое фото нужно сделать
-              </Text>
-            </View>
-            {/* <View
+                <TextInput
+                  multiline={true}
+                  style={{
+                    height: '100%',
+                    backgroundColor: 'white',
+                    borderRadius: 20,
+                    borderColor: '#E5E3E2',
+                    borderWidth: 1,
+                    paddingTop: 15,
+                    paddingLeft: 5,
+                    textAlignVertical: 'top',
+                  }}
+                  value={photos_text}
+                  placeholderTextColor={`#979493`}
+                  placeholder="Например: сделайте фото заправленной кровати"
+                  onChangeText={SetPhotosText}
+                />
+                <Text
+                  style={{
+                    position: 'absolute',
+                    padding: 3,
+                    top: -10,
+                    paddingLeft: 8,
+                    paddingRight: 8,
+                    backgroundColor: 'white',
+                    left: '5%',
+                    borderRadius: 8,
+                    color: !question ? 'rgb(197, 190, 190)' : 'black',
+                  }}>
+                  какое фото нужно сделать
+                </Text>
+              </View>
+              {/* <View
               style={{
                 height: verticalScale(50),
                 marginTop: 10,
@@ -910,13 +917,16 @@ export const EditCheckList = ({navigation, route}) => {
                 </View>
               </View>
             </View> */}
-            <Button
-              height={verticalScale(50)}
-              text={'Сохранить задачу сделать фото'}
-              onPress={AddPhotosTask}
-              disabled={!photos_text}
-            />
-          </View>
+              <View style={{marginBottom: verticalScale(20)}}>
+                <Button
+                  height={verticalScale(50)}
+                  text={'Сохранить задачу сделать фото'}
+                  onPress={AddPhotosTask}
+                  disabled={!photos_text}
+                />
+              </View>
+            </View>
+          </KeyboardAvoidingView>
         </BottomSheet>
       ) : null}
       {is_delete_modal_open ? (
@@ -958,7 +968,7 @@ export const EditCheckList = ({navigation, route}) => {
         visible={is_minutes_modal_visible}
         closeModal={() => SetIsMinutesModalVisible(false)}
       />
-    </>
+    </View>
   );
 };
 

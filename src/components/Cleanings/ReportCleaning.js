@@ -10,9 +10,9 @@ import {
   Dimensions,
 } from 'react-native';
 import {api, ImageURL} from 'utils/api';
-import {Header} from 'utils/Header';
-import {Loader} from 'utils/Loader';
-import {moderateScale} from 'utils/Normalize';
+import {Header} from 'styled_components/Header';
+import {Loader} from 'styled_components/Loader';
+import {moderateScale} from 'utils/normalize';
 import Map from 'assets/map.svg';
 import Home from 'assets/home.svg';
 import Check from 'assets/check.svg';
@@ -25,7 +25,7 @@ import selected_location from 'assets/location.png';
 import {dimensions} from 'utils/dimisions';
 import {convertType} from 'utils/flat_types';
 import {colors} from 'utils/colors';
-import {Button} from 'utils/Button';
+import {Button} from 'styled_components/Button';
 import MapView, {Marker} from 'react-native-maps';
 import {app} from 'store/app';
 export const ReportCleaning = ({navigation, route}) => {
@@ -53,7 +53,6 @@ export const ReportCleaning = ({navigation, route}) => {
     amount_defects,
     location,
   } = cleaning;
-  console.log(cleaning.id, 'AMOUNT');
   let is_repeat = amount_checks;
   let is_complited = status == 'accepted';
   if (!is_complited && is_repeat)
@@ -282,93 +281,106 @@ export const ReportCleaning = ({navigation, route}) => {
               </View>
             </View>
             {is_complited ? (
-              <TouchableOpacity
-                disabled={
-                  inspector.role == 'role_admin' || !inspector.is_active
-                }
-                onPress={() => {
-                  if (
-                    app.role == 'role_admin' ||
-                    app.accesses.includes('workers')
-                  ) {
-                    navigation.navigate('Workers', {
-                      screen: 'WorkerProfile',
-                      params: {worker: inspector},
-                    });
-                  } else {
-                    navigation.navigate('WorkerProfile', {worker: inspector});
+              inspector ? (
+                <TouchableOpacity
+                  disabled={
+                    inspector.role == 'role_admin' || !inspector.is_active
                   }
-                }}
-                style={{width: '100%'}}>
-                <Text
-                  style={{
-                    marginTop: 10,
-                    fontFamily: 'Inter-Regular',
-                    fontSize: moderateScale(15),
-                    color: '#AAA8A7',
-                    marginLeft: 10,
-                  }}>
-                  проверил
-                </Text>
-                <View
-                  style={{
-                    height: dimensions.height / 10,
-                    backgroundColor: 'white',
-                    marginTop: 10,
-                    shadowColor: '#C8C7C7',
-                    shadowOffset: {
-                      width: 0,
-                      height: 0,
-                    },
-                    shadowOpacity: 0.51,
-                    shadowRadius: 13.16,
-                    elevation: 20,
-                    paddingHorizontal: 20,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: 10,
-                    borderRadius: 20,
-                    flexDirection: 'row',
-                    width: '100%',
-                  }}>
+                  onPress={() => {
+                    if (
+                      app.role == 'role_admin' ||
+                      app.accesses.includes('workers')
+                    ) {
+                      navigation.navigate('Workers', {
+                        screen: 'WorkerProfile',
+                        params: {worker: inspector},
+                      });
+                    } else {
+                      navigation.navigate('WorkerProfile', {worker: inspector});
+                    }
+                  }}
+                  style={{width: '100%'}}>
+                  <Text
+                    style={{
+                      marginTop: 10,
+                      fontFamily: 'Inter-Regular',
+                      fontSize: moderateScale(15),
+                      color: '#AAA8A7',
+                      marginLeft: 10,
+                    }}>
+                    проверил
+                  </Text>
                   <View
                     style={{
-                      width: '100%',
-                      flexDirection: 'row',
+                      height: dimensions.height / 10,
+                      backgroundColor: 'white',
+                      marginTop: 10,
+                      shadowColor: '#C8C7C7',
+                      shadowOffset: {
+                        width: 0,
+                        height: 0,
+                      },
+                      shadowOpacity: 0.51,
+                      shadowRadius: 13.16,
+                      elevation: 20,
+                      paddingHorizontal: 20,
                       alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: 10,
+                      borderRadius: 20,
+                      flexDirection: 'row',
+                      width: '100%',
                     }}>
                     <View
                       style={{
-                        width: '15%',
+                        width: '100%',
+                        flexDirection: 'row',
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        marginRight: 10,
                       }}>
-                      <Image
-                        source={{uri: inspector.avatar}}
+                      <View
                         style={{
-                          width: '100%',
-                          aspectRatio: 1,
-                          borderRadius: 100,
-                        }}
-                      />
-                    </View>
-                    <Text
-                      numberOfLines={2}
-                      style={{
-                        fontFamily: 'Inter-Regular',
-                        fontSize: moderateScale(15),
-                        color: 'black',
-                        width: '50%',
-                      }}>
-                      {inspector.first_name + ' ' + inspector.last_name}
-                    </Text>
-                    <View style={{position: 'absolute', right: 10}}>
-                      <ArrowRight fill="#C4C2C2" />
+                          width: '15%',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          marginRight: 10,
+                        }}>
+                        <Image
+                          source={{uri: inspector.avatar}}
+                          style={{
+                            width: '100%',
+                            aspectRatio: 1,
+                            borderRadius: 100,
+                          }}
+                        />
+                      </View>
+                      <Text
+                        numberOfLines={2}
+                        style={{
+                          fontFamily: 'Inter-Regular',
+                          fontSize: moderateScale(15),
+                          color: 'black',
+                          width: '50%',
+                        }}>
+                        {inspector.first_name + ' ' + inspector.last_name}
+                      </Text>
+                      <View style={{position: 'absolute', right: 10}}>
+                        <ArrowRight fill="#C4C2C2" />
+                      </View>
                     </View>
                   </View>
-                </View>
-              </TouchableOpacity>
+                </TouchableOpacity>
+              ) : (
+                <Text
+                  style={{
+                    color: '#E8443A',
+                    fontFamily: 'Inter-SemiBold',
+                    fontSize: moderateScale(17),
+                    textAlign: "center",
+                    marginTop: 10,
+                  }}>
+                  Проверено автоматически
+                </Text>
+              )
             ) : null}
 
             <TouchableOpacity

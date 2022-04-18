@@ -27,6 +27,10 @@ class Rate {
   getSelectedTarifId = () => {
     return this.selected_tarf_id;
   };
+
+  getIsSubscriptionActive = () => {
+    return this.is_subscription_active;
+  }
 }
 
 export const rate = new Rate();

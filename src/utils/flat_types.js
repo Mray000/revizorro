@@ -1,4 +1,5 @@
 export const types = {
+  'Стандартная уборка': "any_realty",
   Номер: 'room',
   Студия: 'studio_flat',
   '1-комнатная квартира': '1_room_flat',

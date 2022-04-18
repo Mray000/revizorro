@@ -3,8 +3,8 @@ import React, {useState, useEffect} from 'react';
 import {View, Text, ScrollView} from 'react-native';
 import {app} from 'store/app';
 import {api} from 'utils/api';
-import {Header} from 'utils/Header';
-import {Loader} from 'utils/Loader';
+import {Header} from 'styled_components/Header';
+import {Loader} from 'styled_components/Loader';
 import {observer} from 'mobx-react-lite';
 
 import {CleaningComponent} from './CleaningComponent';
@@ -33,6 +33,7 @@ export const DayCleaningsList = observer(({navigation, route}) => {
   }, []);
 
   const getIsCleaningDisabled = cleaning => {
+    console.log(cleaning.status)
     if (is_housemaid) {
       return cleaning.status == 'on_check' || cleaning.status == 'not_accepted';
     } else {
@@ -73,7 +74,7 @@ export const DayCleaningsList = observer(({navigation, route}) => {
                 ? cleaning.status == 'report_required'
                 : cleaning.status == 'on_check'
             }
-            is_housemiad={is_housemaid}
+            is_housemaid={is_housemaid}
             disabled={getIsCleaningDisabled(cleaning)}
           />
         ))}

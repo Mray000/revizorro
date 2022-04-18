@@ -12,7 +12,6 @@ const getJson = async responce => {
   }
 };
 const middleware = async responce => {
-  console.log(responce.url, responce.status, authentication.accessToken);
   let status = String(responce.status);
   let data = await getJson(responce);
   if (status == '401') {
@@ -106,14 +105,13 @@ const request = {
       return await request.put_form_data(url, body);
     } else return data;
   },
-  delete: async (url, body) => {
+  delete: async url => {
     let responce = await fetch(URL + url, {
       method: 'DELETE',
       headers: {
         Authorization:
           authentication.accessToken && `Bearer ${authentication.accessToken}`,
       },
-      body: body,
     });
     let data = await middleware(responce);
     if (data == 'try_again') {
@@ -166,7 +164,6 @@ export const api = {
       },
       body: JSON.stringify({email, password}),
     }).then(res => res.json());
-    console.log(data, "DSFDSFKDSKLFJKLSDKFJJKSDFKDSKJLF");
     if (data?.access) {
       await SetAuthData(data.access, data.refresh);
       return true;
@@ -225,8 +222,9 @@ export const api = {
       manager_permission_cleaning,
     };
     let data = await request.post(`/users/company/staff/`, body);
-    console.log(data);
-    return typeof data != 'string';
+    if (data?.detail) return 'Сотрудник с такой почтой уже зарегестрирован';
+    if (data?.email) return 'Введите верный адрес электронной почты';
+    return null;
   },
 
   editWorker: async (
@@ -252,10 +250,12 @@ export const api = {
       manager_permission_users,
       manager_permission_cleaning,
     };
-    console.log(body);
     let data = await request.put(`/users/staff/${id}/`, body);
-    console.log(data);
-    return typeof data != 'string';
+
+    if (data?.detail) return 'Сотрудник с такой почтой уже зарегестрирован';
+    if (Array.isArray(data?.email))
+      return 'Введите верный адрес электронной почты';
+    return null;
   },
 
   getWorker: async id => {
@@ -292,11 +292,13 @@ export const api = {
       } else form_data.append(key, body[key]);
     });
     let data = await request.post_form_data('/flats', form_data);
+    console.log(data);
     return data;
   },
 
   editFlat: async (id, body) => {
     let data = await request.put(`/flats/${id}`, body);
+    console.log(data);
     return data;
   },
 
@@ -359,7 +361,9 @@ export const api = {
   },
 
   addCleaning: async body => {
+    console.log(body.check_list_ids);
     let data = await request.post(`/cleaning/multiply`, body);
+    console.log(data);
     return data;
   },
 
@@ -374,7 +378,6 @@ export const api = {
   },
   getCleanings: async () => {
     let cleanings = await request.get('/cleaning/me');
-    console.log(cleanings)
     return cleanings;
   },
 
@@ -470,14 +473,12 @@ export const api = {
   changePassword: async (old_password, new_password) => {
     let body = {old_password, new_password};
     let data = await request.put('/users/auth/change-password/', body);
-    console.log(data);
     if (data?.non_field_errors) return false;
     return true;
   },
 
   registerNotifys: async (token, device) => {
     let data = await request.post('/fcm-tokens', {token, device});
-    console.log(data);
     return data;
   },
 
@@ -490,15 +491,14 @@ export const api = {
     let data = await request.put('/company/', {title, active});
     return data;
   },
+
   getCompany: async () => {
     let data = await request.get('/company');
-    console.log(data, "DATEAL:DVSDFфJKLDSJKLFJKLSDF")
     return data;
   },
 
   getRate: async () => {
     let tarif = await request.get('/rates/company');
-    console.log(tarif)
     return tarif;
   },
   setNotification: async notification => {
@@ -512,7 +512,6 @@ export const api = {
   },
   getPasswordCode: async email => {
     let data = await request.put('/users/auth/recovery-password/', {email});
-    console.log(email, data)
     return !(data?.reason || data.email);
   },
   sendCodeWithNewPassword: async (key, password) => {
@@ -550,8 +549,15 @@ export const api = {
   },
 
   getDollarCourse: async () => {
-    let data = await fetch('https://www.cbr-xml-daily.ru/latest.js').then(res => res.json());
-    
+    let data = await fetch('https://www.cbr-xml-daily.ru/latest.js').then(res =>
+      res.json(),
+    );
+
     return data.rates.USD;
+  },
+
+  getCheckListsForCleanings: async flat_id => {
+    let data = await request.get(`/check-lists/flat/${flat_id}`);
+    return data;
   },
 };

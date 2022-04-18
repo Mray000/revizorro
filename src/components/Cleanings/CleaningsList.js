@@ -3,12 +3,12 @@ import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import {Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {api} from 'utils/api';
-import {Loader} from 'utils/Loader';
-import {moderateScale, scale, verticalScale} from 'utils/Normalize';
+import {Loader} from 'styled_components/Loader';
+import {moderateScale, scale, verticalScale} from 'utils/normalize';
 import {colors} from 'utils/colors';
 import {Shadow} from 'react-native-shadow-2';
 import {dimensions} from 'utils/dimisions';
-import {CleaningsCalendar} from 'utils/CleaningsCalendar';
+import {CleaningsCalendar} from 'styled_components/CleaningsCalendar';
 import {CleaningComponent} from './CleaningComponent';
 import ArrowDown from 'assets/arrow_down.svg';
 import ArrowUp from 'assets/arrow_up.svg';
@@ -204,6 +204,7 @@ export const CleaningsList = observer(({navigation}) => {
                   )}
                 </TouchableOpacity>
               </View>
+              {console.log(app.role)}
               {future_cleanings
                 .splice(
                   0,
@@ -215,9 +216,9 @@ export const CleaningsList = observer(({navigation}) => {
                     cleaning={cleaning}
                     key={cleaning.id}
                     disabled={
+                      app.role == 'role_admin' ||
                       app.accesses.includes('cleanings')
-                        ? cleaning.amount_checks ||
-                          cleaning.status == 'report_required'
+                        ? cleaning.amount_checks
                         : true
                     }
                   />
@@ -234,7 +235,7 @@ export const CleaningsList = observer(({navigation}) => {
                     fontSize: moderateScale(15),
                     fontFamily: 'Inter-Regular',
                   }}>
-                  завершенные уборки
+                  история уборок
                 </Text>
                 <TouchableOpacity
                   style={{marginLeft: 10}}

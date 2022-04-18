@@ -8,9 +8,9 @@ import {
 } from 'react-native';
 import {colors} from 'utils/colors';
 import {dimensions} from 'utils/dimisions';
-import {moderateScale, scale, verticalScale} from 'utils/Normalize';
+import {moderateScale, scale, verticalScale} from 'utils/normalize';
 import Check from 'assets/check.svg';
-import {Button} from 'utils/Button';
+import {Button} from 'styled_components/Button';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 export const SelectRole = ({
   SetRole,

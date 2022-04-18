@@ -12,12 +12,13 @@ import {
   View,
 } from 'react-native';
 import {authentication} from 'store/authentication';
-import {Input} from 'utils/Input';
-import {Button} from 'utils/Button';
+import {Input} from 'styled_components/Input';
+import {Button} from 'styled_components/Button';
 import {colors} from 'utils/colors';
-import {moderateScale, scale, verticalScale} from 'utils/Normalize';
+import {moderateScale, scale, verticalScale} from 'utils/normalize';
 import {observer} from 'mobx-react-lite';
 import {app} from 'store/app';
+import {rate} from 'store/rate';
 export const Login = observer(({navigation, route}) => {
   //ianire@gmail.cted
   //ainurhabibullin0@gmail.test
@@ -34,12 +35,24 @@ export const Login = observer(({navigation, route}) => {
 
   const henderLogin = async () => {
     setIsLoad(true);
-    let is_ok = await authentication.login(email, password);
+    let is_ok = await authentication.login(email.toLowerCase(), password);
     console.log(is_ok);
     if (is_ok) {
       SetEmail('');
       setPassword('');
-      navigation.navigate(app.role == 'role_maid' ? 'Housemaid' : 'Cleanings');
+      let role = app.role;
+      let is_company_active = rate.getIsSubscriptionActive();
+      navigation.navigate(
+        role
+          ? role != 'role_maid'
+            ? is_company_active
+              ? 'Cleanings'
+              : 'RateChoice'
+            : is_company_active
+            ? 'Housemaid'
+            : 'SubscriptionDisactive'
+          : 'Onboarding',
+      );
     } else setIncorrectData(true);
     setIsLoad(false);
   };

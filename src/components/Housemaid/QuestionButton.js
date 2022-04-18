@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Dimensions, Text, TouchableOpacity} from 'react-native';
 import {colors} from 'utils/colors';
-import { moderateScale } from 'utils/Normalize';
+import { moderateScale } from 'utils/normalize';
 export const QuestionButton = ({
   selected,
   text,

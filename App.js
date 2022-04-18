@@ -1,12 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {
-  Alert,
-  Dimensions,
-  Platform,
-  SafeAreaView,
-  Text,
-  View,
-} from 'react-native';
+import {SafeAreaView} from 'react-native';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {Login} from './src/components/Authentication/Login.js';
@@ -14,10 +7,8 @@ import {ChangePassword} from './src/components/Authentication/ChangePassword.js'
 import {ChangePasswordModal} from './src/components/Authentication/ChangePasswordModal.js';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Registration} from './src/components/Authentication/Registration.js';
-import {AddWorker} from './src/components/Workers/AddWorker.js';
-import {BottomNavigator} from 'utils/BottomNavigator.js';
+import {BottomNavigator} from 'styled_components/BottomNavigator.js';
 import {authentication} from './src/store/authentication.js';
-import {profile} from './src/store/profile.js';
 import WorkersIcon from 'assets/workers.svg';
 import WorkersActive from 'assets/workers_active.svg';
 import FlatsIcon from 'assets/home.svg';
@@ -29,16 +20,16 @@ import CheckListsActive from 'assets/check_list_active.svg';
 import SettingsIcon from 'assets/settings.svg';
 import SettingsActive from 'assets/settings_active.svg';
 import {Success} from './src/components/Success/Success.js';
-import {api, getAsyncData} from 'utils/api.js';
+import {api, getAsyncData} from './src/utils/api.js';
 import {Workers} from 'components/Workers/Workers.js';
 import {WorkerSettings} from 'components/Workers/WorkerSettings.js';
-import {Button} from 'utils/Button.js';
 import {Flats} from 'components/Flats/Flats.js';
 import {CheckLists} from 'components/CheckLists/CheckLists.js';
 import {Onboarding} from 'components/Onboarding/Onboarding.js';
 import {Cleanings} from 'components/Cleanings/Cleanings.js';
 import {Housemaid} from 'components/Housemaid/Housemaid.js';
 import {Settings} from 'components/Authentication/Settings.js';
+import {Support} from 'components/Authentication/Support.js';
 import {RateChoice} from 'components/Authentication/RateChoice.js';
 import {SubscriptionDisactive} from 'components/Authentication/SubscriptionDisactive.js';
 import {fcmService} from './src/utils/FCMService.js';
@@ -46,7 +37,7 @@ import {localNotificationService} from './src/utils/LocalNotificationService';
 import {observer} from 'mobx-react-lite';
 import {app} from './src/store/app.js';
 import {rate} from './src/store/rate.js';
-import {Loader} from 'utils/Loader.js';
+import {Loader} from 'styled_components/Loader.js';
 import iap from 'react-native-iap';
 
 const Tab = createBottomTabNavigator();
@@ -57,33 +48,11 @@ const App = observer(() => {
   const [is_load, SetIsLoad] = useState(false);
 
   useEffect(() => {
-    let purchaseUpdatedListener;
-    let purchaseErrorListener;
+    // let purchaseUpdatedListener;
+    // let purchaseErrorListener;
 
     (async () => {
       let data = await getAsyncData();
-
-      await iap.initConnection();
-      purchaseErrorListener = iap.purchaseErrorListener(async error => {
-        Alert.alert(
-          'Ошибка',
-          'Во время попытки оформить подписку произошла ошибка. Код ошибки-',
-          error.code,
-        );
-      });
-
-      purchaseUpdatedListener = iap.purchaseUpdatedListener(async purhcase => {
-        const receipt = purhcase.transactionReceipt;
-        if (receipt) {
-          // Alert.alert('Тестовое сообщение', 'оплата прошла');
-          // let tarif_id = Number(rate.selected_tarf_id.split('_')[1]);
-          let tarif_id = 1;
-          await api.setTarif(tarif_id);
-          await iap.finishTransaction(purhcase, true);
-          rate.setIsSubscriptionActive(true);
-          rate.setIsSubscriptionPaid(true);
-        }
-      });
 
       if (data) {
         authentication.SetAccessToken(data.accessToken);
@@ -92,21 +61,46 @@ const App = observer(() => {
         if (is_token_normal) await app.setMe();
       }
       SetIsLoad(true);
+      // await iap.initConnection();
+      // purchaseErrorListener = iap.purchaseErrorListener(async error => {
+      //   Alert.alert(
+      //     'Ошибка',
+      //     'Во время попытки оформить подписку произошла ошибка. Код ошибки-',
+      //     JSON.stringify(error),
+      //   );
+      // });
+
+      // purchaseUpdatedListener = iap.purchaseUpdatedListener(async purhcase => {
+      //   const receipt = purhcase.transactionReceipt;
+      //   // api.debuggRequest('ПРИШЛО');
+      //   // Alert.alert(receipt, 'TEST');
+
+      //   if (receipt) {
+      //     // Alert.alert('Тестовое сообщение', 'оплата прошла');
+      //     // let tarif_id = Number(rate.selected_tarf_id.split('_')[1]);
+      //     let tarif_id = 1;
+      //     await api.setTarif(tarif_id);
+      //     await iap.finishTransaction(purhcase, true);
+      //     rate.setIsSubscriptionActive(true);
+      //     rate.setIsSubscriptionPaid(true);
+      //   }
+      // });
     })();
 
     return () => {
-      console.log('APP unreigster');
       fcmService.unRegitster();
       localNotificationService.unregister();
-      purchaseErrorListener.remove();
-      purchaseUpdatedListener.remove();
       iap.endConnection();
+      console.log('APP unreigster');
+      // purchaseErrorListener.remove();
+      // purchaseUpdatedListener.remove();
     };
   }, []);
-  let is_company_active = rate.is_subscription_active;
+  let is_company_active = rate.getIsSubscriptionActive();
+  // console.log(is_company_active, 'IS COMPANY ACTIVE');
   if (!is_load) return <Loader />;
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'rgba(40,60,0,0)'}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
       <NavigationContainer>
         <Tab.Navigator
           screenOptions={{
@@ -246,6 +240,11 @@ const App = observer(() => {
           <Tab.Screen
             name="Success"
             component={Success}
+            options={{hidden: true}}
+          />
+          <Tab.Screen
+            name="Support"
+            component={Support}
             options={{hidden: true}}
           />
         </Tab.Navigator>

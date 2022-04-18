@@ -2,7 +2,7 @@ import React from 'react';
 import ArrowRight from 'assets/arrow_right.svg';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {Shadow} from 'react-native-shadow-2';
-import {moderateScale, scale} from 'utils/Normalize';
+import {moderateScale, scale} from 'utils/normalize';
 import moment from 'moment';
 import {cleaning as cleaning_store} from 'store/cleaning';
 import {colors} from 'utils/colors';
@@ -28,7 +28,6 @@ export const CleaningComponent = React.memo(
       amount_checks,
       fill_questions,
     } = cleaning;
-    if (!maid) console.log(cleaning.id);
     if (housemaid) maid = housemaid;
     const getDate = () => {
       let today = moment();
@@ -41,11 +40,15 @@ export const CleaningComponent = React.memo(
     };
 
     const onPress = () => {
-      if (is_housemaid && is_need_check)
+      console.log(is_housemaid)
+      if (is_housemaid && is_need_check) {
+        console.log(34)
         return navigation.navigate('CompleteCleaning', {cleaning});
+      }
 
-      if (is_completed || is_need_check)
+      if (is_completed || is_need_check) {
         return navigation.navigate('ReportCleaning', {cleaning});
+      }
 
       cleaning_store.setEditId(id);
       cleaning_store.setFlat(flat);
@@ -78,7 +81,6 @@ export const CleaningComponent = React.memo(
           ).length;
         });
       } else {
-        console.log(fill_questions, 'FILL');
         fill_questions
           .filter(el => !el.checked)
           .forEach(el => {

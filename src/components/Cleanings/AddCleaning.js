@@ -8,7 +8,7 @@ import {
   Modal,
 } from 'react-native';
 import {Shadow} from 'react-native-shadow-2';
-import {moderateScale, scale, verticalScale} from 'utils/Normalize';
+import {moderateScale, scale, verticalScale} from 'utils/normalize';
 import X from 'assets/x.svg';
 import ArrowRight from 'assets/arrow_right.svg';
 import {dimensions} from 'utils/dimisions';
@@ -20,8 +20,8 @@ import Calendar from 'assets/calendar.svg';
 import TimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import 'moment/locale/ru';
-import {ModalPicker} from 'utils/ModalPicker';
-import {Button} from 'utils/Button';
+import {ModalPicker} from 'styled_components/ModalPicker';
+import {Button} from 'styled_components/Button';
 import {api} from 'utils/api';
 import {getRepeatLabels, getTermLabels} from 'utils/date_repeat';
 import {app} from 'store/app';
@@ -43,6 +43,7 @@ export const AddCleaning = observer(({navigation}) => {
   let housemaid = cleaning.housemaid;
   let date = cleaning.date;
   let time = cleaning.time;
+  let is_repeat_active = cleaning.is_repeat_active;
 
   const repeat_labels = getRepeatLabels();
   const term_labels = getTermLabels();
@@ -492,19 +493,15 @@ export const AddCleaning = observer(({navigation}) => {
               <TouchableOpacity
                 onPress={() => SetIsRepeatpickerModalVisible(true)}
                 style={{
-                  shadowColor: cleaning.is_repeat_active
-                    ? '#A19E9D'
-                    : '#FFF9F5',
+                  shadowColor: is_repeat_active ? '#A19E9D' : '#FFF9F5',
                   shadowOffset: {
                     width: 0,
                     height: 0,
                   },
-                  shadowOpacity: cleaning.is_repeat_active ? 0.5 : 0,
+                  shadowOpacity: is_repeat_active ? 0.5 : 0,
                   shadowRadius: 13.16,
-                  elevation: cleaning.is_repeat_active ? 10 : 0,
-                  backgroundColor: cleaning.is_repeat_active
-                    ? 'white'
-                    : 'transparent',
+                  elevation: is_repeat_active ? 10 : 0,
+                  backgroundColor: is_repeat_active ? 'white' : 'transparent',
                   borderRadius: 15,
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -512,12 +509,12 @@ export const AddCleaning = observer(({navigation}) => {
                   paddingVertical: 10,
                   flexDirection: 'row',
                   marginTop: 5,
-                  borderColor: cleaning.is_repeat_active ? 'white' : '#E5E3E2',
+                  borderColor: is_repeat_active ? 'white' : '#E5E3E2',
                   borderWidth: 1,
                 }}>
                 <Text
                   style={{
-                    color: cleaning.is_repeat_active ? 'black' : '#E5E3E2',
+                    color: is_repeat_active ? 'black' : '#E5E3E2',
                     fontSize: moderateScale(15),
                     fontFamily: 'Inter-Medium',
                     marginRight: 10,
@@ -525,7 +522,7 @@ export const AddCleaning = observer(({navigation}) => {
                   {cleaning.repeat}
                 </Text>
                 <ArrowRight
-                  fill={cleaning.is_repeat_active ? '#D1CFCF' : colors.orange}
+                  fill={is_repeat_active ? '#D1CFCF' : colors.orange}
                 />
               </TouchableOpacity>
             </View>
@@ -547,12 +544,10 @@ export const AddCleaning = observer(({navigation}) => {
                     width: 0,
                     height: 0,
                   },
-                  shadowOpacity: cleaning.is_repeat_active ? 0.5 : 0,
+                  shadowOpacity: is_repeat_active ? 0.5 : 0,
                   shadowRadius: 13.16,
-                  elevation: cleaning.is_repeat_active ? 10 : 0,
-                  backgroundColor: cleaning.is_repeat_active
-                    ? 'white'
-                    : 'transparent',
+                  elevation: is_repeat_active ? 10 : 0,
+                  backgroundColor: is_repeat_active ? 'white' : 'transparent',
                   borderRadius: 15,
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -560,12 +555,12 @@ export const AddCleaning = observer(({navigation}) => {
                   paddingVertical: 10,
                   flexDirection: 'row',
                   marginTop: 5,
-                  borderColor: cleaning.is_repeat_active ? 'white' : '#E5E3E2',
+                  borderColor: is_repeat_active ? 'white' : '#E5E3E2',
                   borderWidth: 1,
                 }}>
                 <Text
                   style={{
-                    color: cleaning.is_repeat_active ? 'black' : '#E5E3E2',
+                    color: is_repeat_active ? 'black' : '#E5E3E2',
                     fontSize: moderateScale(15),
                     fontFamily: 'Inter-Medium',
                     marginRight: 10,
@@ -573,7 +568,7 @@ export const AddCleaning = observer(({navigation}) => {
                   {cleaning.term}
                 </Text>
                 <ArrowRight
-                  fill={cleaning.is_repeat_active ? '#D1CFCF' : colors.orange}
+                  fill={is_repeat_active ? '#D1CFCF' : colors.orange}
                 />
               </TouchableOpacity>
             </View>
@@ -589,6 +584,8 @@ export const AddCleaning = observer(({navigation}) => {
       <TimePickerModal
         isVisible={is_timepicker_modal_visible}
         mode="time"
+        cancelTextIOS="Отмена"
+        confirmTextIOS="Сохранить"
         is24Hour={true}
         date={moment(time).toDate()}
         onConfirm={time => {

@@ -3,7 +3,7 @@ import {AddCheckList} from 'components/CheckLists/AddCheckList';
 import {AddFlat} from 'components/Flats/AddFlat';
 import {AddWorker} from 'components/Workers/AddWorker';
 import React, {useState, useEffect} from 'react';
-import {FlatTypes} from 'utils/FlatTypes';
+import {FlatTypes} from 'styled_components/FlatTypes';
 import {AddCleaning} from './AddCleaning';
 import {AddCleaningCalendar} from './AddCleaningCalendar';
 import {CleaningCheckLists} from './CleaningCheckLists';

@@ -8,7 +8,7 @@ import {
   Modal,
 } from 'react-native';
 import {Shadow} from 'react-native-shadow-2';
-import {moderateScale, scale, verticalScale} from 'utils/Normalize';
+import {moderateScale, scale, verticalScale} from 'utils/normalize';
 import X from 'assets/x.svg';
 import ArrowRight from 'assets/arrow_right.svg';
 import {dimensions} from 'utils/dimisions';
@@ -20,12 +20,12 @@ import Calendar from 'assets/calendar.svg';
 import TimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import 'moment/locale/ru';
-import {ModalPicker} from 'utils/ModalPicker';
-import {Button} from 'utils/Button';
+import {ModalPicker} from 'styled_components/ModalPicker';
+import {Button} from 'styled_components/Button';
 import {api} from 'utils/api';
 import {getRepeatLabels, getTermLabels} from 'utils/date_repeat';
 import {app} from 'store/app';
-import {Header} from 'utils/Header';
+import {Header} from 'styled_components/Header';
 
 export const EditCleaning = observer(({navigation}) => {
   const [active_date, SetActiveDate] = useState('сегодня');

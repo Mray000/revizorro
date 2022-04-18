@@ -3,9 +3,9 @@ import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import {Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {api} from 'utils/api';
-import {Loader} from 'utils/Loader';
-import {moderateScale, scale, verticalScale} from 'utils/Normalize';
-import {CleaningsCalendar} from 'utils/CleaningsCalendar';
+import {Loader} from 'styled_components/Loader';
+import {moderateScale, scale, verticalScale} from 'utils/normalize';
+import {CleaningsCalendar} from 'styled_components/CleaningsCalendar';
 import {CleaningComponent} from '../Cleanings/CleaningComponent';
 import ArrowDown from 'assets/arrow_down.svg';
 import ArrowUp from 'assets/arrow_up.svg';
@@ -38,7 +38,6 @@ export const HousemaidClenaings = observer(({navigation}) => {
   }, [cleanings]);
 
   if (!cleanings) return <Loader />;
-  console.log(cleanings.forEach(el => console.log(el.status, 'SADASD')));
 
   let on_check_cleanings = cleanings.filter(el => el.status == 'on_check');
 
@@ -360,7 +359,7 @@ export const HousemaidClenaings = observer(({navigation}) => {
                     fontSize: moderateScale(15),
                     fontFamily: 'Inter-Regular',
                   }}>
-                  завершенные уборки
+                  история уборок
                 </Text>
                 <TouchableOpacity
                   style={{marginLeft: 10}}

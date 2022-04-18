@@ -1,13 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
-import { app } from 'store/app';
+import {app} from 'store/app';
 import {cleaning} from 'store/cleaning';
-import {AddButton} from 'utils/AddButton';
+import {AddButton} from 'styled_components/AddButton';
 import {api} from 'utils/api';
 import {dimensions} from 'utils/dimisions';
-import {Header} from 'utils/Header';
-import {Loader} from 'utils/Loader';
-import {moderateScale} from 'utils/Normalize';
+import {Header} from 'styled_components/Header';
+import {Loader} from 'styled_components/Loader';
+import {moderateScale} from 'utils/normalize';
 
 export const CleaningFlats = ({navigation, route}) => {
   const [flats, SetFlats] = useState(null);
@@ -76,7 +76,7 @@ const Flat = ({flat, navigation}) => (
       style={{
         fontSize: moderateScale(16),
         color: 'black',
-        fontFamily: 'Inter-Mdeium',
+        fontFamily: 'Inter-Medium',
       }}>
       {flat.title}
     </Text>

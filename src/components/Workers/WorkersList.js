@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 import {api} from 'utils/api';
 import {colors} from 'utils/colors';
-import {Loader} from 'utils/Loader';
-import {moderateScale, scale, verticalScale} from 'utils/Normalize';
+import {Loader} from 'styled_components/Loader';
+import {moderateScale, scale, verticalScale} from 'utils/normalize';
 import ArrowRight from 'assets/arrow_right.svg';
 import Star from 'assets/star.svg';
 import {dimensions} from 'utils/dimisions';

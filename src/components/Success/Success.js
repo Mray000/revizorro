@@ -3,8 +3,8 @@ import {View, Text, TouchableOpacity} from 'react-native';
 import SuccessSvg from 'assets/success.svg';
 import X from 'assets/x.svg';
 import {Shadow} from 'react-native-shadow-2';
-import {Button} from 'utils/Button';
-import {moderateScale} from 'utils/Normalize';
+import {Button} from 'styled_components/Button';
+import {moderateScale} from 'utils/normalize';
 
 export const Success = ({navigation, route: {params: params}}) => {
   return (

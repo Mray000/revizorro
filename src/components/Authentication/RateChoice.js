@@ -13,13 +13,13 @@ import RatePro from 'assets/rate_pro';
 import RateHousemaidPhoto from 'assets/rate_housemaid_photo.svg';
 import X from 'assets/x.svg';
 import {Shadow} from 'react-native-shadow-2';
-import {moderateScale} from 'utils/Normalize';
+import {moderateScale} from 'utils/normalize';
 import Check from 'assets/check.svg';
 import {colors} from 'utils/colors';
 import Star from 'assets/star.svg';
 import {api} from 'utils/api';
-import {Loader} from 'utils/Loader';
-import {Button} from 'utils/Button';
+import {Loader} from 'styled_components/Loader';
+import {Button} from 'styled_components/Button';
 import SuccessSvg from 'assets/success.svg';
 import iap from 'react-native-iap';
 import {observer} from 'mobx-react-lite';
@@ -207,9 +207,21 @@ export const RateChoice = observer(({navigation, route}) => {
 });
 
 const Tarif = ({tarif}) => {
-  let {productId, description, name, title, subscriptionPeriod, price} = tarif;
+  let {
+    productId,
+    description,
+    name,
+    title,
+    subscriptionPeriod,
+    subscriptionPeriodUnitIOS,
+    price,
+  } = tarif;
   let is_active = rate.selected_tarf_id == productId;
-  let is_year_tarif = subscriptionPeriod == 'P1Y';
+  let is_year_tarif =
+    Platform.OS == 'android'
+      ? subscriptionPeriod == 'P1Y'
+      : subscriptionPeriodUnitIOS == 'YEAR';
+  console.log(tarif);
   let is_sale = productId == 'revizorro_3';
   return (
     <TouchableOpacity

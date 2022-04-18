@@ -7,13 +7,13 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import {colors} from 'utils/colors';
-import {moderateScale, scale} from 'utils/Normalize';
+import {moderateScale, scale} from 'utils/normalize';
 import ArrowRight from 'assets/arrow_right.svg';
 import Copy from 'assets/copy.svg';
 import Trash from 'assets/trash.svg';
 import {dimensions} from 'utils/dimisions';
 import {api} from 'utils/api';
-import {Loader} from 'utils/Loader';
+import {Loader} from 'styled_components/Loader';
 import {app} from 'store/app';
 export const ListOfCheckLists = ({navigation}) => {
   const [check_lists, SetCheckLists] = useState(null);
@@ -48,7 +48,12 @@ export const ListOfCheckLists = ({navigation}) => {
   if (!check_lists) return <Loader />;
   return (
     <ScrollView style={{backgroundColor: selected_id ? '#E7E6E6' : '#F9F9F9'}}>
-      <TouchableWithoutFeedback onPress={() => SetSelectedId(0)}>
+      <TouchableWithoutFeedback
+        onPress={() => SetSelectedId(0)}
+        // onPress={() => {
+        //   console.log(324234)
+        // }}
+      >
         <View
           style={{
             position: 'absolute',
@@ -69,7 +74,6 @@ export const ListOfCheckLists = ({navigation}) => {
           style={{
             color: 'black',
             fontFamily: 'Inter-SemiBold',
-            fontWeight: '800',
             fontSize: moderateScale(19),
           }}>
           Мои чек-листы
@@ -87,7 +91,7 @@ export const ListOfCheckLists = ({navigation}) => {
       </View>
       <View style={{paddingBottom: 200, marginTop: 10, paddingHorizontal: 10}}>
         {check_lists.map(check_list => (
-          <Check
+          <CheckList
             width={14}
             height={10}
             List
@@ -105,7 +109,7 @@ export const ListOfCheckLists = ({navigation}) => {
   );
 };
 
-const Check = ({
+const CheckList = ({
   check_list,
   SetSelectedId,
   selected_id,
@@ -121,7 +125,7 @@ const Check = ({
     else photo_tasks_count++;
   });
   return (
-    <View>
+    <View style={{zIndex: selected_id == id ? 1 : 0}}>
       <TouchableOpacity
         onLongPress={() => SetSelectedId(id)}
         onPress={() =>
@@ -138,9 +142,9 @@ const Check = ({
           shadowOpacity: 0.51,
           shadowRadius: 13.16,
           elevation: 15,
+          zIndex: 1,
           paddingHorizontal: 10,
           marginVertical: 5,
-          // backgroundColor: "red"
         }}>
         <View
           style={{
@@ -192,8 +196,7 @@ const Check = ({
             borderRadius: 20,
             right: 10,
             bottom: -90,
-            zIndex: 1,
-            elevation: 21,
+            zIndex: 10,
           }}>
           <TouchableOpacity
             onPress={() => CopyCheckList(check_list)}

@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {View, BackHandler} from 'react-native';
 import {rate} from 'store/rate';
-import {Button} from 'utils/Button';
+import {Button} from 'styled_components/Button';
 import {OnboardingScreens} from './OnboardingScreens';
 import {SelectRole} from './SelectRole';
 

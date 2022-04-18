@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 import {Shadow} from 'react-native-shadow-2';
-import {Button} from 'utils/Button';
-import {Input} from 'utils/Input';
-import {moderateScale, scale} from 'utils/Normalize';
+import {Button} from 'styled_components/Button';
+import {Input} from 'styled_components/Input';
+import {moderateScale, scale} from 'utils/normalize';
 import X from 'assets/x.svg';
 import {colors} from 'utils/colors';
 import {api} from 'utils/api';

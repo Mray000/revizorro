@@ -1,18 +1,18 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {Header} from 'utils/Header';
-import {moderateScale, scale, verticalScale} from 'utils/Normalize';
-import {Input} from 'utils/Input';
+import {Header} from 'styled_components/Header';
+import {moderateScale, scale, verticalScale} from 'utils/normalize';
+import {Input} from 'styled_components/Input';
 import {dimensions} from 'utils/dimisions';
 import {Shadow} from 'react-native-shadow-2';
 import ToggleSwitch from 'toggle-switch-react-native';
 import {api} from 'utils/api';
-import {Button} from 'utils/Button';
+import {Button} from 'styled_components/Button';
 import ArrowRight from 'assets/arrow_right.svg';
 import ArrowBottom from 'assets/arrow_down.svg';
 import {authentication} from 'store/authentication';
-import { SwitchComponent } from 'utils/SwitchComponent';
+import {SwitchComponent} from 'styled_components/SwitchComponent';
 export const AddWorker = ({navigation, route}) => {
   const [is_housemaid, SetIsHousemaid] = useState(true);
   const [email, SetEmail] = useState('');
@@ -28,7 +28,7 @@ export const AddWorker = ({navigation, route}) => {
   const [is_load, SetIsLoad] = useState(false);
   const handleAddWorker = async () => {
     SetIsLoad(true);
-    let is_ok = await api.addWorker(
+    let error = await api.addWorker(
       is_housemaid ? 'role_maid' : 'role_manager',
       name,
       surname,
@@ -39,23 +39,22 @@ export const AddWorker = ({navigation, route}) => {
       add_workers,
       control_cleaning,
     );
-    if (is_ok) {
+    if (!error) {
       navigation.navigate('Success', {
         to: route.params.parent,
         title: 'Сотрудник добавлен',
         description:
           'Сообщите вашему сотруднику, что на его почту отправлено письмо с паролем для входа в приложение',
       });
-    } else SetEmailError('Сотрудник с такой почтой уже зарегестрирован');
+    } else SetEmailError(error);
+
     SetIsLoad(false);
   };
-  let is_button_disabled = !(email && name && surname && middlename && sex) || is_load;
+  let is_button_disabled =
+    !(email && name && surname && middlename && sex) || is_load;
   return (
     <KeyboardAwareScrollView style={{backgroundColor: 'white'}}>
-      <Header
-        title={'Добавление сотрудников'}
-        onBack={navigation.goBack}
-      />
+      <Header title={'Добавление сотрудников'} onBack={navigation.goBack} />
       <View
         style={{
           paddingHorizontal: 10,

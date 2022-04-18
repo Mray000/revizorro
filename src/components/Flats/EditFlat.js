@@ -3,16 +3,16 @@ import {View, Text, TouchableOpacity, Image, Modal} from 'react-native';
 import {Shadow} from 'react-native-shadow-2';
 import {colors} from 'utils/colors';
 import {dimensions} from 'utils/dimisions';
-import {Header} from 'utils/Header';
-import {Input} from 'utils/Input';
-import {moderateScale, scale, verticalScale} from 'utils/Normalize';
+import {Header} from 'styled_components/Header';
+import {Input} from 'styled_components/Input';
+import {moderateScale, scale, verticalScale} from 'utils/normalize';
 import ArrowRight from 'assets/arrow_right.svg';
 import Picture from 'assets/picture.svg';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {launchImageLibrary} from 'react-native-image-picker';
 import X from 'assets/x.svg';
 import {api, ImageURL} from 'utils/api';
-import {Loader} from 'utils/Loader';
+import {Loader} from 'styled_components/Loader';
 import {convertType, types} from 'utils/flat_types';
 
 

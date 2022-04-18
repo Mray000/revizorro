@@ -8,20 +8,23 @@ import {
   Modal,
 } from 'react-native';
 import {colors} from 'utils/colors';
-import {Header} from 'utils/Header';
-import {moderateScale, verticalScale} from 'utils/Normalize';
+import {Header} from 'styled_components/Header';
+import {moderateScale, verticalScale} from 'utils/normalize';
 import {dimensions} from 'utils/dimisions';
 import Map from 'assets/map.svg';
-import {GetBlocks} from 'utils/GetBlocks';
-import {Button} from 'utils/Button';
+import {getBlocks} from 'utils/get_blocks';
+import {Button} from 'styled_components/Button';
 import {QuestionButton} from './QuestionButton';
 import ArrowLeft from 'assets/arrow_left.svg';
 import ArrowRight from 'assets/arrow_right.svg';
 import Camera from 'assets/camera.svg';
 import Swiper from 'react-native-swiper';
 import {launchCamera} from 'react-native-image-picker';
-import {PhotoComponent} from 'utils/PhotoComponent';
-import {requestLocationPermission} from 'utils/PermisionsAccess';
+import {PhotoComponent} from 'styled_components/PhotoComponent';
+import {
+  requestCameraPermission,
+  requestLocationPermission,
+} from 'utils/PermisionsAccess';
 import Geolocation from '@react-native-community/geolocation';
 import {api} from 'utils/api';
 export const CompleteCleaning = ({navigation, route}) => {
@@ -67,9 +70,11 @@ export const CompleteCleaning = ({navigation, route}) => {
 
   const GetCoords = async () => {
     let is_ok = await requestLocationPermission();
+
     if (is_ok) {
       Geolocation.getCurrentPosition(
-        coords => api.sendCoords(cleaning.id, coords),
+        console.log,
+        // coords => api.sendCoords(cleaning.id, coords),
         alert.error,
         {
           enableHighAccuracy: true,
@@ -79,7 +84,6 @@ export const CompleteCleaning = ({navigation, route}) => {
       );
       SetIndex(index + 1);
     }
-    // SetIndex(index + 1);
   };
 
   const handleCompleteCleaning = async () => {
@@ -115,15 +119,19 @@ export const CompleteCleaning = ({navigation, route}) => {
     });
   };
   const AddPhoto = async id => {
-    const result = await launchCamera({mediaType: 'photo'});
-    if (!result.didCancel)
-      SetQuestionsAndPhotosWithAnswers(prev => {
-        let new_data = prev.map(el => {
-          if (el.id == id) el.answer = [...el.answer, ...result.assets];
-          return el;
+    let is_ok = await requestCameraPermission();
+    if (is_ok) {
+      const result = await launchCamera({mediaType: 'photo'});
+      if (!result.didCancel)
+        SetQuestionsAndPhotosWithAnswers(prev => {
+          console.log(result);
+          let new_data = prev.map(el => {
+            if (el.id == id) el.answer = [...el.answer, ...result.assets];
+            return el;
+          });
+          return new_data;
         });
-        return new_data;
-      });
+    }
   };
 
   const DeletePhoto = async (id, photo) => {
@@ -173,7 +181,10 @@ export const CompleteCleaning = ({navigation, route}) => {
           </TouchableOpacity>
         </View>,
         <View
-          style={{paddingHorizontal: 10, width: '100%', marginVertical: 10}}>
+          style={{
+            paddingHorizontal: 10,
+            width: '100%',
+          }}>
           <Text
             style={{
               fontFamily: 'Inter-SemiBold',
@@ -192,8 +203,8 @@ export const CompleteCleaning = ({navigation, route}) => {
             }}>
             нажмите чтобы увеличить
           </Text>
-          <ScrollView style={{height: '75%'}}>
-            {GetBlocks(cleaning.flat.images, 3).map(block => (
+          <ScrollView style={{height: '70%'}}>
+            {getBlocks([...cleaning.flat.images], 3).map(block => (
               <View
                 style={{
                   flexDirection: 'row',
@@ -475,7 +486,7 @@ export const CompleteCleaning = ({navigation, route}) => {
         <View
           style={{
             height: dimensions.height - verticalScale(50) - 40,
-            justifyContent: 'center',
+            justifyContent: !(!is_rejected && index == 1) ? 'center' : '',
             alignItems: 'center',
           }}>
           {steps[index]}
