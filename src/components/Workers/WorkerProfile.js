@@ -24,7 +24,7 @@ export const WorkerProfile = observer(({navigation, route}) => {
     return word;
   };
   useEffect(() => {
-    console.log(342342)
+    console.log(342342);
     api
       .getWorker(id)
       .then(worker =>

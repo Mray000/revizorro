@@ -14,6 +14,8 @@ import {moderateScale, scale, verticalScale} from 'utils/normalize';
 import ArrowRight from 'assets/arrow_right.svg';
 import Star from 'assets/star.svg';
 import {dimensions} from 'utils/dimisions';
+import {NoData} from 'styled_components/NoData';
+import {PlusButton} from 'styled_components/PlusButton';
 export const WorkersList = ({navigation}) => {
   const [workers, SetWorkers] = useState(null);
   useEffect(() => {
@@ -29,7 +31,7 @@ export const WorkersList = ({navigation}) => {
   if (!workers) return <Loader />;
   console.log(workers.forEach(el => console.log(el.role)));
   return (
-    <ScrollView>
+    <View style={{flex: 1}}>
       <View
         style={{
           flexDirection: 'row',
@@ -60,14 +62,24 @@ export const WorkersList = ({navigation}) => {
           </Text>
         </TouchableOpacity>
       </View>
-      <View style={{marginTop: 10, paddingHorizontal: 10}}>
-        {workers
-          .filter(el => el.role != 'role_admin')
-          .map(el => (
-            <Worker worker={el} navigation={navigation} key={el.id} />
-          ))}
-      </View>
-    </ScrollView>
+
+      {workers.length ? (
+        <ScrollView style={{marginTop: 10, paddingHorizontal: 10}}>
+          {workers
+            .filter(el => el.role != 'role_admin')
+            .map(el => (
+              <Worker worker={el} navigation={navigation} key={el.id} />
+            ))}
+        </ScrollView>
+      ) : (
+        <NoData screen={'Workers'} />
+      )}
+      <PlusButton
+        onPress={() =>
+          navigation.navigate('AddWorker', {parent: 'WorkersList'})
+        }
+      />
+    </View>
   );
 };
 

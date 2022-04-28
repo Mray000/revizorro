@@ -6,6 +6,8 @@ import ArrowRight from 'assets/arrow_right.svg';
 import {colors} from 'utils/colors';
 import {Loader} from 'styled_components/Loader';
 import moment from 'moment';
+import {NoData} from 'styled_components/NoData';
+import {PlusButton} from 'styled_components/PlusButton';
 export const FlatsList = ({navigation}) => {
   const [flats, SetFlats] = useState(null);
 
@@ -22,7 +24,7 @@ export const FlatsList = ({navigation}) => {
   if (!flats) return <Loader />;
   console.log(flats[0]);
   return (
-    <ScrollView>
+    <View style={{flex: 1}}>
       <View
         style={{
           flexDirection: 'row',
@@ -50,12 +52,17 @@ export const FlatsList = ({navigation}) => {
           </Text>
         </TouchableOpacity>
       </View>
-      <View style={{marginTop: 10, paddingHorizontal: 10}}>
-        {flats.reverse().map(flat => (
-          <Flat flat={flat} navigation={navigation} key={flat.id} />
-        ))}
-      </View>
-    </ScrollView>
+      {flats.length ? (
+        <ScrollView style={{marginTop: 10, paddingHorizontal: 10}}>
+          {flats.reverse().map(flat => (
+            <Flat flat={flat} navigation={navigation} key={flat.id} />
+          ))}
+        </ScrollView>
+      ) : (
+        <NoData screen={'Flats'} />
+      )}
+      <PlusButton onPress={() => navigation.navigate('AddFlat')} />
+    </View>
   );
 };
 

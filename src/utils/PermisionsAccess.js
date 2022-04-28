@@ -35,6 +35,7 @@ export async function requestCameraPermission() {
         message: 'Необходимо разрешить доступ приложения к вашей камере',
       },
     );
+    console.log(granted);
 
     if (granted === 'granted') {
       console.log('You can use the caera');

@@ -21,11 +21,10 @@ import TimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import 'moment/locale/ru';
 import {ModalPicker} from 'styled_components/ModalPicker';
-import {Button} from 'styled_components/Button';
-import {api} from 'utils/api';
 import {getRepeatLabels, getTermLabels} from 'utils/date_repeat';
 import {app} from 'store/app';
 import {Header} from 'styled_components/Header';
+import {ErrorText} from 'styled_components/ErrorText';
 
 export const EditCleaning = observer(({navigation}) => {
   const [active_date, SetActiveDate] = useState('сегодня');
@@ -47,29 +46,37 @@ export const EditCleaning = observer(({navigation}) => {
   let housemaid = cleaning.housemaid;
   let date = cleaning.date;
   let time = cleaning.time;
+  console.log(housemaid?.is_active);
 
   const repeat_labels = getRepeatLabels();
   const term_labels = getTermLabels();
 
+  let now = Date.now();
   const dates = [
-    {title: 'сегодня', date: Date.now()},
-    {title: 'завтра', date: moment(Date.now()).add(1, 'day')},
-    {title: 'послезавтра', date: moment(Date.now()).add(2, 'day')},
+    {title: 'сегодня', date: now},
+    {title: 'завтра', date: moment(now).add(1, 'day')},
+    {title: 'послезавтра', date: moment(now).add(2, 'day')},
   ];
+
+  let current_selected_date = moment(date)
+    .set('h', moment(time).get('h'))
+    .set('m', moment(time).get('m'));
+
+  let is_overdue = !current_selected_date.isAfter(moment());
 
   let is_button_disabled =
     !(flat && check_lists.length && housemaid) ||
-    !moment(date)
-      .set('h', moment(time).get('h'))
-      .set('m', moment(time).get('m'))
-      .isAfter(moment());
+    is_overdue ||
+    !housemaid?.is_active;
 
   const handleEditCleaning = async () => {
-    let res = await cleaning.editCleaning();
-    if (res?.error_dates) return SetErrorDates(res.error_dates);
-    if (res?.error_housemaid_dates)
-      return SetErrorHouseMaidDates(res.error_housemaid_dates);
-    navigation.navigate('CleaningsList');
+    let error = await cleaning.editCleaning();
+    console.log(error);
+    if (!error) navigation.navigate('CleaningsList');
+    else {
+      if (error == 'data_error') SetErrorDates([current_selected_date]);
+      else SetErrorHouseMaidDates([current_selected_date]);
+    }
   };
 
   useEffect(() => {
@@ -84,6 +91,40 @@ export const EditCleaning = observer(({navigation}) => {
     navigation.navigate('CleaningsList');
   };
 
+  if (cleaning.amount_checks) {
+    return (
+      <View>
+        <Header
+          title={'Редактирование'}
+          onBack={() => {
+            navigation.goBack();
+            cleaning.clearAllData();
+          }}
+        />
+        <Text
+          style={{
+            fontSize: moderateScale(20),
+            color: colors.orange,
+            fontFamily: 'Inter-Medium',
+          }}>
+          Дождитесь отчета горничной
+        </Text>
+        <TouchableOpacity
+          onPress={() => SetIsDeleteModalVisible(true)}
+          style={{alignItems: 'center', width: '100%', marginTop: 20}}>
+          <Text
+            style={{
+              color: '#AAA8A7',
+              fontFamily: 'Inter-Medium',
+              fontSize: moderateScale(16),
+              marginBottom: 20,
+            }}>
+            Удалить уборку
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
       <ScrollView
@@ -106,7 +147,7 @@ export const EditCleaning = observer(({navigation}) => {
                 style={{
                   fontSize: moderateScale(15),
                   fontFamily: 'Inter-Medium',
-                  color: colors.orange,
+                  color: is_button_disabled ? 'gray' : colors.orange,
                 }}>
                 Готово
               </Text>
@@ -212,7 +253,7 @@ export const EditCleaning = observer(({navigation}) => {
                 <CheckList check_list={check_list} key={check_list.id} />
               ))}
             </View>
-            {!housemaid ? (
+            {!housemaid || !housemaid?.is_active ? (
               <TouchableOpacity
                 onPress={() => navigation.navigate('CleaningHousemaids')}
                 style={{
@@ -257,6 +298,18 @@ export const EditCleaning = observer(({navigation}) => {
             )}
           </View>
           <View style={{width: '100%', marginTop: 20}}>
+            {is_overdue ? (
+              <Text
+                style={{
+                  color: colors.red,
+                  fontFamily: 'Inter-SemiBold',
+                  textAlign: 'center',
+                  fontSize: moderateScale(16),
+                  marginBottom: 10,
+                }}>
+                Уборка не выполнена
+              </Text>
+            ) : null}
             <View
               style={{
                 flexDirection: 'row',
@@ -283,6 +336,7 @@ export const EditCleaning = observer(({navigation}) => {
                 }}>
                 <Calendar />
               </View>
+
               <Text
                 style={{
                   color: 'black',
@@ -593,6 +647,8 @@ export const EditCleaning = observer(({navigation}) => {
       <TimePickerModal
         isVisible={is_timepicker_modal_visible}
         mode="time"
+        cancelTextIOS="Отмена"
+        confirmTextIOS="Сохранить"
         is24Hour={true}
         date={moment(time).toDate()}
         onConfirm={time => {

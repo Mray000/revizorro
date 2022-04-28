@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {SafeAreaView} from 'react-native';
+import {Platform, SafeAreaView} from 'react-native';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {Login} from './src/components/Authentication/Login.js';
@@ -39,6 +39,7 @@ import {app} from './src/store/app.js';
 import {rate} from './src/store/rate.js';
 import {Loader} from 'styled_components/Loader.js';
 import iap from 'react-native-iap';
+import SplashScreen from 'react-native-splash-screen';
 
 const Tab = createBottomTabNavigator();
 const App = observer(() => {
@@ -50,7 +51,7 @@ const App = observer(() => {
   useEffect(() => {
     // let purchaseUpdatedListener;
     // let purchaseErrorListener;
-
+    if (Platform.OS == 'android') SplashScreen.hide();
     (async () => {
       let data = await getAsyncData();
 
@@ -97,7 +98,7 @@ const App = observer(() => {
     };
   }, []);
   let is_company_active = rate.getIsSubscriptionActive();
-  // console.log(is_company_active, 'IS COMPANY ACTIVE');
+  console.log(is_company_active, 'IS COMPANY ACTIVE');
   if (!is_load) return <Loader />;
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>

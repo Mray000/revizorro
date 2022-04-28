@@ -3,7 +3,18 @@ import {View, Text, TouchableOpacity} from 'react-native';
 import {Shadow} from 'react-native-shadow-2';
 import {moderateScale, scale, verticalScale} from '../utils/normalize';
 import ArrowLeft from 'assets/arrow_left.svg';
-export const Header = ({title, navigation, to, children, params, onBack}) => {
+import {colors} from 'utils/colors';
+export const Header = ({
+  title,
+  navigation,
+  to,
+  children,
+  params,
+  onBack,
+  complete_button,
+  is_complete_button_disabled,
+  onCompleteButtonPress,
+}) => {
   return (
     <View
       style={{
@@ -48,6 +59,21 @@ export const Header = ({title, navigation, to, children, params, onBack}) => {
         }}>
         {title}
       </Text>
+      {complete_button ? (
+        <TouchableOpacity
+          style={{position: 'absolute', right: 20}}
+          disabled={is_complete_button_disabled}
+          onPress={onCompleteButtonPress}>
+          <Text
+            style={{
+              fontSize: moderateScale(15),
+              fontFamily: 'Inter-Medium',
+              color: is_complete_button_disabled ? '#AAA8A7' : colors.orange,
+            }}>
+            Готово
+          </Text>
+        </TouchableOpacity>
+      ) : null}
       {children}
     </View>
   );

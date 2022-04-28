@@ -13,6 +13,8 @@ import {CleaningComponent} from './CleaningComponent';
 import ArrowDown from 'assets/arrow_down.svg';
 import ArrowUp from 'assets/arrow_up.svg';
 import {app} from 'store/app';
+import {PlusButton} from 'styled_components/PlusButton';
+import {NoData} from 'styled_components/NoData';
 export const CleaningsList = observer(({navigation}) => {
   const [is_list_active, SetIsListActive] = useState(true);
   const [cleanings, SetCleanings] = useState(null);
@@ -40,6 +42,8 @@ export const CleaningsList = observer(({navigation}) => {
 
   if (!cleanings) return <Loader />;
   // console.log(cleanings.forEach(el => console.log(el.id)));
+
+  console.log(cleanings[0]);
   let need_check_cleanings = cleanings.filter(el => el.status == 'on_check');
   let future_cleanings = cleanings.filter(
     el => el.status == 'not_accepted' || el.status == 'report_required',
@@ -60,7 +64,8 @@ export const CleaningsList = observer(({navigation}) => {
   };
 
   return (
-    <View style={{alignItems: 'center', padding: 10, flex: 1}}>
+    <View
+      style={{alignItems: 'center', padding: 10, flex: 1, paddingBottom: 0}}>
       <View
         style={{
           flexDirection: 'row',
@@ -109,164 +114,169 @@ export const CleaningsList = observer(({navigation}) => {
         </TouchableOpacity>
       </View>
       {is_list_active ? (
-        <ScrollView
-          contentContainerStyle={{
-            alignItems: 'center',
-            paddingBottom: moderateScale(60),
-            width: '100%',
-          }}
-          style={{width: '100%'}}>
-          {need_check_cleanings.length ? (
-            <View style={{width: '100%', marginTop: 10}}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <View
-                  style={{
-                    width: scale(18),
-                    aspectRatio: 1,
-                    borderRadius: scale(40),
-                    backgroundColor: '#FCE5E3',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginRight: 5,
-                  }}>
+        cleanings.length ? (
+          <ScrollView
+            contentContainerStyle={{
+              alignItems: 'center',
+              paddingBottom: moderateScale(60),
+              width: '100%',
+            }}
+            style={{width: '100%'}}>
+            {need_check_cleanings.length ? (
+              <View style={{width: '100%', marginTop: 10}}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <View
                     style={{
-                      width: scale(11),
+                      width: scale(18),
                       aspectRatio: 1,
-                      borderRadius: scale(20),
-                      backgroundColor: '#E8443A',
-                    }}
-                  />
+                      borderRadius: scale(40),
+                      backgroundColor: '#FCE5E3',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginRight: 5,
+                    }}>
+                    <View
+                      style={{
+                        width: scale(11),
+                        aspectRatio: 1,
+                        borderRadius: scale(20),
+                        backgroundColor: '#E8443A',
+                      }}
+                    />
+                  </View>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Text
+                      style={{
+                        fontSize: moderateScale(18),
+                        color: 'black',
+                        fontFamily: 'Inter-SemiBold',
+                        marginLeft: 5,
+                      }}>
+                      Нужна проверка!
+                    </Text>
+                    <TouchableOpacity
+                      style={{marginLeft: 10}}
+                      onPress={() =>
+                        SetIsNeedCheckCleaningsFull(
+                          !is_need_check_cleanings_full,
+                        )
+                      }>
+                      {!is_need_check_cleanings_full ? (
+                        <ArrowDown fill="black" />
+                      ) : (
+                        <ArrowUp fill="black" />
+                      )}
+                    </TouchableOpacity>
+                  </View>
                 </View>
+                <View>
+                  {need_check_cleanings
+                    .splice(
+                      0,
+                      !is_need_check_cleanings_full
+                        ? 10
+                        : need_check_cleanings.length,
+                    )
+                    .map(cleaning => (
+                      <CleaningComponent
+                        key={cleaning.id}
+                        navigation={navigation}
+                        cleaning={cleaning}
+                        is_need_check={true}
+                      />
+                    ))}
+                </View>
+              </View>
+            ) : null}
+            {future_cleanings.length ? (
+              <View style={{width: '100%', marginTop: 10}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <Text
                     style={{
-                      fontSize: moderateScale(18),
-                      color: 'black',
-                      fontFamily: 'Inter-SemiBold',
-                      marginLeft: 5,
+                      textAlign: 'left',
+                      color: '#A9A6A6',
+                      fontSize: moderateScale(15),
+                      fontFamily: 'Inter-Regular',
                     }}>
-                    Нужна проверка!
+                    предстоящие уборки
                   </Text>
                   <TouchableOpacity
                     style={{marginLeft: 10}}
                     onPress={() =>
-                      SetIsNeedCheckCleaningsFull(!is_need_check_cleanings_full)
+                      SetIsFutureCleaningsFull(!is_future_cleanings_full)
                     }>
-                    {!is_need_check_cleanings_full ? (
-                      <ArrowDown fill="black" />
+                    {!is_future_cleanings_full ? (
+                      <ArrowDown fill="#A9A6A6" />
                     ) : (
-                      <ArrowUp fill="black" />
+                      <ArrowUp fill="#A9A6A6" />
                     )}
                   </TouchableOpacity>
                 </View>
-              </View>
-              <View>
-                {need_check_cleanings
+                {future_cleanings
                   .splice(
                     0,
-                    !is_need_check_cleanings_full
-                      ? 10
-                      : need_check_cleanings.length,
+                    !is_future_cleanings_full ? 10 : future_cleanings.length,
                   )
                   .map(cleaning => (
                     <CleaningComponent
-                      key={cleaning.id}
                       navigation={navigation}
                       cleaning={cleaning}
-                      is_need_check={true}
+                      key={cleaning.id}
+                      disabled={
+                        app.role == 'role_admin' ||
+                        app.accesses.includes('cleanings')
+                          ? cleaning.amount_checks
+                          : true
+                      }
                     />
                   ))}
               </View>
-            </View>
-          ) : null}
-          {future_cleanings.length ? (
-            <View style={{width: '100%', marginTop: 10}}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text
-                  style={{
-                    textAlign: 'left',
-                    color: '#A9A6A6',
-                    fontSize: moderateScale(15),
-                    fontFamily: 'Inter-Regular',
-                  }}>
-                  предстоящие уборки
-                </Text>
-                <TouchableOpacity
-                  style={{marginLeft: 10}}
-                  onPress={() =>
-                    SetIsFutureCleaningsFull(!is_future_cleanings_full)
-                  }>
-                  {!is_future_cleanings_full ? (
-                    <ArrowDown fill="#A9A6A6" />
-                  ) : (
-                    <ArrowUp fill="#A9A6A6" />
-                  )}
-                </TouchableOpacity>
+            ) : null}
+            {complited_cleanings.length ? (
+              <View style={{width: '100%', marginTop: 10}}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Text
+                    style={{
+                      textAlign: 'left',
+                      color: '#A9A6A6',
+                      fontSize: moderateScale(15),
+                      fontFamily: 'Inter-Regular',
+                    }}>
+                    история уборок
+                  </Text>
+                  <TouchableOpacity
+                    style={{marginLeft: 10}}
+                    onPress={() =>
+                      SetIsComplitedCleaningsFull(!is_complited_cleanings_full)
+                    }>
+                    {!is_complited_cleanings_full ? (
+                      <ArrowDown fill="#A9A6A6" />
+                    ) : (
+                      <ArrowUp fill="#A9A6A6" />
+                    )}
+                  </TouchableOpacity>
+                </View>
+                {complited_cleanings
+                  .splice(
+                    0,
+                    !is_complited_cleanings_full
+                      ? 10
+                      : complited_cleanings.length,
+                  )
+                  .map(cleaning => (
+                    <CleaningComponent
+                      is_completed={true}
+                      cleaning={cleaning}
+                      key={cleaning.id}
+                      navigation={navigation}
+                    />
+                  ))}
               </View>
-              {console.log(app.role)}
-              {future_cleanings
-                .splice(
-                  0,
-                  !is_future_cleanings_full ? 10 : future_cleanings.length,
-                )
-                .map(cleaning => (
-                  <CleaningComponent
-                    navigation={navigation}
-                    cleaning={cleaning}
-                    key={cleaning.id}
-                    disabled={
-                      app.role == 'role_admin' ||
-                      app.accesses.includes('cleanings')
-                        ? cleaning.amount_checks
-                        : true
-                    }
-                  />
-                ))}
-            </View>
-          ) : null}
-          {complited_cleanings.length ? (
-            <View style={{width: '100%', marginTop: 10}}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text
-                  style={{
-                    textAlign: 'left',
-                    color: '#A9A6A6',
-                    fontSize: moderateScale(15),
-                    fontFamily: 'Inter-Regular',
-                  }}>
-                  история уборок
-                </Text>
-                <TouchableOpacity
-                  style={{marginLeft: 10}}
-                  onPress={() =>
-                    SetIsComplitedCleaningsFull(!is_complited_cleanings_full)
-                  }>
-                  {!is_complited_cleanings_full ? (
-                    <ArrowDown fill="#A9A6A6" />
-                  ) : (
-                    <ArrowUp fill="#A9A6A6" />
-                  )}
-                </TouchableOpacity>
-              </View>
-              {complited_cleanings
-                .splice(
-                  0,
-                  !is_complited_cleanings_full
-                    ? 10
-                    : complited_cleanings.length,
-                )
-                .map(cleaning => (
-                  <CleaningComponent
-                    is_completed={true}
-                    cleaning={cleaning}
-                    key={cleaning.id}
-                    navigation={navigation}
-                  />
-                ))}
-            </View>
-          ) : null}
-        </ScrollView>
+            ) : null}
+          </ScrollView>
+        ) : (
+          <NoData screen={'Cleanings'} />
+        )
       ) : (
         <View style={{width: '100%', marginTop: 10}}>
           <CleaningsCalendar
@@ -345,41 +355,7 @@ export const CleaningsList = observer(({navigation}) => {
         </View>
       )}
       {app.role == 'role_admin' || app.accesses.includes('cleanings') ? (
-        <Shadow
-          startColor={'#F4843316'}
-          finalColor={'#F4843301'}
-          offset={[0, 6]}
-          distance={10}
-          containerViewStyle={{
-            position: 'absolute',
-            width: scale(40),
-            aspectRatio: 1,
-            backgroundColor: colors.orange,
-            right: 10,
-            bottom: verticalScale(50),
-            borderRadius: 15,
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 0,
-          }}
-          viewStyle={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-            padding: 0,
-          }}>
-          <TouchableOpacity onPress={() => navigation.navigate('AddCleaning')}>
-            <Text
-              style={{
-                color: 'white',
-                fontFamily: 'Inter-Medium',
-                fontSize: moderateScale(30),
-                bottom: 3,
-              }}>
-              +
-            </Text>
-          </TouchableOpacity>
-        </Shadow>
+        <PlusButton onPress={() => navigation.navigate('AddCleaning')} />
       ) : null}
     </View>
   );

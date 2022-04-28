@@ -19,6 +19,7 @@ import {rate} from 'store/rate';
 import {rate_prices} from 'utils/rate_constants';
 import {useToggle} from 'hooks/useToggle';
 import {LogoutModal} from 'styled_components/LogoutModal';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 export const Settings = observer(({navigation}) => {
   const [name, SetName] = useState('');
   const [surname, SetSurname] = useState('');
@@ -29,7 +30,7 @@ export const Settings = observer(({navigation}) => {
   const [is_cleaning_interval_modal_active, SetIsCleaningIntervalModalActive] =
     useState(false);
   const [is_logout_modal_visible, SetIsLogoutModalVisible] = useToggle(false);
-  const [tarif, SetTarif] = useState(null);
+  // const [tarif, SetTarif] = useState(null);
 
   const [error, SetError] = useState('');
 
@@ -44,24 +45,24 @@ export const Settings = observer(({navigation}) => {
     SetIsActualData(true);
   };
 
-  useEffect(() => {
-    iap.initConnection().then(() => {
-      api.getRate().then(data => {
-        let current_tarif_id = 'revizorro_' + data.rate.id;
-        iap
-          .getProducts([current_tarif_id])
-          .then(tarifs => {
-            if (Platform.OS == 'android')
-              return JSON.parse(tarifs[0].originalJson);
-            else return tarifs[0];
-          })
-          .then(tarif => {
-            tarif.price = rate_prices[tarif.productId];
-            SetTarif(tarif);
-          });
-      });
-    });
-  }, []);
+  // useEffect(() => {
+  //   iap.initConnection().then(() => {
+  //     api.getRate().then(data => {
+  //       let current_tarif_id = 'revizorro_' + data.rate.id;
+  //       iap
+  //         .getProducts([current_tarif_id])
+  //         .then(tarifs => {
+  //           if (Platform.OS == 'android')
+  //             return JSON.parse(tarifs[0].originalJson);
+  //           else return tarifs[0];
+  //         })
+  //         .then(tarif => {
+  //           tarif.price = rate_prices[tarif.productId];
+  //           SetTarif(tarif);
+  //         });
+  //     });
+  //   });
+  // }, []);
 
   useEffect(() => {
     if (!is_actual_data) SetMe();
@@ -91,17 +92,17 @@ export const Settings = observer(({navigation}) => {
     api.changeCompany(company, true);
   };
 
-  const intervals = ['3 минут', '5 минут', '7 минут', '10 минут', '15 минут'];
+  const intervals = ['3 минуты', '5 минут', '7 минут', '10 минут', '15 минут'];
 
   const SetGlobalInterval = interval => {
     let minutes = Number(interval.split(' ')[0]);
     api.setInterval(minutes);
     SetInterval(minutes);
   };
-  if (!tarif) return <Loader />;
+  // if (!tarif) return <Loader />;
   if (!is_actual_data) return <Loader />;
   return (
-    <ScrollView style={{padding: 10}}>
+    <KeyboardAwareScrollView style={{padding: 10}}>
       <View
         style={{
           flexDirection: 'row',
@@ -194,7 +195,7 @@ export const Settings = observer(({navigation}) => {
           изменить пароль
         </Text>
       </TouchableOpacity>
-      <View style={{paddingHorizontal: 5, marginTop: 20}}>
+      {/* <View style={{paddingHorizontal: 5, marginTop: 20}}>
         <Text
           style={{
             color: '#AAA8A7',
@@ -205,8 +206,8 @@ export const Settings = observer(({navigation}) => {
           АКТИВНЫЙ ТАРИФ
         </Text>
         <Tarif tarif={tarif} />
-      </View>
-      <TouchableOpacity
+      </View> 
+       <TouchableOpacity
         onPress={() => navigation.navigate('RateChoice', {parent: 'Settings'})}>
         <Text
           style={{
@@ -218,8 +219,8 @@ export const Settings = observer(({navigation}) => {
           }}>
           изменить тариф
         </Text>
-      </TouchableOpacity>
-      <Text
+      </TouchableOpacity> */}
+      {/* <Text
         style={{
           fontFamily: 'Inter-Regular',
           fontSize: moderateScale(15),
@@ -228,7 +229,7 @@ export const Settings = observer(({navigation}) => {
           marginTop: 10,
         }}>
         Осталось 8 дней бесплатного периода до списания средств.
-      </Text>
+      </Text> */}
       <SwitchComponent
         title={'Уведомления'}
         is_active={app.is_notify}
@@ -303,11 +304,27 @@ export const Settings = observer(({navigation}) => {
           </Text>
         </View>
       </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Support')}
+        style={{
+          width: '100%',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginVertical: 15,
+        }}>
+        <Text
+          style={{
+            fontSize: moderateScale(17),
+            color: colors.orange,
+            fontFamily: 'Inter-Medium',
+          }}>
+          Написать в техподдержку
+        </Text>
+      </TouchableOpacity>
 
       <TouchableOpacity
         onPress={SetIsLogoutModalVisible}
         style={{
-          marginTop: 10,
           width: '100%',
           justifyContent: 'center',
           alignItems: 'center',
@@ -333,7 +350,7 @@ export const Settings = observer(({navigation}) => {
         closeModal={SetIsLogoutModalVisible}
         navigation={navigation}
       />
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 });
 

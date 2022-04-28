@@ -7,7 +7,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import {colors} from 'utils/colors';
-import {moderateScale, scale} from 'utils/normalize';
+import {moderateScale, scale, verticalScale} from 'utils/normalize';
 import ArrowRight from 'assets/arrow_right.svg';
 import Copy from 'assets/copy.svg';
 import Trash from 'assets/trash.svg';
@@ -15,6 +15,8 @@ import {dimensions} from 'utils/dimisions';
 import {api} from 'utils/api';
 import {Loader} from 'styled_components/Loader';
 import {app} from 'store/app';
+import {PlusButton} from 'styled_components/PlusButton';
+import {NoData} from 'styled_components/NoData';
 export const ListOfCheckLists = ({navigation}) => {
   const [check_lists, SetCheckLists] = useState(null);
   const [selected_id, SetSelectedId] = useState(0);
@@ -47,65 +49,72 @@ export const ListOfCheckLists = ({navigation}) => {
 
   if (!check_lists) return <Loader />;
   return (
-    <ScrollView style={{backgroundColor: selected_id ? '#E7E6E6' : '#F9F9F9'}}>
-      <TouchableWithoutFeedback
-        onPress={() => SetSelectedId(0)}
-        // onPress={() => {
-        //   console.log(324234)
-        // }}
-      >
-        <View
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: dimensions.height,
-          }}
-        />
-      </TouchableWithoutFeedback>
+    <TouchableWithoutFeedback
+      onPress={() => SetSelectedId(0)}
+      style={{flex: 1}}>
       <View
         style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginTop: 20,
-          paddingHorizontal: 20,
+          backgroundColor: selected_id ? '#E7E6E6' : '#F9F9F9',
+          flex: 1,
+          // elevation: -10,
+          // zIndex: -11000,
         }}>
-        <Text
+        <View
           style={{
-            color: 'black',
-            fontFamily: 'Inter-SemiBold',
-            fontSize: moderateScale(19),
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginTop: 20,
+            paddingHorizontal: 20,
           }}>
-          Мои чек-листы
-        </Text>
-        <TouchableOpacity onPress={() => navigation.navigate('AddCheckList')}>
           <Text
             style={{
-              color: colors.orange,
-              fontSize: moderateScale(15),
-              fontFamily: 'Inter-Medium',
+              color: 'black',
+              fontFamily: 'Inter-SemiBold',
+              fontSize: moderateScale(19),
             }}>
-            Добавить
+            Мои чек-листы
           </Text>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('AddCheckList')}>
+            <Text
+              style={{
+                color: colors.orange,
+                fontSize: moderateScale(15),
+                fontFamily: 'Inter-Medium',
+              }}>
+              Добавить
+            </Text>
+          </TouchableOpacity>
+        </View>
+        {check_lists.length ? (
+          <ScrollView
+            contentContainerStyle={{
+              paddingBottom: 200,
+            }}
+            style={{
+              marginTop: 10,
+              paddingHorizontal: 10,
+            }}>
+            {check_lists.map(check_list => (
+              <CheckList
+                width={14}
+                height={10}
+                SetSelectedId={SetSelectedId}
+                CopyCheckList={CopyCheckList}
+                DeleteCheckList={DeleteCheckList}
+                selected_id={selected_id}
+                check_list={check_list}
+                navigation={navigation}
+                key={check_list.id}
+              />
+            ))}
+          </ScrollView>
+        ) : (
+          <NoData screen={'CheckLists'} />
+        )}
+        <PlusButton onPress={() => navigation.navigate('AddCheckList')} />
       </View>
-      <View style={{paddingBottom: 200, marginTop: 10, paddingHorizontal: 10}}>
-        {check_lists.map(check_list => (
-          <CheckList
-            width={14}
-            height={10}
-            List
-            SetSelectedId={SetSelectedId}
-            CopyCheckList={CopyCheckList}
-            DeleteCheckList={DeleteCheckList}
-            selected_id={selected_id}
-            check_list={check_list}
-            navigation={navigation}
-            key={check_list.id}
-          />
-        ))}
-      </View>
-    </ScrollView>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -125,7 +134,13 @@ const CheckList = ({
     else photo_tasks_count++;
   });
   return (
-    <View style={{zIndex: selected_id == id ? 1 : 0}}>
+    <View
+      style={
+        {
+          zIndex: selected_id == id ? 1 : 0,
+       
+        }
+      }>
       <TouchableOpacity
         onLongPress={() => SetSelectedId(id)}
         onPress={() =>
@@ -142,7 +157,6 @@ const CheckList = ({
           shadowOpacity: 0.51,
           shadowRadius: 13.16,
           elevation: 15,
-          zIndex: 1,
           paddingHorizontal: 10,
           marginVertical: 5,
         }}>
@@ -195,7 +209,7 @@ const CheckList = ({
             backgroundColor: 'white',
             borderRadius: 20,
             right: 10,
-            bottom: -90,
+            bottom: -moderateScale(80),
             zIndex: 10,
           }}>
           <TouchableOpacity

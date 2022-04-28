@@ -13,6 +13,8 @@ class Cleaning {
   term = '1-го месяца';
   is_repeat_active = false;
   edit_id = null;
+  amount_checks = 0;
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -88,15 +90,19 @@ class Cleaning {
       time_cleaning: this.getCleaningDates()[0],
     };
     let data = await api.editCleaning(new_cleanings);
-    if (data.time) {
-      if (data.detail[0].includes('Cleaning')) return {error_dates: data.time};
-      else return {error_housemaid_dates: data.time};
+    if (data.detail) {
+      if (data.detail[0].includes('Cleaning')) return 'data_error';
+      else return 'housemaid_data_error';
     } else this.clearAllData();
   };
 
   deleteCleaning = async () => {
     await api.deleteCleaning(this.edit_id);
     this.clearAllData();
+  };
+
+  setAmountChecks = amount_checks => {
+    this.amount_checks = amount_checks;
   };
 
   clearAllData() {

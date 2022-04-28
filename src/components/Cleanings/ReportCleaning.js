@@ -375,7 +375,7 @@ export const ReportCleaning = ({navigation, route}) => {
                     color: '#E8443A',
                     fontFamily: 'Inter-SemiBold',
                     fontSize: moderateScale(17),
-                    textAlign: "center",
+                    textAlign: 'center',
                     marginTop: 10,
                   }}>
                   Проверено автоматически
@@ -530,11 +530,14 @@ export const ReportCleaning = ({navigation, route}) => {
                       marginTop: 10,
                       justifyContent: 'center',
                     }}>
+                    {console.log(Number(cleaning.rating))}
                     {[1, 2, 3, 4, 5].map(el => (
                       <View style={{marginLeft: 3}} key={el}>
                         <Star
                           fill={
-                            Number(cleaning.rating) < el ? '#DFDCDC' : '#F38434'
+                            (Number(cleaning.rating) || 0) < el
+                              ? '#DFDCDC'
+                              : '#F38434'
                           }
                           width={45}
                           height={45}
@@ -894,6 +897,7 @@ const AnswerComponent = ({
                 paddingVertical: 3,
                 fontSize: moderateScale(16),
                 fontFamily: 'Inter-Medium',
+                color: 'black',
               }}
             />
           </View>

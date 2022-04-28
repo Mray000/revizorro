@@ -13,6 +13,7 @@ const getJson = async responce => {
 };
 const middleware = async responce => {
   let status = String(responce.status);
+  console.log(status, authentication.accessToken);
   let data = await getJson(responce);
   if (status == '401') {
     await api.refresh_token();
@@ -222,7 +223,7 @@ export const api = {
       manager_permission_cleaning,
     };
     let data = await request.post(`/users/company/staff/`, body);
-    if (data?.detail) return 'Сотрудник с такой почтой уже зарегестрирован';
+    if (data?.detail) return 'Сотрудник с такой почтой уже зарегистрирован';
     if (data?.email) return 'Введите верный адрес электронной почты';
     return null;
   },
@@ -252,7 +253,7 @@ export const api = {
     };
     let data = await request.put(`/users/staff/${id}/`, body);
 
-    if (data?.detail) return 'Сотрудник с такой почтой уже зарегестрирован';
+    if (data?.detail) return 'Сотрудник с такой почтой уже зарегистрирован';
     if (Array.isArray(data?.email))
       return 'Введите верный адрес электронной почты';
     return null;
@@ -352,6 +353,7 @@ export const api = {
 
   editQuestion: async body => {
     let data = await request.put(`/questions/${body.id}`, body);
+    console.log(data, 'SFKLSDFJDSKLFJSDF');
     return data;
   },
 
@@ -364,11 +366,13 @@ export const api = {
     console.log(body.check_list_ids);
     let data = await request.post(`/cleaning/multiply`, body);
     console.log(data);
+    // console.log(data);
     return data;
   },
 
   editCleaning: async body => {
     let data = await request.put(`/cleaning/${body.id}`, body);
+    console.log(data);
     return data;
   },
 
@@ -466,7 +470,8 @@ export const api = {
     let body = {
       location: {latitude: coords.latitude, longitude: coords.longitude},
     };
-    let data = await request.patch(`/cleaning/${cleaning_id}`, body);
+    let data = await request.put(`/cleaning/location/${cleaning_id}`, body);
+    console.log(data);
     return data;
   },
 
@@ -557,7 +562,20 @@ export const api = {
   },
 
   getCheckListsForCleanings: async flat_id => {
-    let data = await request.get(`/check-lists/flat/${flat_id}`);
+    let data = await request.get(`/check-lists/flat/${flat_id}/`);
+    return data;
+  },
+
+  sendSupport: async (phone, question) => {
+    let data = await request.post('/feedback', {phone, question});
+    console.log(data);
+    return data?.phone;
+  },
+
+  deleteQuestionsAndPhotos: async id => {
+    console.log(id);
+    let data = await request.delete(`/questions/${id}`);
+    console.log(data)
     return data;
   },
 };

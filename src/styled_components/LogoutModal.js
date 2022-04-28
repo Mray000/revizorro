@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, Modal} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import { authentication } from 'store/authentication';
+import {View, Text, Modal, TouchableOpacity} from 'react-native';
+
+import {authentication} from 'store/authentication';
 import {moderateScale, verticalScale} from 'utils/normalize';
 
 export const LogoutModal = ({visible, closeModal, navigation}) => {
@@ -51,15 +51,17 @@ export const LogoutModal = ({visible, closeModal, navigation}) => {
             }}>
             Вы уверены, что хотите выйти?
           </Text>
+
           <View
             style={{
               flexDirection: 'row',
               marginTop: 10,
               borderTopColor: '#E5E3E2',
               borderTopWidth: 1,
+              width: '100%',
             }}>
             <TouchableOpacity
-              containerStyle={{width: '50%', padding: 8}}
+              style={{width: '50%', padding: 8}}
               onPress={logout}>
               <Text
                 style={{
@@ -74,7 +76,7 @@ export const LogoutModal = ({visible, closeModal, navigation}) => {
             <View style={{backgroundColor: '#E5E3E2', width: 1}} />
             <TouchableOpacity
               onPress={closeModal}
-              containerStyle={{width: '50%', padding: 8}}>
+              style={{width: '50%', padding: 8}}>
               <Text
                 style={{
                   fontFamily: 'Inter-SemiBold',

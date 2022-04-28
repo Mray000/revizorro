@@ -27,6 +27,8 @@ export const CleaningComponent = React.memo(
       time_cleaning,
       amount_checks,
       fill_questions,
+      time_end_cleaning,
+      date,
     } = cleaning;
     if (housemaid) maid = housemaid;
     const getDate = () => {
@@ -34,15 +36,19 @@ export const CleaningComponent = React.memo(
       let date = moment(time_cleaning);
       let time = date.format('HH:mm');
       if (date.format('YYYY-MM-DD') == today.format('YYYY-MM-DD')) return time;
-      if (date.format('YYYY-MM-DD') == today.add(1, 'day').format('YYYY-MM-DD'))
+      if (
+        date.format('YYYY-MM-DD') == today.add(1, 'day').format('YYYY-MM-DD')
+      ) {
+        console.log('--');
+        console.log(time_cleaning);
         return 'завтра ' + time;
+      }
+
       return date.format('D MMM') + ' ' + time;
     };
 
     const onPress = () => {
-      console.log(is_housemaid)
       if (is_housemaid && is_need_check) {
-        console.log(34)
         return navigation.navigate('CompleteCleaning', {cleaning});
       }
 
@@ -56,6 +62,8 @@ export const CleaningComponent = React.memo(
       cleaning_store.setHousemaid(maid);
       cleaning_store.setTime(time_cleaning);
       cleaning_store.setDate(time_cleaning);
+      cleaning_store.setDate(time_cleaning);
+      cleaning_store.setAmountChecks(amount_checks);
       navigation.navigate('EditCleaning');
     };
 
@@ -123,6 +131,13 @@ export const CleaningComponent = React.memo(
       return count;
     };
 
+    let is_maid_disactive = !maid.is_active && !is_completed;
+    let is_overdue =
+      !moment(time_end_cleaning).isAfter(moment()) && !is_completed;
+    // let is_current_year =
+    //   moment(time_cleaning).get('year') == moment().get('year');
+    // console.log(time_cleaning)
+    // console.log(is_current_year, "C_Y")
     return (
       <Shadow
         startColor={!is_completed ? '#00000003' : '#0000'}
@@ -189,6 +204,7 @@ export const CleaningComponent = React.memo(
                   {flat?.title || moment(time_cleaning).format('D MMMM HH:mm')}
                 </Text>
               </View>
+
               {!is_housemaid ? (
                 <Text
                   style={{
@@ -224,9 +240,11 @@ export const CleaningComponent = React.memo(
                     style={{
                       fontFamily: 'Inter-Medium',
                       fontSize: moderateScale(15),
-                      color: 'black',
+                      color: !is_maid_disactive ? 'black' : colors.orange,
                     }}>
-                    {maid.first_name + ' ' + maid.last_name}
+                    {!is_maid_disactive
+                      ? maid.first_name + ' ' + maid.last_name
+                      : 'Горничная не назначена'}
                   </Text>
                 </View>
               ) : (
@@ -292,18 +310,23 @@ export const CleaningComponent = React.memo(
                     ' фото'}
               </Text>
             ) : (
-              <Text
+              <View
                 style={{
+                  borderRadius: 10,
+                  backgroundColor: '#FEF3EB',
+                  overflow: 'hidden',
                   paddingHorizontal: 10,
                   paddingVertical: 5,
-                  backgroundColor: '#FEF3EB',
-                  color: colors.orange,
-                  fontSize: moderateScale(14),
-                  fontFamily: 'Inter-Regular',
-                  borderRadius: 10,
                 }}>
-                на проверке
-              </Text>
+                <Text
+                  style={{
+                    color: colors.orange,
+                    fontSize: moderateScale(14),
+                    fontFamily: 'Inter-Regular',
+                  }}>
+                  на проверке
+                </Text>
+              </View>
             )}
 
             <View
@@ -324,6 +347,31 @@ export const CleaningComponent = React.memo(
               </Text>
             </View>
           </View>
+          {is_maid_disactive || is_overdue ? (
+            <View
+              style={{
+                width: scale(22),
+                position: 'absolute',
+                right: 10,
+                top: '10%',
+                aspectRatio: 1,
+                borderRadius: 20,
+                borderWidth: 2,
+                borderColor: colors.red,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: colors.red,
+                  fontFamily: 'Inter-SemiBold',
+                  fontSize: moderateScale(15),
+                  // textAlignVertical: "center"
+                }}>
+                !
+              </Text>
+            </View>
+          ) : null}
           <TouchableOpacity
             style={{position: 'absolute', top: '50%', right: 15}}>
             <ArrowRight fill="black" />

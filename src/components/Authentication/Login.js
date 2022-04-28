@@ -30,7 +30,6 @@ export const Login = observer(({navigation, route}) => {
   const [incorrect_data, setIncorrectData] = useState(false);
   const [isLoad, setIsLoad] = useState(false);
   const [is_keyboard_show, SetIsKeyboardShow] = useState(false);
-
   let is_button_disabled = !(email && password) || isLoad;
 
   const henderLogin = async () => {
@@ -216,7 +215,7 @@ export const Login = observer(({navigation, route}) => {
                 fontSize: moderateScale(15),
                 marginLeft: 10,
               }}>
-              Если вы новый сотрудник, обратитесь к вашему нанимателю, чтобы он
+              Если вы новый сотрудник, обратитесь к вашему руководителю, чтобы он
               вас зарегистрировал в приложении.
             </Text>
           </View>

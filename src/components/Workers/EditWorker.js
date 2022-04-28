@@ -321,25 +321,27 @@ export const EditWorker = ({navigation, route}) => {
                     flexDirection: 'row',
                     alignItems: 'center',
                   }}>
-                  <Text
+                  <View
                     style={{
-                      backgroundColor: '#E7443A',
-                      borderRadius: 100,
                       width: scale(20),
                       height: scale(20),
+                      borderRadius: 20,
+                      backgroundColor: '#E7443A',
                       justifyContent: 'center',
                       alignItems: 'center',
-                      textAlign: 'center',
-                      fontWeight: '600',
-                      fontFamily: 'Inter-SemiBold',
-                      color: 'white',
-                      fontSize: moderateScale(12),
-                      textAlignVertical: 'center',
                       marginRight: 5,
-                      padding: 0,
                     }}>
-                    i
-                  </Text>
+                    <Text
+                      style={{
+                        textAlign: 'center',
+                        fontFamily: 'Inter-SemiBold',
+                        color: 'white',
+                        fontSize: moderateScale(14),
+                        textAlignVertical: 'center',
+                      }}>
+                      i
+                    </Text>
+                  </View>
                   <Text
                     style={{
                       fontFamily: 'Inter-SemiBold',

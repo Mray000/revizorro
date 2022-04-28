@@ -78,7 +78,7 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    enableHermes: false,  // clean and rebuild if changing
+    enableHermes: true,  // clean and rebuild if changing
     bundleInRelease: true
 ]
 
@@ -139,8 +139,8 @@ android {
         applicationId "com.revizorro"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode  13
-        versionName "1.60"
+        versionCode  18
+        versionName "2.1"
         missingDimensionStrategy 'store', 'play'
     }
     splits {
@@ -207,6 +207,8 @@ dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules     // Import the Firebase BoM
   implementation platform('com.google.firebase:firebase-bom:29.1.0')
+
+  implementation project(':react-native-splash-screen')
 
   // When using the BoM, you don't specify versions in Firebase library dependencies
 

@@ -50,18 +50,19 @@ export const Registration = ({navigation, route}) => {
           SetPassword('');
           SetRepeatPassword('');
           SetIsFirstStep(true);
-          navigation.navigate('RateChoice', {parent: 'Registration'});
+          // navigation.navigate('RateChoice', {parent: 'Registration'});
+          navigation.navigate('Cleanings');
           break;
         }
         case 'phone_exist': {
           SetIsPhoneError(true);
-          SetError('Номер телефона уже зарегестрирован');
+          SetError('Номер телефона уже зарегистрирован');
           SetIsFirstStep(true);
           break;
         }
         case 'email_exist': {
           SetIsEmailError(true);
-          SetError('Почта уже зарегестрирована');
+          SetError('Почта уже зарегистрирована');
           SetIsFirstStep(true);
 
           break;
@@ -83,9 +84,7 @@ export const Registration = ({navigation, route}) => {
     is_load ||
     is_email_error ||
     is_phone_error;
-  console.log(
-    Dimensions.get('window').height - Dimensions.get('screen').height,
-  );
+
   return (
     <KeyboardAwareScrollView style={{flex: 1}}>
       <View

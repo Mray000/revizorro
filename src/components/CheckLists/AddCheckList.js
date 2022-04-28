@@ -1,62 +1,35 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  ScrollView,
-  Modal,
-  KeyboardAvoidingView,
-} from 'react-native';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {R, Shadow} from 'react-native-shadow-2';
-import {dimensions} from 'utils/dimisions';
-import {Input} from 'styled_components/Input';
-import ArrowRight from 'assets/arrow_right.svg';
-import {colors} from 'utils/colors';
-import {Header} from 'styled_components/Header';
-import {moderateScale, scale, verticalScale} from 'utils/normalize';
-import BottomSheet from 'styled_components/BottomSheet';
-import Check from 'assets/check.svg';
-import {app} from 'store/app';
-import X from 'assets/x.svg';
-import {Button} from 'styled_components/Button';
+
 import {api} from 'utils/api';
 import {types} from 'utils/flat_types';
-import {AddButton} from 'styled_components/AddButton';
-import {ModalPicker} from 'styled_components/ModalPicker';
+
+import {useToggle} from 'hooks/useToggle';
+
+import {AddEditCheckListLayout} from './AddEditCheckListLayout';
+import {app} from 'store/app';
 
 export const AddCheckList = ({navigation, route}) => {
   const [title, SetTitle] = useState('');
   const [price, SetPrice] = useState(0);
-  const [questions, SetQuestions] = useState([]);
-  const [photos_tasks, SetPhotosTasks] = useState([]);
   const [question, SetQuestion] = useState('');
   const [answers, SetAnswers] = useState([]);
   const [answer, SetAnswer] = useState('');
   const [hours, SetHours] = useState(0);
   const [minutes, SetMinutes] = useState(5);
   const [photos_text, SetPhotosText] = useState('');
-  const [is_hours_modal_visible, SetIsHoursModalVisible] = useState(false);
-  const [is_minutes_modal_visible, SetIsMinutesModalVisible] = useState(false);
-  const [photos_count, SetPhotosCount] = useState(0);
+
   const [edit_id, SetEditId] = useState(null);
   const [is_load, SetIsLoad] = useState(false);
   const [is_question_modal_visible, SetIsQuestionModalVisible] =
-    useState(false);
-  const [is_photo_modal_visible, SetIsPhotoModalVisible] = useState(false);
-  const [is_info_visible, SetIsInfoVisible] = useState(false);
-  const [is_cancel_modal_open, SetIsCancelModalOpen] = useState(false);
+    useToggle(false);
+  const [is_photo_modal_visible, SetIsPhotoModalVisible] = useToggle(false);
+
+  const [is_add_modal_visible, SetIsAddModalVisible] = useToggle(false);
+
+  const [questions_and_photos, SetQuestionsAndPhotos] = useState([]);
 
   let questionbBottomSheet = useRef();
   let photoBottomSheet = useRef();
-
-  let scroll = useRef();
-  const scrollToInput = reactNode => {
-    // scroll.current.scrollToFocusedInput(reactNode);
-    // console.log(questionbBottomSheet.current.setNativeProps)
-    // questionbBottomSheet.current.setNativeProps({marginBottom: 100});
-  };
 
   const ChangeIsOpenQuestionModal = () => {
     if (is_question_modal_visible) {
@@ -64,18 +37,19 @@ export const AddCheckList = ({navigation, route}) => {
       SetQuestion('');
       SetAnswers([]);
     }
+    if (is_add_modal_visible) SetIsAddModalVisible();
     app.setIsBottomNavigatorVisible(is_question_modal_visible);
-    SetIsQuestionModalVisible(!is_question_modal_visible);
+    SetIsQuestionModalVisible();
   };
 
   const ChangeIsOpenPhotoModal = () => {
     if (is_photo_modal_visible) {
       SetEditId(null);
       SetPhotosText('');
-      SetPhotosCount(0);
     }
+    if (is_add_modal_visible) SetIsAddModalVisible();
     app.setIsBottomNavigatorVisible(is_photo_modal_visible);
-    SetIsPhotoModalVisible(!is_photo_modal_visible);
+    SetIsPhotoModalVisible();
   };
 
   const AddAnswer = () => {
@@ -85,7 +59,7 @@ export const AddCheckList = ({navigation, route}) => {
 
   const AddQuestion = () => {
     if (!edit_id) {
-      SetQuestions(prev => [
+      SetQuestionsAndPhotos(prev => [
         ...prev,
         {
           id: Date.now().toString(),
@@ -94,7 +68,7 @@ export const AddCheckList = ({navigation, route}) => {
         },
       ]);
     } else {
-      SetQuestions(prev => {
+      SetQuestionsAndPhotos(prev => {
         let new_questions = prev.map(el => {
           if (el.id == edit_id) {
             let new_task = {
@@ -114,12 +88,12 @@ export const AddCheckList = ({navigation, route}) => {
 
   const AddPhotosTask = () => {
     if (!edit_id) {
-      SetPhotosTasks(prev => [
+      SetQuestionsAndPhotos(prev => [
         ...prev,
         {id: Date.now().toString(), text: photos_text},
       ]);
     } else {
-      SetPhotosTasks(prev => {
+      SetQuestionsAndPhotos(prev => {
         let new_questions = prev.map(el => {
           if (el.id == edit_id) {
             let new_task = {
@@ -133,6 +107,22 @@ export const AddCheckList = ({navigation, route}) => {
       });
       SetEditId(null);
     }
+    ChangeIsOpenPhotoModal();
+  };
+
+  const DeleteQuestion = () => {
+    SetQuestionsAndPhotos(questions_and_photos =>
+      questions_and_photos.filter(el => el.id !== edit_id),
+    );
+    SetEditId(null);
+    ChangeIsOpenQuestionModal();
+  };
+
+  const DeletePhoto = () => {
+    SetQuestionsAndPhotos(questions_and_photos =>
+      questions_and_photos.filter(el => el.id !== edit_id),
+    );
+    SetEditId(null);
     ChangeIsOpenPhotoModal();
   };
 
@@ -157,15 +147,18 @@ export const AddCheckList = ({navigation, route}) => {
       cost: Number(price),
       interval: hours * 60 + minutes,
       questions: [
-        ...questions.map(q => ({
-          question_type: 'type_text',
-          question_text: q.text,
-          answer: q.answers,
-        })),
-        ...photos_tasks.map(q => ({
-          question_type: 'type_photo',
-          question_text: q.text,
-        })),
+        ...questions_and_photos.map(q =>
+          q.answers
+            ? {
+                question_type: 'type_text',
+                question_text: q.text,
+                answer: q.answers,
+              }
+            : {
+                question_type: 'type_photo',
+                question_text: q.text,
+              },
+        ),
       ],
     });
     navigation.goBack();
@@ -181,824 +174,47 @@ export const AddCheckList = ({navigation, route}) => {
   }, [is_photo_modal_visible]);
 
   let type = route.params?.type;
-  let is_button_disabled = !(questions.length && type && title) || is_load;
-
-  let hours_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-  let minutes_values = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
 
   return (
-    <View style={{flex: 1}}>
-      {/* <KeyboardAwareScrollView
-        automaticallyAdjustContentInsets={false}
-        // ref={scroll}
-        style={{flex: 1}}
-        // resetScrollToCoords={{x: 0, y: 0}}
-        contentContainerStyle={{flexGrow: 1}}
-        // enableOnAndroid={true}
-        // scrollEnabled={true}
-      > */}
-      <ScrollView>
-        <Header
-          to={'ListOfCheckLists'}
-          navigation={navigation}
-          title={'Добавление чек-листа'}
-          onBack={() => SetIsCancelModalOpen(true)}
-        />
-        <View style={{paddingHorizontal: 10, flex: 1}}>
-          <Input
-            key={1}
-            value={title}
-            onChangeText={SetTitle}
-            placeholder="Придумайте название"
-            title={'название'}
-          />
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('FlatTypes', {
-                type,
-                parent: 'AddCheckList',
-              })
-            }
-            style={{
-              height: dimensions.height / 10,
-              marginTop: 10,
-              width: '100%',
-              justifyContent: 'center',
-            }}>
-            <Shadow
-              viewStyle={{
-                width: '100%',
-                height: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderColor: '#E5E3E2',
-                borderWidth: 1,
-                borderRadius: 18,
-                flexDirection: 'row',
-                paddingHorizontal: 1,
-                backgroundColor: 'white',
-              }}
-              startColor={type ? '#00000010' : '#0000'}
-              finalColor={type ? '#00000002' : '#0000'}
-              offset={type ? [0, 5] : [0, 0]}
-              distance={!type ? 0 : undefined}
-              corners={!type ? [] : undefined}
-              sides={!type ? [] : undefined}
-              size={!type ? 0 : undefined}>
-              <View
-                style={{
-                  justifyContent: 'center',
-                  width: '90%',
-                  height: '100%',
-                }}>
-                <Text
-                  style={{
-                    alignSelf: 'stretch',
-                    color: type ? 'black' : '#979493',
-                    paddingLeft: 20,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 17,
-                  }}>
-                  {type || 'Выберите тип недвижимости'}
-                </Text>
-              </View>
-              <View
-                style={{
-                  width: '10%',
-                  alignItems: 'center',
-                }}>
-                <ArrowRight fill={type ? '#CAC8C8' : colors.orange} />
-              </View>
-            </Shadow>
-            {title ? (
-              <View
-                style={{
-                  position: 'absolute',
-                  paddingVertical: 3,
-                  top: '-10%',
-                  paddingHorizontal: 8,
-                  backgroundColor: 'white',
-                  left: '5%',
-                  borderRadius: 8,
-                }}>
-                <Text
-                  style={{
-                    color: '#C5BEBE',
-                    fontFamily: 'Inter-Regular',
-                    fontSize: moderateScale(14),
-                  }}>
-                  подходящий тип недвижимости
-                </Text>
-              </View>
-            ) : null}
-          </TouchableOpacity>
-          <View style={{marginTop: 10}}>
-            <Text
-              style={{
-                fontFamily: 'Inter-Regular',
-                fontSize: moderateScale(14),
-                color: '#AEACAB',
-                marginLeft: 10,
-              }}>
-              ДЛИТЕЛЬНОСТЬ
-            </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginTop: 10,
-                justifyContent: 'space-between',
-              }}>
-              <TouchableOpacity
-                onPress={() => SetIsHoursModalVisible(true)}
-                style={{
-                  height: dimensions.height / 11,
-                  borderColor: '#C5BFBE',
-                  borderRadius: 20,
-                  borderWidth: 1,
-                  width: '48%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={{
-                    color: '#C5BFBE',
-                    fontSize: moderateScale(14),
-                    fontFamily: 'Inter-Regular',
-                  }}>
-                  {hours} ч
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => SetIsMinutesModalVisible(true)}
-                style={{
-                  height: dimensions.height / 11,
-                  borderColor: '#C5BFBE',
-                  borderRadius: 20,
-                  borderWidth: 1,
-                  width: '48%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={{
-                    color: '#C5BFBE',
-                    fontSize: moderateScale(14),
-                    fontFamily: 'Inter-Regular',
-                  }}>
-                  {minutes} мин
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View
-            style={{
-              height: dimensions.height / 10,
-              marginTop: 15,
-              width: '100%',
-              justifyContent: 'center',
-            }}>
-            <TouchableOpacity
-              onPress={() => SetIsInfoVisible(!is_info_visible)}
-              style={{
-                position: 'absolute',
-                left: 10,
-                zIndex: 1,
-                elevation: 1,
-                width: scale(20),
-              }}>
-              <Shadow
-                startColor={'#00000008'}
-                finalColor={'#00000001'}
-                offset={[0, 5]}
-                distance={8}
-                viewStyle={{
-                  borderRadius: 30,
-                  aspectRatio: 1,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: 'white',
-                }}>
-                <View>
-                  <Text
-                    style={{
-                      color: colors.orange,
-                      fontSize: moderateScale(14),
-                      fontFamily: 'Inter-SemiBold',
-                    }}>
-                    i
-                  </Text>
-                </View>
-              </Shadow>
-            </TouchableOpacity>
-            <Shadow
-              viewStyle={{
-                width: '100%',
-                height: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderColor: '#E5E3E2',
-                borderWidth: 1,
-                borderRadius: 18,
-                flexDirection: 'row',
-                paddingHorizontal: 1,
-                backgroundColor: 'white',
-              }}
-              startColor={price ? '#00000010' : '#0000'}
-              finalColor={price ? '#00000002' : '#0000'}
-              offset={price ? [0, 5] : [0, 0]}
-              distance={!price ? 0 : undefined}
-              corners={!price ? [] : undefined}
-              sides={!price ? [] : undefined}
-              size={!price ? 0 : undefined}>
-              <TextInput
-                style={{
-                  justifyContent: 'center',
-                  width: '90%',
-                  height: '100%',
-                  color: 'black',
-                  paddingLeft: 40,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: moderateScale(17),
-                }}
-                value={price}
-                placeholderTextColor={`#979493`}
-                placeholder={price || 'не обязательно'}
-                keyboardType="numeric"
-                onChangeText={SetPrice}
-              />
-
-              <View
-                style={{
-                  width: '10%',
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={{
-                    fontFamily: 'Inter-Medium',
-                    fontSize: moderateScale(15),
-                    color: 'rgb(127,122,122)',
-                  }}>
-                  ₽
-                </Text>
-              </View>
-            </Shadow>
-            <View
-              style={{
-                position: 'absolute',
-                paddingVertical: 3,
-                top: '-10%',
-                paddingHorizontal: 8,
-                backgroundColor: 'white',
-                left: '5%',
-                borderRadius: 8,
-              }}>
-              <Text
-                style={{
-                  color: '#C5BEBE',
-                  fontFamily: 'Inter-Regular',
-                  fontSize: moderateScale(14),
-                }}>
-                стоимость
-              </Text>
-            </View>
-          </View>
-          {is_info_visible ? (
-            <Text
-              style={{
-                marginTop: 5,
-                fontSize: moderateScale(15),
-                fontFamily: 'Inter-Regular',
-                color: '#A9A6A6',
-              }}>
-              Если у вас сдельная оплата, то напишите стоимость уборки, если
-              оклад, тогда оставьте поле не заполненным
-            </Text>
-          ) : null}
-          <View>
-            <Text
-              style={{
-                marginTop: 10,
-                color: 'rgb(159,156,155)',
-                fontFamily: 'Inter-Medium',
-                fontSize: moderateScale(15),
-              }}>
-              вопросы
-            </Text>
-            <TouchableOpacity
-              onPress={ChangeIsOpenQuestionModal}
-              style={{
-                height: dimensions.height / 10,
-                backgroundColor: 'white',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'row',
-                borderRadius: 20,
-                marginTop: 10,
-              }}>
-              <View
-                style={{
-                  backgroundColor: 'rgba(243, 132, 52, 0.1)',
-                  width: scale(30),
-                  aspectRatio: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: 12,
-                }}>
-                <Text
-                  style={{
-                    color: colors.orange,
-                    fontFamily: 'Inter-Regular',
-                    fontSize: moderateScale(16),
-                    textAlignVertical: 'center',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  +
-                </Text>
-              </View>
-              <Text
-                style={{
-                  color: colors.orange,
-                  fontFamily: 'Inter-Medium',
-                  marginLeft: 10,
-                  fontSize: moderateScale(16),
-                }}>
-                Добавить вопрос
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={{paddingHorizontal: 10}}>
-          {questions.map(({text, answers, id}, i) => (
-            <TouchableOpacity
-              style={{
-                backgroundColor: 'white',
-                borderRadius: 20,
-                padding: 15,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginTop: 10,
-              }}
-              onPress={() => EditQuestion({text, answers, id})}>
-              <View>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontSize: moderateScale(15),
-                    fontFamily: 'Inter-Medium',
-                  }}>
-                  {i + 1}. {text}
-                </Text>
-                <Text
-                  style={{
-                    color: '#8C8383',
-                    marginTop: 2,
-                    fontSize: moderateScale(14),
-                    fontFamily: 'Inter-Regular',
-                  }}>
-                  {answers.join(' / ')}
-                </Text>
-              </View>
-              <ArrowRight fill="#CAC8C8" />
-            </TouchableOpacity>
-          ))}
-
-          <View>
-            <Text
-              style={{
-                marginTop: 10,
-                color: 'rgb(159,156,155)',
-                fontFamily: 'Inter-Medium',
-                fontSize: moderateScale(15),
-              }}>
-              фото
-            </Text>
-            <AddButton
-              text="Добавить задачу сделать фото"
-              onPress={ChangeIsOpenPhotoModal}
-              marginTop={10}
-            />
-            {photos_tasks.map(({text, id}, i) => (
-              <TouchableOpacity
-                key={id}
-                style={{
-                  backgroundColor: 'white',
-                  borderRadius: 20,
-                  padding: 15,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginTop: 10,
-                }}
-                onPress={() => EditPhotoTask({text, id})}>
-                <View>
-                  <Text
-                    style={{
-                      color: 'black',
-                      fontSize: moderateScale(15),
-                      fontFamily: 'Inter-Medium',
-                    }}>
-                    {questions.length + i + 1}. {text}
-                  </Text>
-                </View>
-                <ArrowRight fill="#CAC8C8" />
-              </TouchableOpacity>
-            ))}
-          </View>
-          <View style={{marginVertical: 20}}>
-            <Button
-              text={'Сохранить чек-лист'}
-              onPress={handleAddCheckList}
-              disabled={is_button_disabled}
-            />
-          </View>
-        </View>
-        {console.log(answers.length)}
-        {is_question_modal_visible ? (
-          <BottomSheet
-            height={verticalScale(390)}
-            radius={20}
-            plus_height={answers.length ? 70 : 0}
-            hasDraggableIcon
-            ref={questionbBottomSheet}
-            closeFunction={ChangeIsOpenQuestionModal}>
-            <KeyboardAvoidingView
-              behavior="padding"
-              style={{backgroundColor: 'white'}}>
-              <View style={{padding: 10, backgroundColor: 'white'}}>
-                <View
-                  style={{
-                    height: verticalScale(150),
-                    backgroundColor: 'white',
-                  }}>
-                  <TextInput
-                    multiline={true}
-                    style={{
-                      height: '100%',
-                      backgroundColor: 'white',
-                      borderRadius: 20,
-                      borderColor: '#E5E3E2',
-                      borderWidth: 1,
-                      paddingTop: 15,
-                      paddingLeft: 5,
-                      textAlignVertical: 'top',
-                    }}
-                    value={question}
-                    placeholderTextColor={`#979493`}
-                    placeholder="Например: вы нормально убрали?"
-                    onChangeText={SetQuestion}
-                  />
-                  <Text
-                    style={{
-                      position: 'absolute',
-                      padding: 3,
-                      top: -10,
-                      paddingLeft: 8,
-                      paddingRight: 8,
-                      backgroundColor: 'white',
-                      left: '5%',
-                      borderRadius: 8,
-                      color: !question ? 'rgb(197, 190, 190)' : 'black',
-                    }}>
-                    ваш вопрос
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    height: verticalScale(50),
-                    marginTop: 10,
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginBottom: 10,
-                    alignItems: 'center',
-                  }}>
-                  <View style={{height: '100%', width: '85%'}}>
-                    <TextInput
-                      style={{
-                        height: '100%',
-                        backgroundColor: 'white',
-                        borderRadius: 20,
-                        borderColor: '#E5E3E2',
-                        borderWidth: 1,
-                        paddingLeft: 25,
-                        color: 'black',
-                      }}
-                      placeholder="Например: безусловно"
-                      placeholderTextColor={`#979493`}
-                      value={answer}
-                      onChangeText={SetAnswer}
-                    />
-                    <Text
-                      style={{
-                        position: 'absolute',
-                        padding: 3,
-                        top: -10,
-                        paddingLeft: 8,
-                        paddingRight: 8,
-                        backgroundColor: 'white',
-                        left: '5%',
-                        borderRadius: 8,
-                        color: !answer ? 'rgb(197, 190, 190)' : 'black',
-                      }}>
-                      вариант ответа
-                    </Text>
-                  </View>
-
-                  <TouchableOpacity
-                    disabled={!answer}
-                    onPress={AddAnswer}
-                    style={{
-                      backgroundColor: answer ? colors.orange : '#fef3eb',
-                      width: '12%',
-                      aspectRatio: 1,
-                      borderRadius: 15,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <Check
-                      width={14}
-                      height={10}
-                      fill={answer ? 'white' : '#FACCAB'}
-                    />
-                  </TouchableOpacity>
-                </View>
-                {answers.length ? (
-                  <ScrollView
-                    style={{height: verticalScale(60), marginBottom: 10}}>
-                    <View
-                      style={{
-                        flexWrap: 'wrap',
-                        width: '100%',
-                        flexDirection: 'row',
-                      }}>
-                      {answers.map(el => (
-                        <View
-                          key={el}
-                          style={{
-                            flexDirection: 'row',
-                            padding: 5,
-                            backgroundColor: '#fef3eb',
-                            borderRadius: 8,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            margin: 3,
-                          }}>
-                          <Text
-                            style={{
-                              color: colors.orange,
-                              fontSize: moderateScale(14),
-                              fontFamily: 'Inter-Regular',
-                              marginRight: 5,
-                            }}>
-                            {el}
-                          </Text>
-                          <TouchableOpacity
-                            onPress={() =>
-                              SetAnswers(prev => prev.filter(q => el != q))
-                            }>
-                            <X fill={'#FACCAB'} />
-                          </TouchableOpacity>
-                        </View>
-                      ))}
-                    </View>
-                  </ScrollView>
-                ) : null}
-                <View style={{marginBottom: verticalScale(20)}}>
-                  <Button
-                    height={verticalScale(50)}
-                    text={'Сохранить вопрос'}
-                    onPress={AddQuestion}
-                    disabled={!(question && answers.length)}
-                  />
-                </View>
-              </View>
-            </KeyboardAvoidingView>
-          </BottomSheet>
-        ) : null}
-        {is_photo_modal_visible ? (
-          <BottomSheet
-            height={verticalScale(330)}
-            radius={20}
-            plus_height={answers.length ? 0 : 70}
-            hasDraggableIcon
-            ref={photoBottomSheet}
-            closeFunction={ChangeIsOpenPhotoModal}>
-            <KeyboardAvoidingView
-              behavior="padding"
-              style={{backgroundColor: 'white'}}>
-              <View style={{padding: 10, backgroundColor: 'white'}}>
-                <View
-                  style={{
-                    height: verticalScale(150),
-                    marginBottom: verticalScale(10),
-                  }}>
-                  <TextInput
-                    multiline={true}
-                    style={{
-                      height: '100%',
-                      backgroundColor: 'white',
-                      borderRadius: 20,
-                      borderColor: '#E5E3E2',
-                      borderWidth: 1,
-                      paddingTop: 15,
-                      paddingLeft: 5,
-                      textAlignVertical: 'top',
-                    }}
-                    value={photos_text}
-                    placeholderTextColor={`#979493`}
-                    placeholder="Например: сделайте фото заправленной кровати"
-                    onChangeText={SetPhotosText}
-                  />
-                  <Text
-                    style={{
-                      position: 'absolute',
-                      padding: 3,
-                      top: -10,
-                      paddingLeft: 8,
-                      paddingRight: 8,
-                      backgroundColor: 'white',
-                      left: '5%',
-                      borderRadius: 8,
-                      color: !question ? 'rgb(197, 190, 190)' : 'black',
-                    }}>
-                    какое фото нужно сделать
-                  </Text>
-                </View>
-                {/* <View
-              style={{
-                height: verticalScale(50),
-                marginTop: 10,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginBottom: 10,
-                alignItems: 'center',
-              }}>
-              <View
-                style={{
-                  height: '100%',
-                  width: '100%',
-                  justifyContent: 'center',
-                }}>
-                <TextInput
-                  style={{
-                    height: '100%',
-                    backgroundColor: 'white',
-                    borderRadius: 20,
-                    borderColor: '#E5E3E2',
-                    borderWidth: 1,
-                    paddingLeft: 25,
-                  }}
-                  placeholderTextColor={`#979493`}
-                  value={photos_count}
-                  onChangeText={SetPhotosCount}
-                  keyboardType="numeric"
-                />
-                <Text
-                  style={{
-                    position: 'absolute',
-                    padding: 3,
-                    top: -10,
-                    paddingLeft: 8,
-                    paddingRight: 8,
-                    backgroundColor: 'white',
-                    left: '5%',
-                    borderRadius: 8,
-                    color: !answer ? 'rgb(197, 190, 190)' : 'black',
-                  }}>
-                  сколько фото нужно сделать
-                </Text>
-                <View
-                  style={{
-                    position: 'absolute',
-                    right: '5%',
-                  }}>
-                  <ArrowRight
-                    fill={!photos_count ? '#CAC8C8' : colors.orange}
-                  />
-                </View>
-              </View>
-            </View> */}
-                <View style={{marginBottom: verticalScale(20)}}>
-                  <Button
-                    height={verticalScale(50)}
-                    text={'Сохранить задачу сделать фото'}
-                    onPress={AddPhotosTask}
-                    disabled={!photos_text}
-                  />
-                </View>
-              </View>
-            </KeyboardAvoidingView>
-          </BottomSheet>
-        ) : null}
-
-        {is_cancel_modal_open ? (
-          <CancelModal
-            GoBack={() => {
-              SetIsCancelModalOpen(false);
-              navigation.goBack();
-            }}
-            Stay={() => SetIsCancelModalOpen(false)}
-          />
-        ) : null}
-        <ModalPicker
-          data={hours_values}
-          onPick={SetHours}
-          visible={is_hours_modal_visible}
-          closeModal={() => SetIsHoursModalVisible(false)}
-        />
-        <ModalPicker
-          data={minutes_values}
-          onPick={SetMinutes}
-          visible={is_minutes_modal_visible}
-          closeModal={() => SetIsMinutesModalVisible(false)}
-        />
-      </ScrollView>
-    </View>
-  );
-};
-
-const CancelModal = ({GoBack, Stay}) => {
-  return (
-    <Modal animationType="fade" transparent>
-      <View
-        style={{
-          backgroundColor: 'rgba(0,0,0,0.2)',
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <View
-          style={{
-            backgroundColor: 'white',
-            borderRadius: 15,
-            width: '70%',
-            alignItems: 'center',
-          }}>
-          <Text
-            style={{
-              fontFamily: 'Inter-SemiBold',
-              fontSize: moderateScale(15),
-              color: 'black',
-              marginTop: verticalScale(15),
-            }}>
-            Сохранить изменения?
-          </Text>
-          <Text
-            style={{
-              fontFamily: 'Inter-Regular',
-              fontSize: moderateScale(13),
-              paddingHorizontal: 5,
-              color: '#8B8887',
-              marginTop: 3,
-              textAlign: 'center',
-            }}>
-            При нажатии на кнопку “Уйти” данные не сохранятся
-          </Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              marginTop: 10,
-              borderTopColor: '#E5E3E2',
-              borderTopWidth: 1,
-            }}>
-            <TouchableOpacity
-              onPress={GoBack}
-              style={{width: '50%', padding: 8}}>
-              <Text
-                style={{
-                  fontFamily: 'Inter-Regular',
-                  fontSize: moderateScale(15),
-                  color: '#E6443A',
-                  textAlign: 'center',
-                }}>
-                Уйти
-              </Text>
-            </TouchableOpacity>
-            <View
-              style={{backgroundColor: '#E5E3E2', width: 1, height: '100%'}}
-            />
-            <TouchableOpacity
-              onPress={Stay}
-              style={{
-                width: '50%',
-                padding: 8,
-              }}>
-              <Text
-                style={{
-                  fontFamily: 'Inter-SemiBold',
-                  fontSize: moderateScale(15),
-                  color: 'black',
-                  textAlign: 'center',
-                }}>
-                Остаться
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </Modal>
+    <AddEditCheckListLayout
+      type={type}
+      SetTitle={SetTitle}
+      SetPrice={SetPrice}
+      SetHours={SetHours}
+      SetMinutes={SetMinutes}
+      is_load={is_load}
+      questionbBottomSheet={questionbBottomSheet}
+      photoBottomSheet={photoBottomSheet}
+      ChangeIsOpenQuestionModal={ChangeIsOpenQuestionModal}
+      AddAnswer={AddAnswer}
+      EditQuestion={EditQuestion}
+      AddPhotosTask={AddPhotosTask}
+      AddQuestion={AddQuestion}
+      questions_and_photos={questions_and_photos}
+      title={title}
+      price={price}
+      answers={answers}
+      answer={answer}
+      photos_text={photos_text}
+      hours={hours}
+      minutes={minutes}
+      is_question_modal_visible={is_question_modal_visible}
+      is_photo_modal_visible={is_photo_modal_visible}
+      is_add_modal_visible={is_add_modal_visible}
+      navigation={navigation}
+      SetIsAddModalVisible={SetIsAddModalVisible}
+      handleAddCheckList={handleAddCheckList}
+      ChangeIsOpenPhotoModal={ChangeIsOpenPhotoModal}
+      question={question}
+      SetQuestion={SetQuestion}
+      SetAnswer={SetAnswer}
+      SetPhotosText={SetPhotosText}
+      SetQuestionsAndPhotos={SetQuestionsAndPhotos}
+      EditPhotoTask={EditPhotoTask}
+      SetAnswers={SetAnswers}
+      edit_id={edit_id}
+      DeleteQuestion={DeleteQuestion}
+      DeletePhoto={DeletePhoto}
+    />
   );
 };

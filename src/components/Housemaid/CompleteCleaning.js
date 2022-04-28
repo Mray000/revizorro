@@ -70,16 +70,18 @@ export const CompleteCleaning = ({navigation, route}) => {
 
   const GetCoords = async () => {
     let is_ok = await requestLocationPermission();
-
+    console.log(is_ok, '@1434');
     if (is_ok) {
       Geolocation.getCurrentPosition(
-        console.log,
-        // coords => api.sendCoords(cleaning.id, coords),
+        coords => {
+          console.log(coords);
+          api.sendCoords(cleaning.id, coords);
+        },
         alert.error,
         {
           enableHighAccuracy: true,
           timeout: 20000,
-          maximumAge: 60 * 60,
+          maximumAge: 60 * 60 * 60 * 10,
         },
       );
       SetIndex(index + 1);
@@ -486,7 +488,7 @@ export const CompleteCleaning = ({navigation, route}) => {
         <View
           style={{
             height: dimensions.height - verticalScale(50) - 40,
-            justifyContent: !(!is_rejected && index == 1) ? 'center' : '',
+            justifyContent: !(!is_rejected && index == 1) ? 'center' : undefined,
             alignItems: 'center',
           }}>
           {steps[index]}

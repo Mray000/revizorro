@@ -94,6 +94,7 @@ class App {
       localNotificationService.configure(onOpenNotification);
     });
     let company = await api.getCompany();
+    console.log(company);
     rate.setIsSubscriptionActive(company?.active);
   };
 }
