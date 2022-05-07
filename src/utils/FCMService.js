@@ -11,7 +11,7 @@ class FCMService {
     );
   };
 
-  registerAppWithFCM = async () => {
+  registerAppWithFCM =  async () => {
     await messaging().registerDeviceForRemoteMessages();
     await messaging().setAutoInitEnabled(true);
   };

@@ -14,7 +14,6 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		17F997885E334967AAC33C05 /* Inter-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 82777BC71EEB4E4583A77492 /* Inter-Medium.ttf */; };
-		3695579527E0B77800E124AC /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3695579427E0B77800E124AC /* StoreKit.framework */; };
 		36B37FFD27F1BE5300E82C3E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 36B37FFB27F1BE5300E82C3E /* GoogleService-Info.plist */; };
 		381D155F17902840AEB4C323 /* libPods-revizorro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 52DC5DFB3CA18F46357D3D47 /* libPods-revizorro.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
@@ -52,7 +51,6 @@
 		23989B8C60ED4117877D361B /* Inter-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Light.ttf"; path = "../src/assets/fonts/Inter-Light.ttf"; sourceTree = "<group>"; };
 		2D8ADBBE3BE341C6C4FC33F4 /* Pods-revizorro.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-revizorro.release.xcconfig"; path = "Target Support Files/Pods-revizorro/Pods-revizorro.release.xcconfig"; sourceTree = "<group>"; };
 		2EADEC20285541A3B7359A74 /* Inter-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Thin.ttf"; path = "../src/assets/fonts/Inter-Thin.ttf"; sourceTree = "<group>"; };
-		3695579427E0B77800E124AC /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		36B37FFB27F1BE5300E82C3E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		36B37FFF27FB195A00E82C3E /* revizorro.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = revizorro.entitlements; path = revizorro/revizorro.entitlements; sourceTree = "<group>"; };
 		5019AD429FE24FADA0FD4392 /* Inter-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-ExtraBold.ttf"; path = "../src/assets/fonts/Inter-ExtraBold.ttf"; sourceTree = "<group>"; };
@@ -82,7 +80,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3695579527E0B77800E124AC /* StoreKit.framework in Frameworks */,
 				381D155F17902840AEB4C323 /* libPods-revizorro.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -125,7 +122,6 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3695579427E0B77800E124AC /* StoreKit.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				52DC5DFB3CA18F46357D3D47 /* libPods-revizorro.a */,
 				8A4F08BD62AE08B33E8E9CED /* libPods-revizorro-revizorroTests.a */,
@@ -556,7 +552,7 @@
 				CODE_SIGN_ENTITLEMENTS = revizorro/revizorro.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 19;
 				DEVELOPMENT_TEAM = Y64T68TG3X;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = revizorro/Info.plist;
@@ -564,7 +560,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.2.6;
+				MARKETING_VERSION = 0.2.9;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -590,14 +586,14 @@
 				CODE_SIGN_ENTITLEMENTS = revizorro/revizorro.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 19;
 				DEVELOPMENT_TEAM = Y64T68TG3X;
 				INFOPLIST_FILE = revizorro/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.2.6;
+				MARKETING_VERSION = 0.2.9;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",

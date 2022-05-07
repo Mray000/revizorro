@@ -1,16 +1,16 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import X from 'assets/x.svg';
 import {Shadow} from 'react-native-shadow-2';
 import {getBoxShadow} from 'utils/get_box_shadow';
-export const CloseButton = ({onPress}) => {
+export const CloseButton = ({onPress, is_absolute, style}) => {
   return (
     <Shadow
       {...getBoxShadow()}
-      containerViewStyle={{
-        marginRight: 10,
-        alignSelf: 'flex-end',
-      }}>
+      containerViewStyle={[
+        is_absolute ? styles.right_absolute : styles.right,
+        {...style},
+      ]}>
       <TouchableOpacity
         onPress={onPress}
         style={{
@@ -26,3 +26,14 @@ export const CloseButton = ({onPress}) => {
     </Shadow>
   );
 };
+
+const styles = StyleSheet.create({
+  right_absolute: {
+    right: 10,
+    position: 'absolute',
+  },
+  right: {
+    marginRight: 10,
+    alignSelf: 'flex-end',
+  },
+});

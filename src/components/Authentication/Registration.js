@@ -34,14 +34,14 @@ export const Registration = ({navigation, route}) => {
   const handleRegistration = async () => {
     if (!is_first_step) {
       SetIsLoad(true);
-      let data = await authentication.registration(
+      let error = await authentication.registration(
         name,
         surname,
         company,
         email.toLowerCase(),
         password,
       );
-      switch (data) {
+      switch (error) {
         case 'is_ok': {
           SetName('');
           SetSurname('');
@@ -50,8 +50,7 @@ export const Registration = ({navigation, route}) => {
           SetPassword('');
           SetRepeatPassword('');
           SetIsFirstStep(true);
-          // navigation.navigate('RateChoice', {parent: 'Registration'});
-          navigation.navigate('Cleanings');
+          navigation.navigate('TarifSelect', {parent: 'Registration'});
           break;
         }
         case 'phone_exist': {

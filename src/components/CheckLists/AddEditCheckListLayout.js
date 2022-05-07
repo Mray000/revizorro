@@ -853,7 +853,7 @@ const AddCancelModal = ({GoBack, Stay}) => {
               marginTop: 3,
               textAlign: 'center',
             }}>
-            При нажатии на кнопку “Уйти” данные не сохранятся
+            При нажатии на кнопку “Выйти” данные не сохранятся
           </Text>
           <View
             style={{
@@ -872,7 +872,7 @@ const AddCancelModal = ({GoBack, Stay}) => {
                   color: '#E6443A',
                   textAlign: 'center',
                 }}>
-                Уйти
+                Выйти
               </Text>
             </TouchableOpacity>
             <View

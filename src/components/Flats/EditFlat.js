@@ -11,10 +11,9 @@ import Picture from 'assets/picture.svg';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {launchImageLibrary} from 'react-native-image-picker';
 import X from 'assets/x.svg';
-import {api, ImageURL} from 'utils/api';
+import {api} from 'utils/api';
 import {Loader} from 'styled_components/Loader';
 import {convertType, types} from 'utils/flat_types';
-
 
 export const EditFlat = ({navigation, route}) => {
   let flat = route.params.flat;
@@ -153,7 +152,7 @@ export const EditFlat = ({navigation, route}) => {
               width: 0,
               height: 10,
             },
-            shadowOpacity: 0.50,
+            shadowOpacity: 0.5,
             shadowRadius: 10,
             elevation: 20,
             paddingHorizontal: 10,
@@ -223,7 +222,7 @@ export const EditFlat = ({navigation, route}) => {
                     borderRadius: 20,
                   }}>
                   <Image
-                    source={{uri: photo.uri ||  photo.image}}
+                    source={{uri: photo.uri || photo.image}}
                     style={{
                       aspectRatio: 1,
                       borderRadius: 10,

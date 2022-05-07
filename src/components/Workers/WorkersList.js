@@ -18,6 +18,7 @@ import {NoData} from 'styled_components/NoData';
 import {PlusButton} from 'styled_components/PlusButton';
 export const WorkersList = ({navigation}) => {
   const [workers, SetWorkers] = useState(null);
+  
   useEffect(() => {
     if (!workers) api.getCompanyWorkers().then(SetWorkers);
   }, [workers]);
@@ -28,8 +29,8 @@ export const WorkersList = ({navigation}) => {
       api.getCompanyWorkers().then(SetWorkers);
     });
   }, []);
+
   if (!workers) return <Loader />;
-  console.log(workers.forEach(el => console.log(el.role)));
   return (
     <View style={{flex: 1}}>
       <View

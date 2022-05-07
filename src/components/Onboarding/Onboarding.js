@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {View, BackHandler} from 'react-native';
-import {rate} from 'store/rate';
+import {rate} from 'store/tarif';
 import {Button} from 'styled_components/Button';
 import {OnboardingScreens} from './OnboardingScreens';
 import {SelectRole} from './SelectRole';
@@ -8,6 +8,7 @@ import {SelectRole} from './SelectRole';
 export const Onboarding = ({navigation, route}) => {
   const [role, SetRole] = useState('owner');
   const [is_select_role_screen, SetIsSelectRoleScreen] = useState(true);
+
   useEffect(() => {
     let backhandler = BackHandler.addEventListener(
       'hardwareBackPress',
@@ -44,7 +45,7 @@ export const Onboarding = ({navigation, route}) => {
       {/* <Button
         text={'dslfdsf'}
         onPress={() => {
-          rate.setIsSubscriptionActive(true);
+          tarif.setIsTarifActive(true);
         }}
       /> */}
     </View>

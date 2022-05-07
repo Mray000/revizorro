@@ -1,5 +1,5 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {Platform, SafeAreaView} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {AppState, Platform, SafeAreaView} from 'react-native';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {Login} from './src/components/Authentication/Login.js';
@@ -20,7 +20,8 @@ import CheckListsActive from 'assets/check_list_active.svg';
 import SettingsIcon from 'assets/settings.svg';
 import SettingsActive from 'assets/settings_active.svg';
 import {Success} from './src/components/Success/Success.js';
-import {api, getAsyncData} from './src/utils/api.js';
+
+import {requestATTPermission} from './src/utils/PermisionsAccess';
 import {Workers} from 'components/Workers/Workers.js';
 import {WorkerSettings} from 'components/Workers/WorkerSettings.js';
 import {Flats} from 'components/Flats/Flats.js';
@@ -30,75 +31,44 @@ import {Cleanings} from 'components/Cleanings/Cleanings.js';
 import {Housemaid} from 'components/Housemaid/Housemaid.js';
 import {Settings} from 'components/Authentication/Settings.js';
 import {Support} from 'components/Authentication/Support.js';
-import {RateChoice} from 'components/Authentication/RateChoice.js';
-import {SubscriptionDisactive} from 'components/Authentication/SubscriptionDisactive.js';
-import {fcmService} from './src/utils/FCMService.js';
-import {localNotificationService} from './src/utils/LocalNotificationService';
+import {TarifSelect} from 'components/Authentication/TarifSelect.js';
+import {TarifDisactive} from 'components/Authentication/TarifDisactive.js';
 import {observer} from 'mobx-react-lite';
 import {app} from './src/store/app.js';
-import {rate} from './src/store/rate.js';
+import {tarif} from './src/store/tarif.js';
 import {Loader} from 'styled_components/Loader.js';
-import iap from 'react-native-iap';
 import SplashScreen from 'react-native-splash-screen';
 
 const Tab = createBottomTabNavigator();
+
 const App = observer(() => {
   let role = app.role;
   let accesses = app.accesses;
 
   const [is_load, SetIsLoad] = useState(false);
 
-  useEffect(() => {
-    // let purchaseUpdatedListener;
-    // let purchaseErrorListener;
-    if (Platform.OS == 'android') SplashScreen.hide();
-    (async () => {
-      let data = await getAsyncData();
-
-      if (data) {
-        authentication.SetAccessToken(data.accessToken);
-        authentication.SetRefreshToken(data.refreshToken);
-        let is_token_normal = await api.refresh_token();
-        if (is_token_normal) await app.setMe();
+  const handleAppStateChange = nextState => {
+    if (nextState === 'active') {
+      if (Platform.OS === 'ios') {
+        requestATTPermission();
+      } else {
+        SplashScreen.hide();
       }
+    }
+  };
+
+  useEffect(() => {
+    AppState.addEventListener('change', handleAppStateChange);
+
+    (async () => {
+      await authentication.onAppOpen();
       SetIsLoad(true);
-      // await iap.initConnection();
-      // purchaseErrorListener = iap.purchaseErrorListener(async error => {
-      //   Alert.alert(
-      //     'Ошибка',
-      //     'Во время попытки оформить подписку произошла ошибка. Код ошибки-',
-      //     JSON.stringify(error),
-      //   );
-      // });
-
-      // purchaseUpdatedListener = iap.purchaseUpdatedListener(async purhcase => {
-      //   const receipt = purhcase.transactionReceipt;
-      //   // api.debuggRequest('ПРИШЛО');
-      //   // Alert.alert(receipt, 'TEST');
-
-      //   if (receipt) {
-      //     // Alert.alert('Тестовое сообщение', 'оплата прошла');
-      //     // let tarif_id = Number(rate.selected_tarf_id.split('_')[1]);
-      //     let tarif_id = 1;
-      //     await api.setTarif(tarif_id);
-      //     await iap.finishTransaction(purhcase, true);
-      //     rate.setIsSubscriptionActive(true);
-      //     rate.setIsSubscriptionPaid(true);
-      //   }
-      // });
     })();
 
-    return () => {
-      fcmService.unRegitster();
-      localNotificationService.unregister();
-      iap.endConnection();
-      console.log('APP unreigster');
-      // purchaseErrorListener.remove();
-      // purchaseUpdatedListener.remove();
-    };
+    return app.onAppClose;
   }, []);
-  let is_company_active = rate.getIsSubscriptionActive();
-  console.log(is_company_active, 'IS COMPANY ACTIVE');
+
+  let is_company_active = tarif.is_tarif_active;
   if (!is_load) return <Loader />;
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
@@ -114,13 +84,13 @@ const App = observer(() => {
               ? role != 'role_maid'
                 ? is_company_active
                   ? 'Cleanings'
-                  : 'RateChoice'
+                  : 'TarifSelect'
                 : is_company_active
                 ? 'Housemaid'
-                : 'SubscriptionDisactive'
+                : 'TarifDisactive'
               : 'Onboarding'
           }
-          // initialRouteName={'RateChoice'}
+          // initialRouteName={'TarifSelect'}
         >
           {app.role == 'role_maid' && is_company_active ? (
             <Tab.Screen
@@ -229,13 +199,13 @@ const App = observer(() => {
             options={{hidden: true}}
           />
           <Tab.Screen
-            name="RateChoice"
-            component={RateChoice}
+            name="TarifSelect"
+            component={TarifSelect}
             options={{hidden: true}}
           />
           <Tab.Screen
-            name="SubscriptionDisactive"
-            component={SubscriptionDisactive}
+            name="TarifDisactive"
+            component={TarifDisactive}
             options={{hidden: true}}
           />
           <Tab.Screen

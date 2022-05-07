@@ -14,12 +14,9 @@ import {moderateScale} from 'utils/normalize';
 import {SwitchComponent} from 'styled_components/SwitchComponent';
 import ArrowRight from 'assets/arrow_right.svg';
 import {ModalPicker} from 'styled_components/ModalPicker';
-import iap from 'react-native-iap';
-import {rate} from 'store/rate';
-import {rate_prices} from 'utils/rate_constants';
 import {useToggle} from 'hooks/useToggle';
 import {LogoutModal} from 'styled_components/LogoutModal';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 export const Settings = observer(({navigation}) => {
   const [name, SetName] = useState('');
   const [surname, SetSurname] = useState('');
@@ -30,7 +27,6 @@ export const Settings = observer(({navigation}) => {
   const [is_cleaning_interval_modal_active, SetIsCleaningIntervalModalActive] =
     useState(false);
   const [is_logout_modal_visible, SetIsLogoutModalVisible] = useToggle(false);
-  // const [tarif, SetTarif] = useState(null);
 
   const [error, SetError] = useState('');
 
@@ -44,25 +40,6 @@ export const Settings = observer(({navigation}) => {
     });
     SetIsActualData(true);
   };
-
-  // useEffect(() => {
-  //   iap.initConnection().then(() => {
-  //     api.getRate().then(data => {
-  //       let current_tarif_id = 'revizorro_' + data.rate.id;
-  //       iap
-  //         .getProducts([current_tarif_id])
-  //         .then(tarifs => {
-  //           if (Platform.OS == 'android')
-  //             return JSON.parse(tarifs[0].originalJson);
-  //           else return tarifs[0];
-  //         })
-  //         .then(tarif => {
-  //           tarif.price = rate_prices[tarif.productId];
-  //           SetTarif(tarif);
-  //         });
-  //     });
-  //   });
-  // }, []);
 
   useEffect(() => {
     if (!is_actual_data) SetMe();
@@ -83,7 +60,6 @@ export const Settings = observer(({navigation}) => {
       app.is_notify,
       interval,
     );
-    console.log(error);
     if (error) SetError(error);
     else SetError('');
   };
@@ -208,7 +184,7 @@ export const Settings = observer(({navigation}) => {
         <Tarif tarif={tarif} />
       </View> 
        <TouchableOpacity
-        onPress={() => navigation.navigate('RateChoice', {parent: 'Settings'})}>
+        onPress={() => navigation.navigate('TarifSelect', {parent: 'Settings'})}>
         <Text
           style={{
             color: colors.orange,
@@ -355,8 +331,8 @@ export const Settings = observer(({navigation}) => {
 });
 
 const Tarif = ({tarif}) => {
-  let {productId, description, name, title, subscriptionPeriod, price} = tarif;
-  let is_year_tarif = subscriptionPeriod == 'P1Y';
+  let {productId, description, name, title, TarifPeriod, price} = tarif;
+  let is_year_tarif = TarifPeriod == 'P1Y';
   let is_sale = productId == 'revizorro_3';
   return (
     <View

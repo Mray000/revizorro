@@ -3,7 +3,6 @@ import {app} from 'store/app';
 import {authentication} from 'store/authentication';
 // import {error} from '../store/error';
 export const URL = 'http://92.53.97.165/api';
-export const ImageURL = 'http://92.53.97.165';
 const getJson = async responce => {
   try {
     return await responce.json();
@@ -15,6 +14,7 @@ const middleware = async responce => {
   let status = String(responce.status);
   console.log(status, authentication.accessToken);
   let data = await getJson(responce);
+  if(status == "404") console.log(responce)
   if (status == '401') {
     await api.refresh_token();
     return 'try_again';
@@ -22,7 +22,7 @@ const middleware = async responce => {
   return data;
 };
 
-export const getAsyncData = async () => {
+export const getTokensFromStorage = async () => {
   let storage_data = await AsyncStorage.multiGet([
     'accessToken',
     'refreshToken',
@@ -181,7 +181,7 @@ export const api = {
         },
         body: JSON.stringify({refresh}),
       }).then(res => res.json());
-
+      console.log(data);
       if (data?.access) await SetAuthData(data.access, data.refresh);
       else {
         await AsyncStorage.removeItem('accessToken');
@@ -353,7 +353,7 @@ export const api = {
 
   editQuestion: async body => {
     let data = await request.put(`/questions/${body.id}`, body);
-    console.log(data, 'SFKLSDFJDSKLFJSDF');
+    // console.log(data, 'SFKLSDFJDSKLFJSDF');
     return data;
   },
 
@@ -363,9 +363,9 @@ export const api = {
   },
 
   addCleaning: async body => {
-    console.log(body.check_list_ids);
+    // console.log(body.check_list_ids);
     let data = await request.post(`/cleaning/multiply`, body);
-    console.log(data);
+    // console.log(data);
     // console.log(data);
     return data;
   },
@@ -382,6 +382,7 @@ export const api = {
   },
   getCleanings: async () => {
     let cleanings = await request.get('/cleaning/me');
+
     return cleanings;
   },
 
@@ -419,7 +420,7 @@ export const api = {
     });
     form_data.append('fill_questions', JSON.stringify(fill_questions));
     let data = await request.post_form_data('/fill-questions/send', form_data);
-    console.log(data);
+    // console.log(data);
     return data;
   },
 
@@ -508,9 +509,7 @@ export const api = {
   },
   setNotification: async notification => {
     let data = await request.patch(
-      app.role != 'role_admin'
-        ? `/users/staff/${app.getId()}/`
-        : `/users/admin/${app.getId()}/`,
+      `/users/${app.role == 'role_admin' ? 'admin' : 'staff'}/${app.getId()}/`,
       {notification},
     );
     return data;
@@ -542,7 +541,7 @@ export const api = {
       autocheck_time,
     };
     let data = await request.put(`/users/admin/${app.getId()}/`, body);
-    console.log(data);
+    // console.log(data);
     return Array.isArray(data?.email) ? data.email[0] : null;
   },
 
@@ -557,7 +556,6 @@ export const api = {
     let data = await fetch('https://www.cbr-xml-daily.ru/latest.js').then(res =>
       res.json(),
     );
-
     return data.rates.USD;
   },
 
@@ -568,14 +566,12 @@ export const api = {
 
   sendSupport: async (phone, question) => {
     let data = await request.post('/feedback', {phone, question});
-    console.log(data);
+    // console.log(data);
     return data?.phone;
   },
 
   deleteQuestionsAndPhotos: async id => {
-    console.log(id);
     let data = await request.delete(`/questions/${id}`);
-    console.log(data)
     return data;
   },
 };

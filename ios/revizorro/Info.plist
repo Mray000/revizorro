@@ -70,7 +70,7 @@
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>YOUR TEXT</string>
 	<key>NSUserTrackingUsageDescription</key>
-	<string>YOUR TEXT</string>
+	<string></string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Inter-Black.ttf</string>

@@ -9,7 +9,7 @@ import {
   TextInput,
   Dimensions,
 } from 'react-native';
-import {api, ImageURL} from 'utils/api';
+import {api, } from 'utils/api';
 import {Header} from 'styled_components/Header';
 import {Loader} from 'styled_components/Loader';
 import {moderateScale} from 'utils/normalize';

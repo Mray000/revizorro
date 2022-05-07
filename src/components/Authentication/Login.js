@@ -2,12 +2,9 @@ import React, {useEffect, useState} from 'react';
 import {
   BackHandler,
   DeviceEventEmitter,
-  Dimensions,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -18,7 +15,7 @@ import {colors} from 'utils/colors';
 import {moderateScale, scale, verticalScale} from 'utils/normalize';
 import {observer} from 'mobx-react-lite';
 import {app} from 'store/app';
-import {rate} from 'store/rate';
+import {tarif} from 'store/tarif';
 export const Login = observer(({navigation, route}) => {
   //ianire@gmail.cted
   //ainurhabibullin0@gmail.test
@@ -36,20 +33,22 @@ export const Login = observer(({navigation, route}) => {
     setIsLoad(true);
     let is_ok = await authentication.login(email.toLowerCase(), password);
     console.log(is_ok);
+
+    console.log();
     if (is_ok) {
       SetEmail('');
       setPassword('');
       let role = app.role;
-      let is_company_active = rate.getIsSubscriptionActive();
+      let is_company_active = tarif.getIsTarifActive();
       navigation.navigate(
         role
           ? role != 'role_maid'
             ? is_company_active
               ? 'Cleanings'
-              : 'RateChoice'
+              : 'TarifSelect'
             : is_company_active
             ? 'Housemaid'
-            : 'SubscriptionDisactive'
+            : 'TarifDisactive'
           : 'Onboarding',
       );
     } else setIncorrectData(true);
@@ -215,8 +214,8 @@ export const Login = observer(({navigation, route}) => {
                 fontSize: moderateScale(15),
                 marginLeft: 10,
               }}>
-              Если вы новый сотрудник, обратитесь к вашему руководителю, чтобы он
-              вас зарегистрировал в приложении.
+              Если вы новый сотрудник, обратитесь к вашему руководителю, чтобы
+              он вас зарегистрировал в приложении.
             </Text>
           </View>
         ) : null}

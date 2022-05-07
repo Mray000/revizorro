@@ -3,7 +3,8 @@ import {Platform} from 'react-native';
 import {api} from 'utils/api';
 import {fcmService} from 'utils/FCMService';
 import {localNotificationService} from 'utils/LocalNotificationService';
-import {rate} from './rate';
+import {NotifysRegister, NotifysUnregister} from 'utils/notifications';
+import {rate, tarif} from './tarif';
 
 class App {
   id = null;
@@ -50,54 +51,25 @@ class App {
   getId = () => this.id;
 
   setMe = async () => {
-    const onRegister = async (token, is_refresh) => {
-      if (!is_refresh) {
-        await api.registerNotifys(token, Platform.OS);
-      } else {
-        await api.refreshNotifys(token, Platform.OS);
-      }
-    };
-
-    const onNotification = notify => {
-      if (app.is_notify) {
-        const options = {
-          soundName: 'default',
-          playSound: true,
-        };
-        localNotificationService.showNotification(
-          0,
-          notify.title,
-          notify.body,
-          notify,
-          options,
-        );
-      }
-    };
-
-    const onOpenNotification = notify => {
-      console.log('APP get open notify', notify);
-    };
-
-    await api.getMe().then(me => {
-      let accesses = [];
-      if (me.manager_permission_cleaning) accesses.push('cleanings');
-      if (me.manager_permission_check_lists) accesses.push('check_lists');
-      if (me.manager_permission_users) accesses.push('workers');
-      this.setId(me.id);
-      this.setNotification(me.notification);
-      this.setAccesses(accesses);
-      this.setRole(me.role);
-      this.setName(me.first_name);
-      fcmService.registerAppWithFCM();
-      fcmService.register(onRegister, onNotification, onOpenNotification);
-      localNotificationService.createChannel();
-      localNotificationService.configure(onOpenNotification);
-    });
+    let me = await api.getMe();
+    let accesses = [];
+    if (me.manager_permission_cleaning) accesses.push('cleanings');
+    if (me.manager_permission_check_lists) accesses.push('check_lists');
+    if (me.manager_permission_users) accesses.push('workers');
+    this.setId(me.id);
+    this.setNotification(me.notification);
+    this.setAccesses(accesses);
+    this.setRole(me.role);
+    this.setName(me.first_name);
+    NotifysRegister();
     let company = await api.getCompany();
-    console.log(company);
-    rate.setIsSubscriptionActive(company?.active);
+    tarif.setIsTarifActive(company?.active);
+  };
+
+  onAppClose = () => {
+    NotifysUnregister();
+    console.log('APP unreigster');
   };
 }
 
 export const app = new App();
-``;

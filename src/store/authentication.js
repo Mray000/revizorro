@@ -1,8 +1,8 @@
 import {makeAutoObservable} from 'mobx';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {api} from 'utils/api';
+import {api, getTokensFromStorage} from 'utils/api';
 import {app} from './app';
-import {rate} from './rate';
+import {rate, tarif} from './tarif';
 
 class Authentication {
   accessToken = '';
@@ -12,7 +12,6 @@ class Authentication {
   }
   login = async (login, password) => {
     let is_login = await api.login(login, password);
-    console.log(is_login);
     if (is_login) await app.setMe();
     return is_login;
   };
@@ -34,10 +33,10 @@ class Authentication {
     app.setRole(null);
     app.setName('');
     app.setId(null);
-    rate.setIsRateChoiceScreen(false);
-    rate.setIsSubscriptionActive(false);
-    rate.setIsSubscriptionPaid(false);
+    tarif.setIsTarifActive(false);
+    tarif.setIsTarifPaid(false);
   };
+
   registration = async (name, surname, company, email, password) => {
     let body = {
       first_name: name,
@@ -47,11 +46,22 @@ class Authentication {
       password,
     };
     let data = await api.registration(body);
-    if (data?.Error)
-      return data.Error.includes('email') ? 'email_exist' : 'phone_exist';
+    console.log(data);
+    if (data?.detail) return 'email_exist';
     if (data?.email) return 'email_incorrect';
     await this.login(email, password);
     return 'is_ok';
+  };
+
+  onAppOpen = async () => {
+    let tokens = await getTokensFromStorage();
+    console.log(tokens);
+    if (tokens) {
+      this.SetAccessToken(tokens.accessToken);
+      this.SetRefreshToken(tokens.refreshToken);
+      let is_token_normal = await api.refresh_token();
+      if (is_token_normal) await app.setMe();
+    }
   };
 }
 

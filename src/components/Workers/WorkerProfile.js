@@ -6,25 +6,28 @@ import Star from 'assets/star.svg';
 import HalfStar from 'assets/half_star.svg';
 import {moderateScale, scale, verticalScale} from 'utils/normalize';
 import {Loader} from 'styled_components/Loader';
-import {api, ImageURL} from 'utils/api';
+import {api} from 'utils/api';
 import {CleaningComponent} from 'components/Cleanings/CleaningComponent';
 import {app} from 'store/app';
 import {observer} from 'mobx-react-lite';
 export const WorkerProfile = observer(({navigation, route}) => {
+
   let worker = route.params.worker;
   let {id, avatar, role, first_name, last_name, middle_name, rating} = worker;
 
   let is_maid = role == 'role_maid';
 
   const [cleanings, SetCleanings] = useState(null);
+
   const getDeclination = (word, count) => {
     if (count == 0 || count > 4) word += 'ок';
     if (count == 1) word += 'ка';
     if (count >= 2 && count <= 4) word += 'ки';
     return word;
   };
+  
   useEffect(() => {
-    console.log(342342);
+    // console.log(342342);
     api
       .getWorker(id)
       .then(worker =>
@@ -121,7 +124,7 @@ export const WorkerProfile = observer(({navigation, route}) => {
               (
               {cleanings.length +
                 ' ' +
-                getDeclination('уборк', cleanings.length)}
+                getDeclination('убор', cleanings.length)}
               )
             </Text>
           </View>
@@ -155,7 +158,7 @@ export const WorkerProfile = observer(({navigation, route}) => {
               }}>
               история {is_maid ? 'уборок' : 'проверок'}
             </Text>
-            {[...cleanings].map(cleaning => (
+            {cleanings.map(cleaning => (
               <CleaningComponent
                 is_completed={true}
                 cleaning={cleaning}

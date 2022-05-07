@@ -1,6 +1,6 @@
 import {PermissionsAndroid, Platform} from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
-import {PERMISSIONS, request} from 'react-native-permissions';
+import {check, PERMISSIONS, request, RESULTS} from 'react-native-permissions';
 
 export async function requestLocationPermission() {
   try {
@@ -43,6 +43,18 @@ export async function requestCameraPermission() {
     } else {
       alert('Необходимо разрешить доступ приложения к вашей камере');
       return false;
+    }
+  } catch (err) {
+    console.warn(err);
+    return false;
+  }
+}
+
+export async function requestATTPermission() {
+  try {
+    const result = await check(PERMISSIONS.IOS.APP_TRACKING_TRANSPARENCY);
+    if (result === RESULTS.DENIED) {
+      await request(PERMISSIONS.IOS.APP_TRACKING_TRANSPARENCY);
     }
   } catch (err) {
     console.warn(err);

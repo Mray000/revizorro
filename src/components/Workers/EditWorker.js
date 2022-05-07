@@ -7,7 +7,7 @@ import {Input} from 'styled_components/Input';
 import {dimensions} from 'utils/dimisions';
 import {Shadow} from 'react-native-shadow-2';
 import ToggleSwitch from 'toggle-switch-react-native';
-import {api, ImageURL} from 'utils/api';
+import {api,} from 'utils/api';
 import {Button} from 'styled_components/Button';
 import ArrowRight from 'assets/arrow_right.svg';
 import ArrowBottom from 'assets/arrow_down.svg';
